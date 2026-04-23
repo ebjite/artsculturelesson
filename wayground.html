@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 2: Identity and Art — Student Guide</title>
+<style>
+:root{
+  --bg:#0C0C14;--surface:#0F0F1A;--card:#1A1A2E;--border:rgba(255,255,255,.08);
+  --rose:#E91E8C;--violet:#7C3AED;--teal:#0D9488;--amber:#F59E0B;--coral:#E76F51;
+  --white:#fff;--light:#E2E8F0;--muted:#64748B;--faint:#94A3B8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--white);
+  line-height:1.65;font-size:15px}
+a{color:var(--rose);text-decoration:none}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(12,12,20,.96);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  padding:0 1.25rem;display:flex;align-items:center;height:48px;gap:0}
+.nav-title{font-size:13px;font-weight:700;color:var(--rose);margin-right:1.5rem;white-space:nowrap}
+.nav-links{display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav-link{padding:0 .9rem;height:48px;display:flex;align-items:center;
+  font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);
+  text-transform:uppercase;white-space:nowrap;border-bottom:2px solid transparent;
+  cursor:pointer;transition:color .2s}
+.nav-link:hover{color:var(--faint)}
+.nav-link.active{color:var(--white);border-bottom-color:var(--rose)}
+
+/* HERO */
+.hero{padding:4rem 1.5rem 3rem;max-width:740px;margin:0 auto}
+.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:4px;color:var(--rose);
+  text-transform:uppercase;margin-bottom:1rem}
+.hero h1{font-family:Georgia,serif;font-size:clamp(2rem,6vw,3.2rem);font-weight:700;
+  line-height:1.1;margin-bottom:.75rem}
+.hero-sub{color:var(--muted);font-size:14px;line-height:1.7;max-width:52ch}
+.hero-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.25rem}
+.pill{padding:.25rem .85rem;border-radius:999px;font-size:10px;font-weight:700;
+  letter-spacing:1px;border:1px solid}
+.pill-v{color:#A78BFA;border-color:var(--violet);background:rgba(124,58,237,.1)}
+.pill-r{color:#F472B6;border-color:var(--rose);background:rgba(233,30,140,.1)}
+.pill-c{color:#FB923C;border-color:var(--coral);background:rgba(231,111,81,.1)}
+
+/* SECTIONS */
+.section{padding:3rem 1.5rem;max-width:740px;margin:0 auto;border-top:1px solid var(--border)}
+.section-label{font-size:9px;font-weight:700;letter-spacing:4px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:.6rem}
+.section-title{font-family:Georgia,serif;font-size:clamp(1.5rem,4vw,2rem);
+  font-weight:700;line-height:1.15;margin-bottom:.5rem}
+.section-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:1.5rem}
+
+/* THEORY CARD */
+.theory-block{border-radius:10px;overflow:hidden;border:1px solid var(--border);
+  background:var(--card);margin-bottom:1.25rem}
+.theory-head{padding:1rem 1.25rem 0}
+.theory-badge{display:inline-flex;padding:.2rem .7rem;border-radius:999px;
+  font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:.6rem;border:1px solid}
+.theory-name{font-family:Georgia,serif;font-size:1.3rem;font-weight:700;margin-bottom:.2rem}
+.theory-thinker{font-size:12px;color:var(--muted);margin-bottom:.85rem}
+.theory-text{font-family:Georgia,serif;font-size:14px;color:var(--light);line-height:1.85}
+.theory-text p{margin-bottom:.75rem}
+.ref-block{border-left:2px solid #334155;padding:.6rem .9rem;margin:1rem 1.25rem 1.25rem}
+.ref-block p{font-size:12px;color:var(--muted);font-style:italic;font-family:Georgia,serif;line-height:1.6}
+
+/* MCQ */
+.mcq-wrap{padding:1rem 1.25rem;border-top:1px solid var(--border)}
+.mcq-label{font-size:9px;font-weight:700;letter-spacing:3px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:.85rem}
+.mcq-q{margin-bottom:1.1rem}
+.mcq-q-text{font-size:13px;font-weight:600;color:var(--light);margin-bottom:.6rem;line-height:1.5}
+.mcq-opt{display:flex;align-items:flex-start;gap:.6rem;padding:.6rem .85rem;
+  border-radius:5px;border:1px solid var(--border);cursor:pointer;
+  margin-bottom:.35rem;transition:all .18s;font-size:13px;color:var(--light)}
+.mcq-opt:hover{border-color:rgba(255,255,255,.18)}
+.mcq-letter{width:20px;height:20px;border-radius:50%;border:1px solid #334155;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px;transition:all .18s}
+.mcq-opt.sel .mcq-letter{color:#fff}
+.mcq-opt.correct{border-color:#10B981;background:rgba(16,185,129,.07);color:#10B981}
+.mcq-opt.correct .mcq-letter{background:#10B981;border-color:#10B981;color:#fff}
+.mcq-opt.wrong{border-color:#EF4444;background:rgba(239,68,68,.07);color:#EF4444}
+.mcq-opt.wrong .mcq-letter{background:#EF4444;border-color:#EF4444;color:#fff}
+.mcq-check{background:var(--violet);color:#fff;border:none;
+  padding:.55rem 1.2rem;border-radius:5px;font-size:12px;font-weight:700;
+  cursor:pointer;margin-top:.35rem;transition:background .2s}
+.mcq-check:hover{background:#6D28D9}
+
+/* DISCUSS BOX */
+.discuss-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);
+  border-radius:6px;padding:.85rem 1rem;margin:.75rem 0;
+  font-size:13px;color:var(--amber);line-height:1.6}
+.discuss-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--amber);
+  text-transform:uppercase;margin-bottom:.4rem}
+
+/* ART SECTION */
+.art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-top:1rem}
+.art-card{border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--card)}
+.art-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.art-card-body{padding:.85rem}
+.art-card-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:2px}
+.art-card-meta{font-size:11px;color:var(--muted);margin-bottom:.6rem}
+.art-card-caption{font-size:11px;color:var(--faint);font-style:italic;line-height:1.5;margin-bottom:.75rem}
+.scaffold-badge{display:inline-block;background:rgba(124,58,237,.12);
+  border:1px solid rgba(124,58,237,.3);color:#A78BFA;
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-bottom:.6rem}
+
+/* STAGE PILLS */
+.stage-pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;
+  font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:5px;border:1px solid}
+.pill-d{background:rgba(13,148,136,.12);color:#2DD4BF;border-color:rgba(13,148,136,.3)}
+.pill-e{background:rgba(245,158,11,.12);color:#FCD34D;border-color:rgba(245,158,11,.3)}
+.pill-m{background:rgba(124,58,237,.12);color:#A78BFA;border-color:rgba(124,58,237,.3)}
+
+/* GAP FILL */
+.gap-para{font-family:Georgia,serif;font-size:14px;line-height:2.2;color:var(--light);margin-bottom:.85rem}
+.gap-in{border:none;border-bottom:2px solid var(--violet);
+  background:rgba(124,58,237,.07);border-radius:2px 2px 0 0;
+  color:var(--white);font-family:Georgia,serif;font-size:14px;
+  padding:1px 6px;outline:none;min-width:65px;text-align:center;
+  transition:all .2s;margin:0 2px}
+.gap-in:focus{border-color:var(--rose);background:rgba(233,30,140,.07)}
+.gap-in.ok{border-color:#10B981;background:rgba(16,185,129,.07);color:#10B981}
+.gap-in.no{border-color:#EF4444;background:rgba(239,68,68,.07);color:#EF4444}
+.starter{font-family:Georgia,serif;font-size:13px;color:var(--amber);
+  font-style:italic;padding:.55rem .85rem;background:rgba(245,158,11,.06);
+  border-radius:4px;border-left:2px solid var(--amber);margin-bottom:.4rem;line-height:1.6}
+.free-ta{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:5px;color:var(--white);font-family:Georgia,serif;font-size:13px;
+  padding:.65rem .85rem;resize:vertical;min-height:65px;outline:none;
+  line-height:1.7;transition:border-color .2s;margin-bottom:.4rem}
+.free-ta:focus{border-color:var(--rose)}
+.free-ta::placeholder{color:var(--muted);font-style:italic}
+.linkers{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.85rem}
+.linker{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);
+  color:#A78BFA;padding:3px 8px;border-radius:4px;font-size:11px;font-style:italic}
+.check-btn{background:var(--violet);color:#fff;border:none;
+  padding:6px 14px;border-radius:4px;font-size:12px;font-weight:700;
+  cursor:pointer;margin-top:.35rem}
+.check-fb{font-size:12px;margin-top:.4rem;display:none}
+.check-fb.show{display:block}
+.check-fb.ok{color:#10B981}
+.check-fb.no{color:var(--amber)}
+
+/* HOMEWORK */
+.hw-box{background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(233,30,140,.05));
+  border:1px solid rgba(124,58,237,.25);border-radius:10px;padding:1.5rem}
+.hw-step{display:flex;gap:.85rem;align-items:flex-start;margin-bottom:.65rem}
+.hw-num{width:1.6rem;height:1.6rem;flex-shrink:0;border-radius:50%;
+  background:rgba(124,58,237,.15);border:1px solid var(--violet);
+  color:#A78BFA;font-size:11px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;margin-top:1px}
+.hw-text{font-size:13px;color:var(--light);line-height:1.65}
+.hw-text strong{color:var(--white)}
+.hw-structure{background:rgba(0,0,0,.25);border-radius:5px;
+  padding:.75rem 1rem;font-size:12px;font-family:monospace;
+  color:#C4B5FD;line-height:2;margin-top:.85rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-title">Lesson 2</div>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="scrollTo('top')">Home</div>
+    <div class="nav-link" onclick="scrollTo('theory-s')">Surveillance</div>
+    <div class="nav-link" onclick="scrollTo('theory-g')">Gender</div>
+    <div class="nav-link" onclick="scrollTo('theory-c')">Class</div>
+    <div class="nav-link" onclick="scrollTo('art-s')">Art: S</div>
+    <div class="nav-link" onclick="scrollTo('art-g')">Art: G</div>
+    <div class="nav-link" onclick="scrollTo('art-c')">Art: C</div>
+    <div class="nav-link" onclick="scrollTo('hw')">Homework</div>
+  </div>
+</nav>
+
+<div id="top" class="hero">
+  <div class="hero-eyebrow">Arts and Culture — Exam Prep</div>
+  <h1>Lesson 2<br>Identity and Art</h1>
+  <p class="hero-sub">This is your student guide. Read each theory section, answer the comprehension questions, then complete the art practice activities. Your teacher will tell you which section to open.</p>
+  <div class="hero-pills">
+    <span class="pill pill-v">Surveillance — Foucault</span>
+    <span class="pill pill-r">Gender Norms — Butler</span>
+    <span class="pill pill-c">Social Class — Bourdieu</span>
+  </div>
+</div>
+
+<!-- ── SURVEILLANCE THEORY ─────────────────────────────────────────────── -->
+<div id="theory-s" class="section">
+  <div class="section-label">Theory 01</div>
+  <h2 class="section-title">Surveillance</h2>
+  <p class="section-sub">Read the text carefully. Then answer the three questions. Your teacher will discuss the answers with the class.</p>
+
+  <div class="theory-block">
+    <div class="theory-head">
+      <div class="theory-badge" style="background:rgba(124,58,237,.15);color:#A78BFA;border-color:rgba(124,58,237,.3)">Surveillance</div>
+      <div class="theory-name">Michel Foucault (1926-1984)</div>
+      <div class="theory-thinker">French philosopher</div>
+      <div class="theory-text">
+        <p>Surveillance means watching or being watched. In everyday life, we think of surveillance as cameras or police. However, the French philosopher Michel Foucault argued that surveillance is much more powerful than this.</p>
+        <p>Foucault described a type of prison called the Panopticon. In this prison, one guard can see all prisoners, but the prisoners cannot see the guard. Because of this, prisoners start to control their own behaviour. They act as if they are always being watched, even when they are not (Foucault, 1977).</p>
+        <p>Foucault argued that modern society works in the same way. Schools, hospitals, and workplaces use systems of observation to control people. People change how they act, how they dress, and how they speak because they believe someone might be watching them.</p>
+        <p>When we look at art through this lens, we ask: who has the power to look? Who must be seen? Does being watched change how the person in the artwork presents their identity?</p>
+      </div>
+    </div>
+    <div class="ref-block">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Reference (APA 7th)</div>
+      <p>Foucault, M. (1977). <em>Discipline and punish: The birth of the prison</em> (A. Sheridan, Trans.). Pantheon Books. (Original work published 1975)</p>
+    </div>
+    <div class="mcq-wrap">
+      <div class="mcq-label">Comprehension check</div>
+      <div id="mcqs">
+        <!-- Q1 -->
+        <div class="mcq-q">
+          <div class="mcq-q-text">1. What is the Panopticon?</div>
+          <div class="mcq-opt" onclick="sel(this,'s',0,1)" id="s_0_0"><div class="mcq-letter">A</div>A type of camera used in modern prisons</div>
+          <div class="mcq-opt" onclick="sel(this,'s',0,1)" id="s_0_1"><div class="mcq-letter">B</div>A prison design where one guard watches all prisoners without being seen</div>
+          <div class="mcq-opt" onclick="sel(this,'s',0,1)" id="s_0_2"><div class="mcq-letter">C</div>A philosophical theory about personal freedom</div>
+          <div class="mcq-opt" onclick="sel(this,'s',0,1)" id="s_0_3"><div class="mcq-letter">D</div>A French word meaning total control</div>
+        </div>
+        <!-- Q2 -->
+        <div class="mcq-q">
+          <div class="mcq-q-text">2. Why do prisoners control their own behaviour in the Panopticon?</div>
+          <div class="mcq-opt" onclick="sel(this,'s',1,2)" id="s_1_0"><div class="mcq-letter">A</div>Because prison rules are very strict</div>
+          <div class="mcq-opt" onclick="sel(this,'s',1,2)" id="s_1_1"><div class="mcq-letter">B</div>Because other prisoners report bad behaviour</div>
+          <div class="mcq-opt" onclick="sel(this,'s',1,2)" id="s_1_2"><div class="mcq-letter">C</div>Because they cannot see the guard and do not know if they are being watched</div>
+          <div class="mcq-opt" onclick="sel(this,'s',1,2)" id="s_1_3"><div class="mcq-letter">D</div>Because guards punish them immediately</div>
+        </div>
+        <!-- Q3 -->
+        <div class="mcq-q">
+          <div class="mcq-q-text">3. Which question should we ask when looking at art through Surveillance theory?</div>
+          <div class="mcq-opt" onclick="sel(this,'s',2,1)" id="s_2_0"><div class="mcq-letter">A</div>How much did the artwork cost to make?</div>
+          <div class="mcq-opt" onclick="sel(this,'s',2,1)" id="s_2_1"><div class="mcq-letter">B</div>Who is watching and who must be seen?</div>
+          <div class="mcq-opt" onclick="sel(this,'s',2,1)" id="s_2_2"><div class="mcq-letter">C</div>When was the artwork created?</div>
+          <div class="mcq-opt" onclick="sel(this,'s',2,1)" id="s_2_3"><div class="mcq-letter">D</div>What materials did the artist use?</div>
+        </div>
+      </div>
+      <button class="mcq-check" onclick="checkMcq('s',[1,2,1])">Check answers</button>
+    </div>
+  </div>
+
+  <div class="discuss-box">
+    <div class="discuss-label">Art discussion — wait for your teacher</div>
+    How does the Bayon temple image show surveillance? What specific details can you see? How does it connect to Foucault?
+  </div>
+</div>
+
+<!-- ── GENDER THEORY ───────────────────────────────────────────────────── -->
+<div id="theory-g" class="section">
+  <div class="section-label">Theory 02</div>
+  <h2 class="section-title">Gender Norms</h2>
+  <p class="section-sub">Read the text carefully. Then answer the three questions.</p>
+
+  <div class="theory-block">
+    <div class="theory-head">
+      <div class="theory-badge" style="background:rgba(233,30,140,.15);color:#F472B6;border-color:rgba(233,30,140,.3)">Gender Norms</div>
+      <div class="theory-name">Judith Butler (born 1956)</div>
+      <div class="theory-thinker">American philosopher</div>
+      <div class="theory-text">
+        <p>Gender refers to the social ideas about how men and women should look, speak, and behave. These ideas change across different cultures and historical periods. The philosopher Judith Butler argues that gender is not natural or fixed. Instead, gender is a performance.</p>
+        <p>Butler explains that from the moment we are born, we are taught to perform gender. We learn what clothes to wear, how to walk, and how to speak based on whether we are seen as male or female (Butler, 1990). These repeated actions create the impression that gender is natural, but Butler argues this impression is not real.</p>
+        <p>Importantly, Butler says that people can also resist or challenge gender norms through their performance. By deliberately wearing unexpected clothes, taking unexpected poses, or presenting their body in unusual ways, people can make visible what is normally invisible: the fact that gender is constructed, not natural.</p>
+        <p>Artists frequently use gender as a subject. They show figures performing gender in expected ways, or they deliberately break these expectations to make the viewer think about rules they normally do not notice.</p>
+      </div>
+    </div>
+    <div class="ref-block">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Reference (APA 7th)</div>
+      <p>Butler, J. (1990). <em>Gender trouble: Feminism and the subversion of identity</em>. Routledge.</p>
+    </div>
+    <div class="mcq-wrap">
+      <div class="mcq-label">Comprehension check</div>
+      <div class="mcq-q">
+        <div class="mcq-q-text">1. According to Butler, gender is best described as:</div>
+        <div class="mcq-opt" onclick="sel(this,'g',0,1)" id="g_0_0"><div class="mcq-letter">A</div>A biological fact that does not change</div>
+        <div class="mcq-opt" onclick="sel(this,'g',0,1)" id="g_0_1"><div class="mcq-letter">B</div>A performance that we learn and repeat from birth</div>
+        <div class="mcq-opt" onclick="sel(this,'g',0,1)" id="g_0_2"><div class="mcq-letter">C</div>A choice that adults make freely</div>
+        <div class="mcq-opt" onclick="sel(this,'g',0,1)" id="g_0_3"><div class="mcq-letter">D</div>A legal category created by governments</div>
+      </div>
+      <div class="mcq-q">
+        <div class="mcq-q-text">2. What does Butler mean when she says the impression that gender is natural is "not real"?</div>
+        <div class="mcq-opt" onclick="sel(this,'g',1,1)" id="g_1_0"><div class="mcq-letter">A</div>Gender is the same in all cultures and times</div>
+        <div class="mcq-opt" onclick="sel(this,'g',1,1)" id="g_1_1"><div class="mcq-letter">B</div>What appears natural is actually a result of repeated learned actions</div>
+        <div class="mcq-opt" onclick="sel(this,'g',1,1)" id="g_1_2"><div class="mcq-letter">C</div>Only some people experience gender as natural</div>
+        <div class="mcq-opt" onclick="sel(this,'g',1,1)" id="g_1_3"><div class="mcq-letter">D</div>Gender norms are created by science</div>
+      </div>
+      <div class="mcq-q">
+        <div class="mcq-q-text">3. How can artists use gender performance in their work?</div>
+        <div class="mcq-opt" onclick="sel(this,'g',2,2)" id="g_2_0"><div class="mcq-letter">A</div>By always showing traditional gender roles</div>
+        <div class="mcq-opt" onclick="sel(this,'g',2,2)" id="g_2_1"><div class="mcq-letter">B</div>By avoiding the topic of gender completely</div>
+        <div class="mcq-opt" onclick="sel(this,'g',2,2)" id="g_2_2"><div class="mcq-letter">C</div>By showing both expected and unexpected gender performances to make viewers think</div>
+        <div class="mcq-opt" onclick="sel(this,'g',2,2)" id="g_2_3"><div class="mcq-letter">D</div>By using only female models in their artworks</div>
+      </div>
+      <button class="mcq-check" onclick="checkMcq('g',[1,1,2])">Check answers</button>
+    </div>
+  </div>
+
+  <div class="discuss-box">
+    <div class="discuss-label">Art discussion — wait for your teacher</div>
+    How does Kahlo's self-portrait show gender performance? What specific visual details can you see? What gender expectations does she follow or break?
+  </div>
+</div>
+
+<!-- ── CLASS THEORY ────────────────────────────────────────────────────── -->
+<div id="theory-c" class="section">
+  <div class="section-label">Theory 03</div>
+  <h2 class="section-title">Social Class</h2>
+  <p class="section-sub">Read the text carefully. Then answer the three questions.</p>
+
+  <div class="theory-block">
+    <div class="theory-head">
+      <div class="theory-badge" style="background:rgba(231,111,81,.15);color:#FB923C;border-color:rgba(231,111,81,.3)">Social Class</div>
+      <div class="theory-name">Pierre Bourdieu (1930-2002)</div>
+      <div class="theory-thinker">French sociologist</div>
+      <div class="theory-text">
+        <p>Social class refers to the different groups in society based on wealth, education, and social position. The French sociologist Pierre Bourdieu developed an important theory about how class works in culture.</p>
+        <p>Bourdieu argued that class is not only about money. It also involves what he called "cultural capital." Cultural capital means the knowledge, tastes, and behaviours that are valued in a particular society (Bourdieu, 1984). For example, knowing which music is considered "serious" or which appearance is considered "professional" are all forms of cultural capital.</p>
+        <p>Bourdieu showed that cultural capital is not distributed equally. People from higher social classes learn this knowledge at home and in education. This gives them advantages in work and social life. People from lower social classes often do not have the same cultural knowledge, which limits their opportunities.</p>
+        <p>Art is deeply connected to class because art itself is a form of cultural capital. Who creates art, who appears in art, and who can visit galleries are all shaped by class. Artworks can show us who has power in a society and who does not.</p>
+      </div>
+    </div>
+    <div class="ref-block">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Reference (APA 7th)</div>
+      <p>Bourdieu, P. (1984). <em>Distinction: A social critique of the judgement of taste</em> (R. Nice, Trans.). Harvard University Press. (Original work published 1979)</p>
+    </div>
+    <div class="mcq-wrap">
+      <div class="mcq-label">Comprehension check</div>
+      <div class="mcq-q">
+        <div class="mcq-q-text">1. What does Bourdieu mean by "cultural capital"?</div>
+        <div class="mcq-opt" onclick="sel(this,'c',0,1)" id="c_0_0"><div class="mcq-letter">A</div>The amount of money spent on cultural events</div>
+        <div class="mcq-opt" onclick="sel(this,'c',0,1)" id="c_0_1"><div class="mcq-letter">B</div>The knowledge, tastes, and behaviours valued in society</div>
+        <div class="mcq-opt" onclick="sel(this,'c',0,1)" id="c_0_2"><div class="mcq-letter">C</div>The number of artworks a person owns</div>
+        <div class="mcq-opt" onclick="sel(this,'c',0,1)" id="c_0_3"><div class="mcq-letter">D</div>The official culture taught in schools</div>
+      </div>
+      <div class="mcq-q">
+        <div class="mcq-q-text">2. Why does Bourdieu say cultural capital gives some people advantages?</div>
+        <div class="mcq-opt" onclick="sel(this,'c',1,2)" id="c_1_0"><div class="mcq-letter">A</div>Because higher class people are more intelligent</div>
+        <div class="mcq-opt" onclick="sel(this,'c',1,2)" id="c_1_1"><div class="mcq-letter">B</div>Because cultural capital is taught equally in all schools</div>
+        <div class="mcq-opt" onclick="sel(this,'c',1,2)" id="c_1_2"><div class="mcq-letter">C</div>Because higher class people learn valued knowledge at home and in education</div>
+        <div class="mcq-opt" onclick="sel(this,'c',1,2)" id="c_1_3"><div class="mcq-letter">D</div>Because cultural capital can be bought with money</div>
+      </div>
+      <div class="mcq-q">
+        <div class="mcq-q-text">3. What question about class should we ask when looking at art?</div>
+        <div class="mcq-opt" onclick="sel(this,'c',2,1)" id="c_2_0"><div class="mcq-letter">A</div>How long did it take to make?</div>
+        <div class="mcq-opt" onclick="sel(this,'c',2,1)" id="c_2_1"><div class="mcq-letter">B</div>Who creates art, who appears in art, and who has access to it?</div>
+        <div class="mcq-opt" onclick="sel(this,'c',2,1)" id="c_2_2"><div class="mcq-letter">C</div>What country does the artist come from?</div>
+        <div class="mcq-opt" onclick="sel(this,'c',2,1)" id="c_2_3"><div class="mcq-letter">D</div>How much does the artwork cost today?</div>
+      </div>
+      <button class="mcq-check" onclick="checkMcq('c',[1,2,1])">Check answers</button>
+    </div>
+  </div>
+
+  <div class="discuss-box">
+    <div class="discuss-label">Art discussion — wait for your teacher</div>
+    How does the skin-lightening advertisement show social class? What does it suggest about the connection between appearance and class? How does Bourdieu help explain it?
+  </div>
+</div>
+
+<!-- ── ART PRACTICE: SURVEILLANCE ─────────────────────────────────────── -->
+<div id="art-s" class="section">
+  <div class="section-label">Art Practice — Surveillance</div>
+  <h2 class="section-title">Apply Foucault</h2>
+  <p class="section-sub">Work through each artwork using the three stages: Describe, Emotion, Message. The scaffolding reduces each time.</p>
+
+  <!-- Artwork S1: Gap fill - near complete -->
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 1 of 5 — Scaffold 1: fill key words</div>
+      <div class="art-card-title">Battle Royale</div>
+      <div class="art-card-meta">Fukasaku, K. (Dir.) (2000)</div>
+      <div class="art-card-caption">Film still: Noriko during the survival game. Students are filmed at all times by cameras placed across the island.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="gap-para">In this still, Noriko stands in a forest. She holds a <input class="gap-in" id="s1d1" data-ans="doll" style="width:60px">. She is covered in <input class="gap-in" id="s1d2" data-ans="blood" style="width:65px">. Game <input class="gap-in" id="s1d3" data-ans="cameras" style="width:80px"> record everything she does.</div>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="gap-para">The image creates a feeling of <input class="gap-in" id="s1e1" data-ans="fear" style="width:55px"> and helplessness. Her <input class="gap-in" id="s1e2" data-ans="gentle" style="width:70px"> expression makes this more disturbing.</div>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="gap-para">Foucault tells us that being <input class="gap-in" id="s1m1" data-ans="watched" style="width:80px"> changes behaviour. Noriko must perform survival. She cannot act <input class="gap-in" id="s1m2" data-ans="freely" style="width:65px"> because she is always being seen.</div>
+      <div style="font-size:11px;color:var(--muted);font-style:italic;margin-bottom:.5rem">[doll / blood / cameras / fear / gentle / watched / freely]</div>
+      <button class="check-btn" onclick="checkGroup(['s1d1','s1d2','s1d3','s1e1','s1e2','s1m1','s1m2'],'s1fb')">Check gaps</button>
+      <div class="check-fb" id="s1fb"></div>
+    </div>
+  </div>
+
+  <!-- Artwork S2: More gaps -->
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 2 of 5 — Scaffold 2: more gaps</div>
+      <div class="art-card-title">Bayon Temple</div>
+      <div class="art-card-meta">Jayavarman VII (commissioned) (c. 1186-1218 CE)</div>
+      <div class="art-card-caption">54 towers. Each tower shows four large stone faces looking in different directions.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="gap-para">The Bayon has <input class="gap-in" id="s2d1" data-ans="54" style="width:40px"> towers. Each shows <input class="gap-in" id="s2d2" data-ans="four" style="width:55px"> large stone faces. No matter where a person stands, at least one face is <input class="gap-in" id="s2d3" data-ans="watching" style="width:85px">.</div>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="gap-para">Standing among the faces creates a feeling of being <input class="gap-in" id="s2e1" data-ans="observed" style="width:85px"> from every direction. You feel <input class="gap-in" id="s2e2" data-ans="small" style="width:60px"> and exposed.</div>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="gap-para">The Bayon is a physical example of Foucault's <input class="gap-in" id="s2m1" data-ans="panopticon" style="width:100px">. True <input class="gap-in" id="s2m2" data-ans="privacy" style="width:75px"> was impossible. The art was a tool of <input class="gap-in" id="s2m3" data-ans="control" style="width:75px">.</div>
+      <button class="check-btn" onclick="checkGroup(['s2d1','s2d2','s2d3','s2e1','s2e2','s2m1','s2m2','s2m3'],'s2fb')">Check gaps</button>
+      <div class="check-fb" id="s2fb"></div>
+    </div>
+  </div>
+
+  <!-- Artwork S3: Sentence starters -->
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 3 of 5 — Scaffold 3: complete the sentence</div>
+      <div class="art-card-title">Bayon Temple Face (close-up)</div>
+      <div class="art-card-meta">Jayavarman VII (commissioned) (c. 1186-1218 CE)</div>
+      <div class="art-card-caption">A single face. May represent the Bodhisattva or King Jayavarman VII himself.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="starter">This close-up shows a single stone face. The expression is</div>
+      <textarea class="free-ta" placeholder="continue describing..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="starter">The image produces a feeling of being</div>
+      <textarea class="free-ta" placeholder="describe the emotional effect and what causes it..."></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="starter">Foucault's theory of surveillance helps us understand this because</div>
+      <textarea class="free-ta" placeholder="apply the theory. Name the thinker."></textarea>
+    </div>
+  </div>
+
+  <!-- Artwork S4: Opening clause only -->
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 4 of 5 — Scaffold 4: write the full sentence</div>
+      <div class="art-card-title">Zanele Muholi: Somnyama Ngonyama</div>
+      <div class="art-card-meta">Muholi, Z. (2012-ongoing)</div>
+      <div class="art-card-caption">The artist darkens their own skin in post-production to explore race and representation.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="starter">In this self-portrait, Zanele Muholi</div>
+      <textarea class="free-ta" placeholder="describe what you see in specific detail..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="starter">The image creates a feeling of</div>
+      <textarea class="free-ta" placeholder="describe the emotional effect and explain what causes it..."></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="starter">Using Foucault's theory of surveillance, we can understand this work because</div>
+      <textarea class="free-ta" placeholder="apply the theory. Name the thinker."></textarea>
+    </div>
+  </div>
+
+  <!-- Artwork S5: Free write -->
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 5 of 5 — Scaffold 5: write independently</div>
+      <div class="art-card-title">Bayon Triple Faces</div>
+      <div class="art-card-meta">Jayavarman VII (commissioned) (c. 1186-1218 CE)</div>
+      <div class="art-card-caption">Three faces visible simultaneously from one position in the Bayon complex.</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:.6rem">You can use these linking phrases:</p>
+      <div class="linkers">
+        <span class="linker">Furthermore,</span>
+        <span class="linker">In contrast to Battle Royale,</span>
+        <span class="linker">Foucault's theory becomes most clear when</span>
+        <span class="linker">Together, these works suggest that surveillance</span>
+      </div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <textarea class="free-ta" placeholder="Describe what you see in this artwork..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <textarea class="free-ta" placeholder="What emotion does this create and why?"></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <textarea class="free-ta" placeholder="How does this work relate to Foucault's theory? Be specific."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ── ART PRACTICE: GENDER ────────────────────────────────────────────── -->
+<div id="art-g" class="section">
+  <div class="section-label">Art Practice — Gender Norms</div>
+  <h2 class="section-title">Apply Butler</h2>
+  <p class="section-sub">Work through each artwork using Describe, Emotion, Message. The scaffolding reduces each time.</p>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 1 of 5 — Scaffold 1: fill key words</div>
+      <div class="art-card-title">Self-Portrait with Cropped Hair</div>
+      <div class="art-card-meta">Kahlo, F. (1940) — Museum of Modern Art, New York</div>
+      <div class="art-card-caption">Oil on canvas, 40 x 27.9 cm. Painted after her divorce from Diego Rivera.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="gap-para">Kahlo sits on a <input class="gap-in" id="g1d1" data-ans="yellow" style="width:65px"> chair. She wears a large grey <input class="gap-in" id="g1d2" data-ans="man's suit" style="width:90px">. She holds <input class="gap-in" id="g1d3" data-ans="scissors" style="width:75px"> in her right hand.</div>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="gap-para">The painting creates a feeling of <input class="gap-in" id="g1e1" data-ans="defiance" style="width:80px"> and sadness. The short hair suggests freedom from feminine expectations, but also a <input class="gap-in" id="g1e2" data-ans="cost" style="width:55px">.</div>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="gap-para">Butler argues that gender is a <input class="gap-in" id="g1m1" data-ans="performance" style="width:100px">. Kahlo's suit is a deliberate refusal. Femininity is not natural, it is <input class="gap-in" id="g1m2" data-ans="constructed" style="width:100px">.</div>
+      <div style="font-size:11px;color:var(--muted);font-style:italic;margin-bottom:.5rem">[yellow / man's suit / scissors / defiance / cost / performance / constructed]</div>
+      <button class="check-btn" onclick="checkGroup(['g1d1','g1d2','g1d3','g1e1','g1e2','g1m1','g1m2'],'g1fb')">Check gaps</button>
+      <div class="check-fb" id="g1fb"></div>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 2 of 5 — Scaffold 2: more gaps</div>
+      <div class="art-card-title">Frida Kahlo in Man's Suit</div>
+      <div class="art-card-meta">Various photographers (c. 1924)</div>
+      <div class="art-card-caption">A family photograph. Kahlo is approximately 17 years old.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="gap-para">This photograph shows Kahlo in a full man's <input class="gap-in" id="g2d1" data-ans="suit" style="width:55px">, tie, and short hair. She looks <input class="gap-in" id="g2d2" data-ans="directly" style="width:80px"> at the camera.</div>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="gap-para">The image creates a feeling of <input class="gap-in" id="g2e1" data-ans="confidence" style="width:100px"> and deliberate <input class="gap-in" id="g2e2" data-ans="choice" style="width:70px">.</div>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="gap-para">Butler's concept of gender <input class="gap-in" id="g2m1" data-ans="performance" style="width:100px"> is shown here. Kahlo exposes the fact that gender is <input class="gap-in" id="g2m2" data-ans="costume" style="width:80px">, and costume is <input class="gap-in" id="g2m3" data-ans="choice" style="width:70px">.</div>
+      <button class="check-btn" onclick="checkGroup(['g2d1','g2d2','g2e1','g2e2','g2m1','g2m2','g2m3'],'g2fb')">Check gaps</button>
+      <div class="check-fb" id="g2fb"></div>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 3 of 5 — Scaffold 3: complete the sentence</div>
+      <div class="art-card-title">Frida Kahlo: Photograph</div>
+      <div class="art-card-meta">Kahlo, G. (1926)</div>
+      <div class="art-card-caption">Photograph by her father Guillermo Kahlo.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="starter">This photograph of Frida Kahlo shows her wearing</div>
+      <textarea class="free-ta" placeholder="continue describing..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="starter">The image creates a feeling of</div>
+      <textarea class="free-ta" placeholder="describe the emotional effect..."></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="starter">Butler's theory of gender performance helps us understand this photograph because</div>
+      <textarea class="free-ta" placeholder="apply the theory..."></textarea>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 4 of 5 — Scaffold 4: write the full sentence</div>
+      <div class="art-card-title">Chhan Dina: Evening Rhythm</div>
+      <div class="art-card-meta">Chhan Dina (c. 2019) — Phnom Penh, Cambodia</div>
+      <div class="art-card-caption">Acrylic on canvas. Chhan Dina was a guest lecturer in this course.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="starter">In this painting by Chhan Dina,</div>
+      <textarea class="free-ta" placeholder="describe what you see in specific detail..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="starter">The painting creates a feeling of</div>
+      <textarea class="free-ta" placeholder="describe the emotional effect..."></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="starter">Butler's theory of gender norms is relevant to this painting because</div>
+      <textarea class="free-ta" placeholder="apply the theory..."></textarea>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 5 of 5 — Scaffold 5: write independently</div>
+      <div class="art-card-title">Athena Dion: RuPaul's Drag Race</div>
+      <div class="art-card-meta">RuPaul's Drag Race, Season 18 (2024)</div>
+      <div class="art-card-caption">Drag performance makes gender construction visible by exaggerating it.</div>
+      <div class="linkers">
+        <span class="linker">Moreover,</span>
+        <span class="linker">When compared to Kahlo's self-portraits,</span>
+        <span class="linker">Butler's theory is most clearly shown when</span>
+        <span class="linker">Taken together, these artworks suggest that gender</span>
+      </div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <textarea class="free-ta" placeholder="Describe what you see..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <textarea class="free-ta" placeholder="What emotion does this create and why?"></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <textarea class="free-ta" placeholder="How does this relate to Butler's theory?"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ── ART PRACTICE: CLASS ─────────────────────────────────────────────── -->
+<div id="art-c" class="section">
+  <div class="section-label">Art Practice — Social Class</div>
+  <h2 class="section-title">Apply Bourdieu</h2>
+  <p class="section-sub">Work through each artwork using Describe, Emotion, Message.</p>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 1 of 5 — Scaffold 1: fill key words</div>
+      <div class="art-card-title">Skin-Lightening Advertisement</div>
+      <div class="art-card-meta">Various cosmetic brands (Present day)</div>
+      <div class="art-card-caption">Global skin-lightening market value: USD 8.3 billion (2020).</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="gap-para">This advertisement shows a <input class="gap-in" id="c1d1" data-ans="before-and-after" style="width:140px"> comparison. The right side shows her in a <input class="gap-in" id="c1d2" data-ans="professional" style="width:110px"> environment. The colours on the right side are <input class="gap-in" id="c1d3" data-ans="brighter" style="width:80px">.</div>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="gap-para">The advertisement creates a feeling of <input class="gap-in" id="c1e1" data-ans="aspiration" style="width:100px"> and <input class="gap-in" id="c1e2" data-ans="anxiety" style="width:80px">. It suggests darker skin is a problem to be solved.</div>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="gap-para">Bourdieu's theory shows lighter skin as <input class="gap-in" id="c1m1" data-ans="cultural" style="width:80px"> capital. This reflects a <input class="gap-in" id="c1m2" data-ans="colonial" style="width:80px"> history where European appearance was linked to power.</div>
+      <div style="font-size:11px;color:var(--muted);font-style:italic;margin-bottom:.5rem">[before-and-after / professional / brighter / aspiration / anxiety / cultural / colonial]</div>
+      <button class="check-btn" onclick="checkGroup(['c1d1','c1d2','c1d3','c1e1','c1e2','c1m1','c1m2'],'c1fb')">Check gaps</button>
+      <div class="check-fb" id="c1fb"></div>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 2 of 5 — Scaffold 2: more gaps</div>
+      <div class="art-card-title">K-Beauty Eyelid Surgery Advertisement</div>
+      <div class="art-card-meta">South Korean cosmetic surgery industry (Present day)</div>
+      <div class="art-card-caption">South Korea has the highest number of cosmetic surgeries per capita in the world.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="gap-para">This advertisement promotes double <input class="gap-in" id="c2d1" data-ans="eyelid" style="width:70px"> surgery. The image shows a young woman with large, <input class="gap-in" id="c2d2" data-ans="rounded" style="width:80px"> eyes in a <input class="gap-in" id="c2d3" data-ans="professional" style="width:110px"> studio environment.</div>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="gap-para">The advertisement creates a feeling of beauty as <input class="gap-in" id="c2e1" data-ans="aspiration" style="width:100px">. However, the procedure moves an East Asian eye shape towards a more <input class="gap-in" id="c2e2" data-ans="Western" style="width:75px"> look.</div>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="gap-para">Through Bourdieu, this shows how <input class="gap-in" id="c2m1" data-ans="cultural" style="width:80px"> capital works. The surgery is also expensive, making it a marker of <input class="gap-in" id="c2m2" data-ans="economic" style="width:85px"> class.</div>
+      <button class="check-btn" onclick="checkGroup(['c2d1','c2d2','c2d3','c2e1','c2e2','c2m1','c2m2'],'c2fb')">Check gaps</button>
+      <div class="check-fb" id="c2fb"></div>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 3 of 5 — Scaffold 3: complete the sentence</div>
+      <div class="art-card-title">Luxury Abaya Editorial</div>
+      <div class="art-card-meta">UAE fashion photography (Present day)</div>
+      <div class="art-card-caption">The abaya is traditional full-length modest dress. Here it is shown in a luxury editorial context.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="starter">This editorial photograph shows a woman wearing a luxury abaya in</div>
+      <textarea class="free-ta" placeholder="continue describing..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="starter">The image creates a feeling of</div>
+      <textarea class="free-ta" placeholder="describe the emotional effect..."></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="starter">Bourdieu's theory of cultural capital helps us understand this image because</div>
+      <textarea class="free-ta" placeholder="apply the theory..."></textarea>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 4 of 5 — Scaffold 4: write the full sentence</div>
+      <div class="art-card-title">Brazilian Cosmetic Surgery Culture</div>
+      <div class="art-card-meta">Documentary photography (Present day)</div>
+      <div class="art-card-caption">Brazil has the second highest number of cosmetic surgeries in the world.</div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <div class="starter">This image from Brazilian cosmetic surgery culture shows</div>
+      <textarea class="free-ta" placeholder="describe what you see in specific detail..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <div class="starter">The image creates a complex feeling of</div>
+      <textarea class="free-ta" placeholder="describe the emotional effect..."></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <div class="starter">Bourdieu's theory of cultural capital is relevant here because</div>
+      <textarea class="free-ta" placeholder="apply the theory..."></textarea>
+    </div>
+  </div>
+
+  <div class="art-card" style="margin-bottom:1rem">
+    <div class="art-card-body">
+      <div class="scaffold-badge">Artwork 5 of 5 — Scaffold 5: write independently</div>
+      <div class="art-card-title">Group Abaya Fashion</div>
+      <div class="art-card-meta">UAE fashion photography (Present day)</div>
+      <div class="art-card-caption">Group abaya editorial. Gulf fashion is now a global industry worth billions.</div>
+      <div class="linkers">
+        <span class="linker">Furthermore,</span>
+        <span class="linker">In contrast to the advertisements examined earlier,</span>
+        <span class="linker">Bourdieu's theory becomes most clear when</span>
+        <span class="linker">The key argument these works make is that class</span>
+      </div>
+      <div class="stage-pill pill-d">1. Describe</div>
+      <textarea class="free-ta" placeholder="Describe what you see..."></textarea>
+      <div class="stage-pill pill-e">2. Emotion</div>
+      <textarea class="free-ta" placeholder="What emotion does this create and why?"></textarea>
+      <div class="stage-pill pill-m">3. Message / Theory</div>
+      <textarea class="free-ta" placeholder="How does this relate to Bourdieu's theory?"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ── HOMEWORK ────────────────────────────────────────────────────────── -->
+<div id="hw" class="section">
+  <div class="section-label">Homework</div>
+  <h2 class="section-title">Write a comparison paragraph</h2>
+  <p class="section-sub">Due next class. Complete this independently — no AI tools.</p>
+  <div class="hw-box">
+    <p style="color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:1.25rem">Choose ONE theory. Choose TWO artworks from today that connect to it. Write a comparison paragraph using this structure.</p>
+    <div class="hw-step"><div class="hw-num">1</div><div class="hw-text"><strong>Name the theory and the thinker.</strong> One sentence. What does Bourdieu / Butler / Foucault argue?</div></div>
+    <div class="hw-step"><div class="hw-num">2</div><div class="hw-text"><strong>Work A: Describe, Emotion, Message.</strong> Three sentences using the method from class.</div></div>
+    <div class="hw-step"><div class="hw-num">3</div><div class="hw-text"><strong>Work B: Describe, Emotion, Message.</strong> Three sentences.</div></div>
+    <div class="hw-step"><div class="hw-num">4</div><div class="hw-text"><strong>What do these works share?</strong> How do they differ? One sentence that connects them.</div></div>
+    <div class="hw-step"><div class="hw-num">5</div><div class="hw-text"><strong>Why can art do this?</strong> What can art argue about identity that journalism cannot? One final sentence.</div></div>
+    <div class="hw-structure">Theory (1 sentence)<br>Work A: Describe + Emotion + Message (3 sentences)<br>Work B: Describe + Emotion + Message (3 sentences)<br>Synthesis (1 sentence)<br>Why art matters (1 sentence)<br><br><span style="color:var(--muted)">= 9 sentences total</span></div>
+  </div>
+</div>
+
+<div style="height:4rem"></div>
+
+<script>
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+
+// Scroll spy
+const ids=['top','theory-s','theory-g','theory-c','art-s','art-g','art-c','hw'];
+const links=document.querySelectorAll('.nav-link');
+window.addEventListener('scroll',()=>{
+  let cur=0;
+  ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<120)cur=i});
+  links.forEach((l,i)=>l.classList.toggle('active',i===cur));
+},{passive:true});
+
+// MCQ selection
+const selected={};
+function sel(el,theory,qi,correctIdx){
+  // Deselect others in same question
+  document.querySelectorAll(`[id^="${theory}_${qi}_"]`).forEach(e=>{
+    e.classList.remove('sel');
+    e.querySelector('.mcq-letter').style.background='';
+    e.querySelector('.mcq-letter').style.color='';
+    e.querySelector('.mcq-letter').style.borderColor='';
+  });
+  el.classList.add('sel');
+  selected[theory+'_'+qi]=parseInt(el.id.split('_')[2]);
+  const colors={s:'#7C3AED',g:'#E91E8C',c:'#E76F51'};
+  const col=colors[theory];
+  el.style.borderColor=col;
+  const ltr=el.querySelector('.mcq-letter');
+  ltr.style.background=col;ltr.style.color='#fff';ltr.style.borderColor=col;
+}
+
+function checkMcq(theory,answers){
+  answers.forEach((ans,qi)=>{
+    const userAns=selected[theory+'_'+qi];
+    for(let oi=0;oi<4;oi++){
+      const el=document.getElementById(`${theory}_${qi}_${oi}`);
+      if(!el)continue;
+      el.classList.remove('sel','correct','wrong');
+      el.style.borderColor='';
+      const ltr=el.querySelector('.mcq-letter');
+      ltr.style.background='';ltr.style.color='';ltr.style.borderColor='';
+      if(oi===ans)el.classList.add('correct');
+      else if(userAns===oi)el.classList.add('wrong');
+    }
+  });
+}
+
+// Gap fill check
+function checkGroup(ids,fbId){
+  let all=true;
+  ids.forEach(id=>{
+    const inp=document.getElementById(id);
+    if(!inp)return;
+    const ans=inp.dataset.ans.toLowerCase().trim();
+    const val=inp.value.toLowerCase().trim();
+    inp.classList.remove('ok','no');
+    if(val===ans)inp.classList.add('ok');
+    else{inp.classList.add('no');all=false;}
+  });
+  const fb=document.getElementById(fbId);
+  if(fb){
+    fb.className='check-fb show '+(all?'ok':'no');
+    fb.textContent=all?'All correct.':'Some gaps are not correct. Check the words marked in red.';
+  }
+}
+</script>
+</body>
+</html>
