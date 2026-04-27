@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art as Voice — Activities</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --peach:#FAE5D3;--peach-mid:#F5C9A8;--peach-dk:#E8A87C;
+  --terra:#C1553A;--terra-lt:#D4684D;--ink:#2C1A0E;
+  --mid:#7A5C48;--muted:#B09080;--cream:#FDF6EE;
+  --blue:#1A5C8A;--green:#2A6E3A;--purple:#6B1F82;--gold:#D4A017;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--peach);color:var(--ink);min-height:100vh;}
+#home{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+#home.active{display:flex;}
+.home-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:900;color:var(--ink);margin-bottom:0.2rem;}
+.home-title span{color:var(--terra);}
+.home-sub{font-size:1rem;color:var(--mid);margin-bottom:2.5rem;letter-spacing:.05em;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem;max-width:860px;width:100%;}
+.card{background:var(--cream);border-radius:12px;cursor:pointer;transition:transform .18s,box-shadow .18s;overflow:hidden;position:relative;}
+.card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--cc,var(--terra));}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(44,26,14,.12);}
+.card-img{width:100%;height:155px;object-fit:cover;display:block;}
+.card-body{padding:1.1rem 1.1rem 1.3rem;}
+.card-num{font-family:'Playfair Display',serif;font-size:2.1rem;font-weight:900;color:var(--cc,var(--terra));line-height:1;}
+.card-title{font-size:.98rem;font-weight:600;margin-bottom:.2rem;}
+.card-desc{font-size:.78rem;color:var(--mid);line-height:1.5;}
+.card-tag{display:inline-block;margin-top:.6rem;font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .55rem;border-radius:4px;background:var(--cc,var(--terra));color:white;}
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+.act-header{color:white;padding:.88rem 1.3rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:50;}
+.back-btn{background:rgba(255,255,255,.2);border:none;color:white;border-radius:6px;padding:.28rem .72rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:500;flex-shrink:0;}
+.back-btn:hover{background:rgba(255,255,255,.32);}
+.act-htitle{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.act-hsub{font-size:.73rem;opacity:.8;}
+.act-body{padding:1.3rem;max-width:940px;margin:0 auto;}
+.artwork-banner{border-radius:12px;overflow:hidden;margin-bottom:1.2rem;box-shadow:0 6px 20px rgba(44,26,14,.14);}
+.artwork-banner img{width:100%;max-height:280px;object-fit:cover;display:block;background:#1C1A0E;}
+.artwork-cap{background:var(--ink);color:var(--peach-mid);padding:.55rem .95rem;font-size:.77rem;line-height:1.5;}
+.artwork-cap strong{color:var(--peach-dk);}
+.artwork-cap em{color:var(--muted);font-size:.72rem;}
+.legend{display:flex;gap:.55rem;margin-bottom:1.1rem;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:.38rem;padding:.28rem .7rem;border-radius:20px;font-size:.72rem;font-weight:600;color:white;}
+.instr{background:var(--cream);border-radius:10px;padding:.85rem 1rem;margin-bottom:1.1rem;font-size:.85rem;color:var(--mid);border-left:4px solid var(--terra);line-height:1.6;}
+.instr strong{color:var(--ink);}
+.s-card{background:white;border:2px solid var(--peach-mid);border-radius:8px;padding:.58rem .82rem;margin-bottom:.45rem;cursor:grab;font-size:.8rem;line-height:1.5;color:var(--ink);transition:box-shadow .15s,border-color .15s;display:flex;align-items:flex-start;gap:.52rem;user-select:none;}
+.s-card:active{cursor:grabbing;}
+.s-card.dragging{opacity:.35;}
+.s-card.placed{border-color:var(--peach-dk);background:var(--peach);}
+.s-letter{font-family:'DM Mono',monospace;font-size:.7rem;font-weight:500;background:var(--peach-mid);border-radius:4px;padding:.08rem .36rem;flex-shrink:0;margin-top:1px;}
+.s-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.zones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;margin-bottom:1rem;}
+@media(max-width:580px){.zones{grid-template-columns:1fr;}}
+.zone{background:var(--cream);border-radius:10px;padding:.8rem;min-height:70px;border:2px dashed var(--peach-dk);transition:border-color .15s,background .15s;}
+.zone.over{border-color:var(--terra);background:rgba(193,85,58,.05);}
+.zone h3{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .52rem;border-radius:4px;color:white;display:inline-block;margin-bottom:.55rem;}
+.bank{background:var(--cream);border-radius:10px;padding:.8rem;margin-bottom:1rem;}
+.bank h3{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.65rem;}
+.oarea{background:var(--cream);border-radius:10px;padding:.8rem;margin-bottom:1rem;}
+.oarea h3{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.65rem;}
+.oslot{background:white;border:2px dashed var(--peach-mid);border-radius:8px;padding:.45rem .82rem;margin-bottom:.38rem;min-height:42px;font-size:.76rem;color:var(--muted);font-style:italic;transition:border-color .15s,background .15s;}
+.oslot.over{border-color:var(--terra);background:rgba(193,85,58,.04);}
+.check-btn{background:var(--terra);color:white;border:none;border-radius:8px;padding:.68rem 1.7rem;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;margin-right:.55rem;transition:background .15s;}
+.check-btn:hover{background:var(--terra-lt);}
+.reset-btn{background:transparent;color:var(--mid);border:2px solid var(--peach-dk);border-radius:8px;padding:.68rem 1.3rem;font-family:'DM Sans',sans-serif;font-size:.9rem;cursor:pointer;transition:all .15s;}
+.reset-btn:hover{border-color:var(--terra);color:var(--terra);}
+.reveal-btn{background:var(--ink);color:var(--peach);border:none;border-radius:8px;padding:.58rem 1.3rem;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;margin-top:.65rem;display:none;}
+.reveal-btn:hover{opacity:.85;}
+.result{margin-top:.85rem;padding:.85rem 1rem;border-radius:10px;display:none;font-size:.83rem;}
+.result.show{display:block;}
+.result.ok{background:#d4edda;color:#155724;border-left:4px solid #28a745;}
+.result.part{background:#fff3cd;color:#856404;border-left:4px solid var(--gold);}
+.result.bad{background:#f8d7da;color:#721c24;border-left:4px solid #dc3545;}
+.apanel{display:none;margin-top:.9rem;border-radius:10px;overflow:hidden;}
+.apanel.show{display:block;}
+.arow{display:flex;align-items:stretch;margin-bottom:3px;}
+.afunc{width:66px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;letter-spacing:.1em;color:white;padding:.48rem .22rem;}
+.atxt{flex:1;padding:.52rem .82rem;font-size:.78rem;line-height:1.5;color:var(--ink);background:var(--cream);}
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem;}
+@media(max-width:560px){.match-cols{grid-template-columns:1fr;}}
+.match-col h3{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.55rem;}
+.m-item{background:white;border:2px solid var(--peach-mid);border-radius:8px;padding:.58rem .82rem;margin-bottom:.42rem;cursor:pointer;font-size:.8rem;line-height:1.42;color:var(--ink);transition:all .15s;}
+.m-item.sel{border-color:var(--terra);background:rgba(193,85,58,.06);box-shadow:0 0 0 3px rgba(193,85,58,.18);}
+.m-item.done{opacity:.44;cursor:default;pointer-events:none;}
+.czone{background:var(--cream);border:2px dashed var(--peach-dk);border-radius:8px;padding:.65rem;margin-bottom:.42rem;min-height:52px;cursor:pointer;transition:border-color .15s;}
+.czone:hover{border-color:var(--terra);}
+.clabel{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;display:inline-block;padding:.17rem .52rem;border-radius:4px;margin-bottom:.38rem;}
+.cplaced{background:white;border-radius:6px;padding:.32rem .62rem;font-size:.75rem;color:var(--ink);margin-bottom:.28rem;display:flex;justify-content:space-between;}
+.rm{cursor:pointer;color:var(--muted);padding:0 .28rem;}.rm:hover{color:var(--terra);}
+.open-q{background:var(--cream);border-radius:12px;padding:1.2rem;margin-bottom:.85rem;}
+.oq-label{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);margin-bottom:.45rem;}
+.oq-text{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:.3rem;}
+.oq-hint{font-size:.78rem;color:var(--mid);font-style:italic;}
+textarea{width:100%;border:2px solid var(--peach-dk);border-radius:8px;padding:.82rem;font-family:'DM Sans',sans-serif;font-size:.84rem;line-height:1.6;color:var(--ink);background:white;resize:vertical;min-height:105px;}
+textarea:focus{outline:none;border-color:var(--terra);}
+.sub-btn{background:var(--terra);color:white;border:none;border-radius:8px;padding:.68rem 1.7rem;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:.6rem;}
+.gold-box{background:var(--ink);color:var(--peach);border-radius:10px;padding:.95rem 1.1rem;margin-top:.9rem;display:none;}
+.gold-box.show{display:block;}
+.gold-label{font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.42rem;}
+.slist{background:white;border-radius:10px;overflow:hidden;margin-bottom:.9rem;}
+.srow{display:flex;border-bottom:1px solid var(--peach-mid);}
+.srow:last-child{border-bottom:none;}
+.sbar{width:6px;flex-shrink:0;}
+.sltr{width:32px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.76rem;color:var(--mid);flex-shrink:0;}
+.stxt{flex:1;padding:.58rem .82rem .58rem .22rem;font-size:.79rem;line-height:1.5;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<div id="home" class="active">
+  <h1 class="home-title">Art as <span>Voice</span></h1>
+  <p class="home-sub">Interactive activities — choose a task</p>
+  <div class="grid">
+    <div class="card" style="--cc:var(--blue)" onclick="go('act1')">
+      <img class="card-img" src="https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg" alt="Guernica by Picasso">
+      <div class="card-body">
+        <div class="card-num">01</div>
+        <div class="card-title">Sort the Sentences</div>
+        <div class="card-desc">Put 6 Guernica sentences in order: WHAT → HOW → MESSAGE. Then colour-code each one.</div>
+        <span class="card-tag" style="background:var(--blue)">Guernica · Picasso, 1937</span>
+      </div>
+    </div>
+    <div class="card" style="--cc:var(--green)" onclick="go('act2')">
+      <img class="card-img" src="https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg" alt="Guernica by Picasso">
+      <div class="card-body">
+        <div class="card-num">02</div>
+        <div class="card-title">Match the Grammar</div>
+        <div class="card-desc">Six grammatical moves from the Guernica paragraph. Match each to WHAT, HOW, or MESSAGE.</div>
+        <span class="card-tag" style="background:var(--green)">Grammar · Guernica</span>
+      </div>
+    </div>
+    <div class="card" style="--cc:var(--blue)" onclick="go('act3')">
+      <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg" alt="Vitruvian Man by Da Vinci">
+      <div class="card-body">
+        <div class="card-num">03</div>
+        <div class="card-title">Sort the Sentences</div>
+        <div class="card-desc">New artwork, same task. Sort 6 Da Vinci sentences into WHAT → HOW → MESSAGE order.</div>
+        <span class="card-tag" style="background:var(--blue)">Vitruvian Man · Da Vinci</span>
+      </div>
+    </div>
+    <div class="card" style="--cc:var(--purple)" onclick="go('act4')">
+      <img class="card-img" src="https://upload.wikimedia.org/wikipedia/en/4/47/Banksy_-_Girl_with_Balloon.jpg" alt="Banksy Girl with Balloon">
+      <div class="card-body">
+        <div class="card-num">04</div>
+        <div class="card-title">Sort + Respond</div>
+        <div class="card-desc">Sort the Banksy paragraph, then answer: which sentence does the most analytical work?</div>
+        <span class="card-tag" style="background:var(--purple)">Banksy · Open Response</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACT 1 -->
+<div class="page" id="act1">
+  <div class="act-header" style="background:var(--blue)">
+    <button class="back-btn" onclick="go('home')">← Back</button>
+    <div><div class="act-htitle">Activity 1 — Sort the Sentences</div><div class="act-hsub">Guernica · Pablo Picasso, 1937</div></div>
+  </div>
+  <div class="act-body">
+    <div class="artwork-banner">
+      <img src="https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg" alt="Guernica by Picasso, 1937">
+      <div class="artwork-cap"><strong>Guernica</strong> — Pablo Picasso, 1937. Oil on canvas, 349 × 776 cm. Museo Reina Sofía, Madrid. <em>Reaction: Nazi bombing of Guernica, April 26, 1937 · Theorist: Judith Herman — Trauma and Recovery (1992)</em></div>
+    </div>
+    <div class="legend">
+      <div class="leg" style="background:var(--blue)">● BLUE = WHAT</div>
+      <div class="leg" style="background:var(--green)">● GREEN = HOW</div>
+      <div class="leg" style="background:var(--purple)">● PURPLE = MESSAGE</div>
+    </div>
+    <div class="instr"><strong>Step 1:</strong> Drag the sentences into the correct order: WHAT first, HOW second, MESSAGE third.<br><strong>Step 2:</strong> Drag each sentence into its colour category below.</div>
+    <div class="oarea"><h3>Correct order — drag here (1 to 6)</h3><div id="g1-order"></div></div>
+    <div class="bank"><h3>Sentences — drag to order above, then to categories below</h3><div id="g1-bank"></div></div>
+    <div class="zones">
+      <div class="zone" id="g1-z-what" ondragover="ev(event)" ondragleave="lv(event)" ondrop="zdrop(event,'what','g1')"><h3 style="background:var(--blue)">WHAT</h3></div>
+      <div class="zone" id="g1-z-how"  ondragover="ev(event)" ondragleave="lv(event)" ondrop="zdrop(event,'how','g1')"><h3 style="background:var(--green)">HOW</h3></div>
+      <div class="zone" id="g1-z-msg"  ondragover="ev(event)" ondragleave="lv(event)" ondrop="zdrop(event,'msg','g1')"><h3 style="background:var(--purple)">MESSAGE</h3></div>
+    </div>
+    <button class="check-btn" onclick="checkSort('g1')">Check answers</button>
+    <button class="reset-btn" onclick="resetSort('g1')">Reset</button>
+    <div class="result" id="g1-res"></div>
+    <button class="reveal-btn" id="g1-rb" onclick="toggle('g1-panel')">Show answer key</button>
+    <div class="apanel" id="g1-panel">
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt">C — Guernica is a monumental oil painting — 3.49 × 7.76m — rendered entirely in black, white and grey, depicting fragmented human and animal figures across a compressed, chaotic plane.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt">F — A screaming horse dominates the centre; a dismembered soldier lies below; a mother holding a dead child occupies the far left.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt">A — The absence of colour strips the image of romanticism; grey is the colour of ash, of moral ambiguity — Picasso allows no escape from it.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt">D — The fragmented bodies and overlapping planes create disorientation that mirrors aerial bombardment, where space itself loses coherence.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt">B — Through trauma theory (Judith Herman, 1992), the painting enacts rather than merely represents suffering — its fractured form IS the psychological state of the survivor.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt">E — Guernica does not show war; it performs the experience of those who cannot un-see it.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ACT 2 -->
+<div class="page" id="act2">
+  <div class="act-header" style="background:var(--green)">
+    <button class="back-btn" onclick="go('home')">← Back</button>
+    <div><div class="act-htitle">Activity 2 — Match the Grammar Move</div><div class="act-hsub">Guernica · same paragraph, new task</div></div>
+  </div>
+  <div class="act-body">
+    <div class="artwork-banner">
+      <img src="https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg" alt="Guernica by Picasso, 1937">
+      <div class="artwork-cap"><strong>Guernica</strong> — Picasso, 1937. Same paragraph as Activity 1. <em>Click a construct to select it, then click the correct category to place it.</em></div>
+    </div>
+    <div class="legend">
+      <div class="leg" style="background:var(--blue)">● BLUE = WHAT</div>
+      <div class="leg" style="background:var(--green)">● GREEN = HOW</div>
+      <div class="leg" style="background:var(--purple)">● PURPLE = MESSAGE</div>
+    </div>
+    <div class="instr"><strong>Click</strong> a grammatical construct to select it (it highlights). <strong>Then click</strong> the correct category to place it. Click ✕ to remove a placed item.</div>
+    <div class="match-cols">
+      <div class="match-col">
+        <h3>Grammatical constructs</h3>
+        <div id="g2-items">
+          <div class="m-item" data-id="g2a" data-ans="what" onclick="selM(this,'g2')">Passive measurement + medium<br><small style="color:var(--mid);font-style:italic">"…a monumental oil painting — 3.49 × 7.76m — rendered in…"</small></div>
+          <div class="m-item" data-id="g2b" data-ans="what" onclick="selM(this,'g2')">Present-tense list of subjects<br><small style="color:var(--mid);font-style:italic">"A screaming horse dominates… a dismembered soldier lies…"</small></div>
+          <div class="m-item" data-id="g2c" data-ans="how"  onclick="selM(this,'g2')">Semicolon + metaphor of equivalence<br><small style="color:var(--mid);font-style:italic">"…grey is the colour of ash, of newsprint, of moral ambiguity"</small></div>
+          <div class="m-item" data-id="g2d" data-ans="how"  onclick="selM(this,'g2')">Verb + comparative clause ('mirrors')<br><small style="color:var(--mid);font-style:italic">"…create disorientation that mirrors the violence of…"</small></div>
+          <div class="m-item" data-id="g2e" data-ans="msg"  onclick="selM(this,'g2')">Theorist citation + present-tense application<br><small style="color:var(--mid);font-style:italic">"Through trauma theory (Judith Herman, 1992), the painting enacts…"</small></div>
+          <div class="m-item" data-id="g2f" data-ans="msg"  onclick="selM(this,'g2')">Paradox / contrast as closing claim<br><small style="color:var(--mid);font-style:italic">"Guernica does not show war; it performs…"</small></div>
+        </div>
+      </div>
+      <div class="match-col">
+        <h3>Categories</h3>
+        <div class="czone" id="g2-what" onclick="placeM('g2','what')"><span class="clabel" style="background:var(--blue)">WHAT</span><div id="g2-what-i"></div></div>
+        <div class="czone" id="g2-how"  onclick="placeM('g2','how')"><span class="clabel" style="background:var(--green)">HOW</span><div id="g2-how-i"></div></div>
+        <div class="czone" id="g2-msg"  onclick="placeM('g2','msg')"><span class="clabel" style="background:var(--purple)">MESSAGE</span><div id="g2-msg-i"></div></div>
+      </div>
+    </div>
+    <button class="check-btn" onclick="checkM('g2')">Check answers</button>
+    <button class="reset-btn" onclick="resetM('g2')">Reset</button>
+    <div class="result" id="g2-res"></div>
+    <button class="reveal-btn" id="g2-rb" onclick="toggle('g2-panel')">Show answer key</button>
+    <div class="apanel" id="g2-panel">
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt"><strong>Passive measurement + medium</strong> — Establishes objective physical facts. Passive voice removes the writer — no feelings yet.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt"><strong>Present-tense list of subjects</strong> — Describes composition with active verbs. Lists what the eye sees — no interpretation.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt"><strong>Semicolon + metaphor</strong> — Semicolon extends an argument. Metaphor shows interpretation of technique — feeling, not fact.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt"><strong>Verb + comparative clause</strong> — 'Create' + 'mirrors' links technique to psychological effect. That link = HOW.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt"><strong>Theorist citation</strong> — Named in brackets. Applied with strong verb: 'enacts' vs 'represents' — precision matters.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt"><strong>Paradox as closing claim</strong> — Two contrasting verbs (show / perform) = the analytical claim in miniature. Classic MESSAGE move.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ACT 3 -->
+<div class="page" id="act3">
+  <div class="act-header" style="background:var(--blue)">
+    <button class="back-btn" onclick="go('home')">← Back</button>
+    <div><div class="act-htitle">Activity 3 — Sort the Sentences</div><div class="act-hsub">Vitruvian Man · Leonardo da Vinci, c.1490</div></div>
+  </div>
+  <div class="act-body">
+    <div class="artwork-banner">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg" alt="Vitruvian Man by Leonardo da Vinci" style="object-fit:contain;background:#1C1A0E;">
+      <div class="artwork-cap"><strong>Vitruvian Man</strong> — Leonardo da Vinci, c.1490. Pen, ink & wash, 34 × 24 cm. Gallerie dell'Accademia, Venice. <em>Event: Church ban on human dissection · Theorist: Michel Foucault — Discipline and Punish (1975)</em></div>
+    </div>
+    <div class="legend">
+      <div class="leg" style="background:var(--blue)">● BLUE = WHAT</div>
+      <div class="leg" style="background:var(--green)">● GREEN = HOW</div>
+      <div class="leg" style="background:var(--purple)">● PURPLE = MESSAGE</div>
+    </div>
+    <div class="instr"><strong>Step 1:</strong> Drag into WHAT → HOW → MESSAGE order.<br><strong>Step 2:</strong> Drag each into its colour category.</div>
+    <div class="oarea"><h3>Correct order — drag here</h3><div id="d1-order"></div></div>
+    <div class="bank"><h3>Sentences</h3><div id="d1-bank"></div></div>
+    <div class="zones">
+      <div class="zone" id="d1-z-what" ondragover="ev(event)" ondragleave="lv(event)" ondrop="zdrop(event,'what','d1')"><h3 style="background:var(--blue)">WHAT</h3></div>
+      <div class="zone" id="d1-z-how"  ondragover="ev(event)" ondragleave="lv(event)" ondrop="zdrop(event,'how','d1')"><h3 style="background:var(--green)">HOW</h3></div>
+      <div class="zone" id="d1-z-msg"  ondragover="ev(event)" ondragleave="lv(event)" ondrop="zdrop(event,'msg','d1')"><h3 style="background:var(--purple)">MESSAGE</h3></div>
+    </div>
+    <button class="check-btn" onclick="checkSort('d1')">Check answers</button>
+    <button class="reset-btn" onclick="resetSort('d1')">Reset</button>
+    <div class="result" id="d1-res"></div>
+    <button class="reveal-btn" id="d1-rb" onclick="toggle('d1-panel')">Show answer key</button>
+    <div class="apanel" id="d1-panel">
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt">C — Vitruvian Man is a pen-and-ink drawing on paper, ~34 × 24cm, depicting a male figure in two superimposed positions inscribed within both a circle and a square.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt">F — Handwritten notes in mirror script surround the figure on all sides, filling every margin with measurement and observation.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt">D — The double image creates an uncanny oscillation: the figure seems to breathe, to refuse to be fixed — ideal and reality held in tension.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt">A — The intimate scale — a private document, not a public commission — amplifies its transgressive charge; not made to be seen, but to know.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt">B — Foucault (Discipline and Punish, 1975): institutional power operates through control of visibility — what can be seen, examined, and known.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt">E — The Church's prohibition was such an act; Da Vinci's drawings are therefore an act of epistemological resistance — the body read in secret.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ACT 4 -->
+<div class="page" id="act4">
+  <div class="act-header" style="background:var(--purple)">
+    <button class="back-btn" onclick="go('home')">← Back</button>
+    <div><div class="act-htitle">Activity 4 — Sort + Respond</div><div class="act-hsub">Love is in the Bin · Banksy, 2018</div></div>
+  </div>
+  <div class="act-body">
+    <div class="artwork-banner">
+      <img src="https://upload.wikimedia.org/wikipedia/en/4/47/Banksy_-_Girl_with_Balloon.jpg" alt="Girl with Balloon by Banksy" style="object-fit:contain;background:#111;max-height:300px;">
+      <div class="artwork-cap"><strong>Love is in the Bin</strong> (originally Girl with Balloon) — Banksy, 2018. Canvas (partially shredded at auction). Sotheby's, London. <em>Event: Commodification of protest · Theorist: Guy Debord — The Society of the Spectacle (1967)</em></div>
+    </div>
+    <div class="legend">
+      <div class="leg" style="background:var(--blue)">● BLUE = WHAT</div>
+      <div class="leg" style="background:var(--green)">● GREEN = HOW</div>
+      <div class="leg" style="background:var(--purple)">● PURPLE = MESSAGE</div>
+    </div>
+    <div class="instr"><strong>Part A:</strong> Drag A–F into the correct category.<br><strong>Part B:</strong> Type your response to the question below.</div>
+    <div class="slist">
+      <div class="srow"><div class="sbar" style="background:var(--purple)"></div><div class="sltr">A</div><div class="stxt">Debord argued in <em>The Society of the Spectacle</em> (1967) that capitalism converts resistance into commodity, draining its political charge.</div></div>
+      <div class="srow"><div class="sbar" style="background:var(--blue)"></div><div class="sltr">B</div><div class="stxt">Love is in the Bin is a framed canvas which self-destructed via a hidden shredder at the moment of its Sotheby's sale in 2018, leaving the lower half in vertical ribbons.</div></div>
+      <div class="srow"><div class="sbar" style="background:var(--green)"></div><div class="sltr">C</div><div class="stxt">The shredded strips create a vertical rhythm that reads simultaneously as prison bars and ticker tape — confinement and celebration at once.</div></div>
+      <div class="srow"><div class="sbar" style="background:var(--purple)"></div><div class="sltr">D</div><div class="stxt">Banksy literalises Debord: by destroying the work at the moment of sale, he refuses commodification — the act of destruction becomes the art, and it cannot be owned.</div></div>
+      <div class="srow"><div class="sbar" style="background:var(--blue)"></div><div class="sltr">E</div><div class="stxt">A stencilled child reaches upward toward a red heart-shaped balloon, rendered in black and white against the framed canvas.</div></div>
+      <div class="srow"><div class="sbar" style="background:var(--green)"></div><div class="sltr">F</div><div class="stxt">The red heart — still whole above the destruction — reads now not as innocence but as irony: love survives the market, barely.</div></div>
+    </div>
+    <div class="bank"><h3>Drag each letter into a category below</h3><div id="b1-bank"></div></div>
+    <div class="zones">
+      <div class="zone" id="b1-z-what" ondragover="ev(event)" ondragleave="lv(event)" ondrop="bdrop(event,'what')"><h3 style="background:var(--blue)">WHAT</h3></div>
+      <div class="zone" id="b1-z-how"  ondragover="ev(event)" ondragleave="lv(event)" ondrop="bdrop(event,'how')"><h3 style="background:var(--green)">HOW</h3></div>
+      <div class="zone" id="b1-z-msg"  ondragover="ev(event)" ondragleave="lv(event)" ondrop="bdrop(event,'msg')"><h3 style="background:var(--purple)">MESSAGE</h3></div>
+    </div>
+    <button class="check-btn" onclick="checkB()">Check sort</button>
+    <button class="reset-btn" onclick="resetB()">Reset sort</button>
+    <div class="result" id="b1-res"></div>
+    <div class="open-q" style="margin-top:1.3rem">
+      <div class="oq-label">Part B — Open Response</div>
+      <div class="oq-text">Which sentence does the most analytical work — and why?</div>
+      <div class="oq-hint">Which one couldn't exist without the others? Which makes the biggest intellectual leap?</div>
+    </div>
+    <textarea id="b1-resp" placeholder="Type your response here…"></textarea>
+    <button class="sub-btn" onclick="subB()">Submit</button>
+    <div class="gold-box" id="b1-gold">
+      <div class="gold-label">★ The gold standard sentence</div>
+      <p style="font-size:.83rem;line-height:1.6"><strong>Sentence D</strong> — "Banksy literalises Debord's argument" — is the strongest. It doesn't just <em>name</em> the theory — it shows the artwork <em>enacting</em> the theory in real time. The verb 'literalises' argues that the act of destruction IS the theoretical argument made visible. That is the difference between applying a theory and embodying one.</p>
+    </div>
+    <button class="reveal-btn" id="b1-rb" onclick="toggle('b1-panel')" style="margin-top:.5rem">Show sort answer key</button>
+    <div class="apanel" id="b1-panel">
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt">B — Love is in the Bin is a framed canvas which self-destructed via a hidden shredder at the moment of its Sotheby's sale, leaving the lower half in vertical ribbons.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--blue)">WHAT</div><div class="atxt">E — A stencilled child reaches upward toward a red heart-shaped balloon, rendered in black and white.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt">C — The shredded strips create a vertical rhythm that reads as prison bars and ticker tape — confinement and celebration at once.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--green)">HOW</div><div class="atxt">F — The red heart — still whole above the destruction — reads now not as innocence but as irony: love survives the market, barely.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt">A — Debord (1967): capitalism converts resistance into commodity, draining its political charge.</div></div>
+      <div class="arow"><div class="afunc" style="background:var(--purple)">MSG</div><div class="atxt">D — Banksy literalises Debord: by destroying at the moment of sale, he refuses commodification — the act of destruction becomes the art.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// DATA
+const SD={
+  g1:{sents:[
+    {id:'g1C',l:'C',t:'Guernica is a monumental oil painting — 3.49 × 7.76m — rendered entirely in black, white and grey, depicting fragmented human and animal figures across a compressed, chaotic plane.',f:'what'},
+    {id:'g1F',l:'F',t:'A screaming horse dominates the centre; a dismembered soldier lies below; a mother holding a dead child occupies the far left.',f:'what'},
+    {id:'g1A',l:'A',t:'The absence of colour strips the image of romanticism; grey is the colour of ash, of moral ambiguity — Picasso allows no escape from it.',f:'how'},
+    {id:'g1D',l:'D',t:'The fragmented bodies and overlapping planes create disorientation that mirrors aerial bombardment, where space itself loses coherence.',f:'how'},
+    {id:'g1B',l:'B',t:'Through trauma theory (Judith Herman, 1992), the painting enacts rather than merely represents suffering — its fractured form IS the psychological state of the survivor.',f:'msg'},
+    {id:'g1E',l:'E',t:'Guernica does not show war; it performs the experience of those who cannot un-see it.',f:'msg'},
+  ],order:['g1C','g1F','g1A','g1D','g1B','g1E']},
+  d1:{sents:[
+    {id:'d1C',l:'C',t:'Vitruvian Man is a pen-and-ink drawing on paper, approximately 34 × 24 centimetres, depicting a male figure in two superimposed positions inscribed within both a circle and a square.',f:'what'},
+    {id:'d1F',l:'F',t:'Handwritten notes in mirror script surround the figure on all sides, filling every margin with measurement and observation.',f:'what'},
+    {id:'d1D',l:'D',t:'The double image creates an uncanny oscillation: the figure seems to breathe, to refuse to be fixed — mathematical ideal and biological reality held in tension.',f:'how'},
+    {id:'d1A',l:'A',t:'The intimate scale — a private document, not a public commission — amplifies its transgressive charge; not made to be seen, but to know.',f:'how'},
+    {id:'d1B',l:'B',t:'Foucault argued in Discipline and Punish (1975) that institutional power operates through control of visibility — what can be seen, examined, and known.',f:'msg'},
+    {id:'d1E',l:'E',t:"The Church's prohibition was such an act; Da Vinci's drawings are therefore an act of epistemological resistance — the body read in secret.",f:'msg'},
+  ],order:['d1C','d1F','d1D','d1A','d1B','d1E']},
+};
+const FC={what:'var(--blue)',how:'var(--green)',msg:'var(--purple)'};
+const ST={};
+let gSel=null;const gST={};
+const BCATS={A:'msg',B:'what',C:'how',D:'msg',E:'what',F:'how'};
+const BST={cats:{what:[],how:[],msg:[]}};
+
+function go(id){
+  document.querySelectorAll('#home,.page').forEach(p=>{p.style.display='none';p.classList.remove('active');});
+  const el=document.getElementById(id);
+  if(id==='home'){el.classList.add('active');}
+  else{el.style.display='block';el.classList.add('active');}
+}
+
+function mkCard(s,key){
+  const c=document.createElement('div');c.className='s-card';c.dataset.id=s.id;c.draggable=true;
+  const dot=document.createElement('div');dot.className='s-dot';dot.style.background=FC[s.f];
+  const ltr=document.createElement('span');ltr.className='s-letter';ltr.textContent=s.l;
+  const txt=document.createElement('span');txt.style.flex='1';txt.textContent=s.t;
+  c.append(dot,ltr,txt);
+  c.addEventListener('dragstart',e=>{e.dataTransfer.setData('text',s.id);setTimeout(()=>c.classList.add('dragging'),0);});
+  c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+  return c;
+}
+
+function initSort(key){
+  ST[key]={slots:[],cats:{what:[],how:[],msg:[]}};
+  const data=SD[key];const shuffled=[...data.sents].sort(()=>Math.random()-.5);
+  const bank=document.getElementById(`${key}-bank`);bank.innerHTML='';
+  shuffled.forEach(s=>bank.appendChild(mkCard(s,key)));
+  const oa=document.getElementById(`${key}-order`);oa.innerHTML='';
+  for(let i=0;i<6;i++){
+    const slot=document.createElement('div');slot.className='oslot';slot.textContent=`Position ${i+1}`;slot.dataset.i=i;
+    slot.addEventListener('dragover',e=>{e.preventDefault();slot.classList.add('over');});
+    slot.addEventListener('dragleave',()=>slot.classList.remove('over'));
+    slot.addEventListener('drop',e=>{
+      e.preventDefault();slot.classList.remove('over');
+      const id=e.dataTransfer.getData('text');const src=document.querySelector(`[data-id="${id}"]`);if(!src)return;
+      const prev=ST[key].slots[i];
+      if(prev){const old=document.querySelector(`[data-id="${prev}"]`);if(old&&old.parentElement===slot)bank.appendChild(old);}
+      ST[key].slots[i]=id;slot.innerHTML='';slot.style.cssText='';
+      const cl=mkCard(data.sents.find(s=>s.id===id),key);cl.draggable=true;slot.appendChild(cl);src.remove();
+    });
+    oa.appendChild(slot);
+  }
+  ['what','how','msg'].forEach(z=>{const zn=document.getElementById(`${key}-z-${z}`);while(zn.children.length>1)zn.removeChild(zn.lastChild);ST[key].cats[z]=[];});
+  const res=document.getElementById(`${key}-res`);res.className='result';res.textContent='';
+  const rb=document.getElementById(`${key}-rb`);if(rb)rb.style.display='none';
+  const panel=document.getElementById(`${key}-panel`);if(panel)panel.classList.remove('show');
+}
+
+function ev(e){e.preventDefault();e.currentTarget.classList.add('over');}
+function lv(e){e.currentTarget.classList.remove('over');}
+
+function zdrop(e,zone,key){
+  e.preventDefault();e.currentTarget.classList.remove('over');
+  const id=e.dataTransfer.getData('text');const src=document.querySelector(`[data-id="${id}"]`);if(!src)return;
+  const s=SD[key].sents.find(s=>s.id===id);if(!s)return;
+  ['what','how','msg'].forEach(z=>ST[key].cats[z]=ST[key].cats[z].filter(i=>i!==id));
+  ST[key].cats[zone].push(id);
+  const cl=mkCard(s,key);cl.classList.add('placed');
+  cl.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text',id);ST[key].cats[zone]=ST[key].cats[zone].filter(i=>i!==id);cl.remove();});
+  e.currentTarget.appendChild(cl);src.remove();
+}
+
+function checkSort(key){
+  const data=SD[key];let o=0,c=0;
+  data.order.forEach((id,i)=>{if(ST[key].slots[i]===id)o++;});
+  data.sents.forEach(s=>{if(ST[key].cats[s.f]&&ST[key].cats[s.f].includes(s.id))c++;});
+  const total=o+c,max=12;
+  const res=document.getElementById(`${key}-res`);res.classList.add('show');
+  if(total===max){res.className='result show ok';res.innerHTML=`✓ Perfect — ${total}/${max}. Both order and colour-coding correct.`;}
+  else if(total>=8){res.className='result show part';res.innerHTML=`${total}/${max} — Almost. Order: ${o}/6, Colour: ${c}/6. Check misplaced sentences.`;}
+  else{res.className='result show bad';res.innerHTML=`${total}/${max} — Keep going. Order: ${o}/6, Colour: ${c}/6. Use the answer key.`;}
+  const rb=document.getElementById(`${key}-rb`);if(rb)rb.style.display='inline-block';
+}
+function resetSort(key){initSort(key);}
+
+function selM(el,pfx){
+  if(el.classList.contains('done'))return;
+  document.querySelectorAll(`#${pfx}-items .m-item`).forEach(i=>i.classList.remove('sel'));
+  if(gSel===el){gSel=null;return;}
+  el.classList.add('sel');gSel=el;
+}
+function placeM(pfx,cat){
+  if(!gSel)return;
+  const id=gSel.dataset.id;const label=gSel.childNodes[0].textContent.trim();
+  ['what','how','msg'].forEach(c=>{
+    const ex=document.querySelector(`#${pfx}-${c}-i [data-id="${id}"]`);if(ex)ex.remove();
+    if(gST[pfx])delete gST[pfx][id];
+  });
+  if(!gST[pfx])gST[pfx]={};gST[pfx][id]=cat;
+  const cont=document.getElementById(`${pfx}-${cat}-i`);
+  const item=document.createElement('div');item.className='cplaced';item.dataset.id=id;
+  item.innerHTML=`<span style="font-size:.76rem">${label}</span><span class="rm" onclick="rmM('${id}','${cat}','${pfx}')">✕</span>`;
+  cont.appendChild(item);
+  gSel.classList.remove('sel');gSel.classList.add('done');gSel.style.opacity='.44';gSel=null;
+}
+function rmM(id,cat,pfx){
+  const item=document.querySelector(`#${pfx}-${cat}-i [data-id="${id}"]`);if(item)item.remove();
+  if(gST[pfx])delete gST[pfx][id];
+  const orig=document.querySelector(`#${pfx}-items [data-id="${id}"]`);
+  if(orig){orig.classList.remove('done');orig.style.opacity='';}
+}
+function checkM(pfx){
+  let score=0;
+  document.querySelectorAll(`#${pfx}-items .m-item`).forEach(item=>{
+    const id=item.dataset.id,ans=item.dataset.ans;
+    if(gST[pfx]&&gST[pfx][id]===ans)score++;
+  });
+  const res=document.getElementById(`${pfx}-res`);res.classList.add('show');
+  if(score===6){res.className='result show ok';res.innerHTML='✓ All 6 correct.';}
+  else if(score>=4){res.className='result show part';res.innerHTML=`${score}/6 — Almost. Check misplaced items.`;}
+  else{res.className='result show bad';res.innerHTML=`${score}/6 — Use the answer key.`;}
+  const rb=document.getElementById(`${pfx}-rb`);if(rb)rb.style.display='inline-block';
+}
+function resetM(pfx){
+  gSel=null;gST[pfx]={};
+  document.querySelectorAll(`#${pfx}-items .m-item`).forEach(i=>{i.classList.remove('done','sel');i.style.opacity='';});
+  ['what','how','msg'].forEach(c=>{const el=document.getElementById(`${pfx}-${c}-i`);if(el)el.innerHTML='';});
+  const res=document.getElementById(`${pfx}-res`);res.className='result';res.textContent='';
+  const rb=document.getElementById(`${pfx}-rb`);if(rb)rb.style.display='none';
+  const panel=document.getElementById(`${pfx}-panel`);if(panel)panel.classList.remove('show');
+}
+
+function initBanksy(){
+  BST.cats={what:[],how:[],msg:[]};
+  const bank=document.getElementById('b1-bank');bank.innerHTML='';
+  ['A','B','C','D','E','F'].sort(()=>Math.random()-.5).forEach(l=>{
+    const c=document.createElement('div');c.className='s-card';c.dataset.id=`b${l}`;c.draggable=true;
+    const ltr=document.createElement('span');ltr.className='s-letter';ltr.textContent=l;
+    const txt=document.createElement('span');txt.textContent=`Sentence ${l}`;
+    c.append(ltr,txt);
+    c.addEventListener('dragstart',e=>{e.dataTransfer.setData('text',l);setTimeout(()=>c.classList.add('dragging'),0);});
+    c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+    bank.appendChild(c);
+  });
+  ['what','how','msg'].forEach(z=>{
+    const zone=document.getElementById(`b1-z-${z}`);
+    while(zone.children.length>1)zone.removeChild(zone.lastChild);
+    BST.cats[z]=[];
+  });
+  document.getElementById('b1-res').className='result';document.getElementById('b1-res').textContent='';
+  document.getElementById('b1-rb').style.display='none';
+  document.getElementById('b1-panel').classList.remove('show');
+  document.getElementById('b1-gold').classList.remove('show');
+  document.getElementById('b1-resp').value='';
+}
+function bdrop(e,zone){
+  e.preventDefault();e.currentTarget.classList.remove('over');
+  const l=e.dataTransfer.getData('text');
+  ['what','how','msg'].forEach(oz=>{
+    BST.cats[oz]=BST.cats[oz].filter(x=>x!==l);
+    const ex=document.querySelector(`#b1-z-${oz} [data-id="b${l}"]`);if(ex)ex.remove();
+  });
+  BST.cats[zone].push(l);
+  const src=document.querySelector(`[data-id="b${l}"]`);
+  const cl=src?src.cloneNode(true):(()=>{
+    const c=document.createElement('div');c.className='s-card placed';c.dataset.id=`b${l}`;
+    const ltr=document.createElement('span');ltr.className='s-letter';ltr.textContent=l;
+    const txt=document.createElement('span');txt.textContent=`Sentence ${l}`;c.append(ltr,txt);return c;
+  })();
+  cl.classList.add('placed');cl.draggable=true;
+  cl.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text',l);BST.cats[zone]=BST.cats[zone].filter(x=>x!==l);cl.remove();});
+  e.currentTarget.appendChild(cl);if(src)src.remove();
+}
+function checkB(){
+  let score=0;Object.entries(BCATS).forEach(([l,cat])=>{if(BST.cats[cat].includes(l))score++;});
+  const res=document.getElementById('b1-res');res.classList.add('show');
+  if(score===6){res.className='result show ok';res.innerHTML='✓ All 6 correct — move to Part B.';}
+  else if(score>=4){res.className='result show part';res.innerHTML=`${score}/6 — Almost. WHAT:B,E  HOW:C,F  MESSAGE:A,D`;}
+  else{res.className='result show bad';res.innerHTML=`${score}/6 — Correct: WHAT=B,E  HOW=C,F  MESSAGE=A,D`;}
+  document.getElementById('b1-rb').style.display='inline-block';
+}
+function resetB(){initBanksy();}
+function subB(){
+  if(!document.getElementById('b1-resp').value.trim()){alert('Write something first!');return;}
+  document.getElementById('b1-gold').classList.add('show');
+}
+function toggle(id){document.getElementById(id).classList.toggle('show');}
+
+initSort('g1');initSort('d1');initBanksy();
+</script>
+</body>
+</html>

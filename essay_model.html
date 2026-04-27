@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Essay — Art as Voice</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --peach:#FAE5D3;--peach-mid:#F5C9A8;--peach-dk:#E8A87C;
+  --terra:#C1553A;--ink:#2C1A0E;--mid:#7A5C48;--muted:#B09080;--cream:#FDF6EE;
+  --blue:#1A5C8A;--green:#2A6E3A;--purple:#6B1F82;--gold:#D4A017;
+  --blue-bg:#E8F0F7;--green-bg:#E8F2EA;--purple-bg:#F3E8F7;
+  --synth:#8B4500;--synth-bg:#FDF0E0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--peach);color:var(--ink);min-height:100vh;}
+
+/* HEADER */
+.header{background:var(--ink);color:white;padding:1rem 1.5rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+.header-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;}
+.header-sub{font-size:.78rem;opacity:.7;margin-top:.1rem;}
+
+/* LEGEND */
+.legend-bar{background:var(--cream);border-bottom:2px solid var(--peach-mid);padding:.75rem 1.5rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;position:sticky;top:0;z-index:40;}
+.leg{display:inline-flex;align-items:center;gap:.4rem;padding:.28rem .75rem;border-radius:20px;font-size:.75rem;font-weight:600;color:white;cursor:pointer;transition:opacity .15s;border:none;}
+.leg:hover{opacity:.85;}
+.leg.inactive{opacity:.35;}
+.legend-label{font-size:.78rem;color:var(--mid);font-weight:500;}
+.reset-all{background:transparent;border:2px solid var(--peach-dk);color:var(--mid);border-radius:20px;padding:.26rem .72rem;font-family:'DM Sans',sans-serif;font-size:.72rem;cursor:pointer;transition:all .15s;}
+.reset-all:hover{border-color:var(--terra);color:var(--terra);}
+
+/* LAYOUT */
+.container{max-width:1100px;margin:0 auto;padding:1.5rem;display:grid;grid-template-columns:1fr 320px;gap:1.4rem;}
+@media(max-width:780px){.container{grid-template-columns:1fr;}}
+
+/* ARTWORK STRIP */
+.artwork-strip{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.3rem;}
+.artwork-card{border-radius:10px;overflow:hidden;box-shadow:0 4px 14px rgba(44,26,14,.12);}
+.artwork-card img{width:100%;height:170px;object-fit:cover;display:block;background:var(--ink);}
+.artwork-card .cap{background:var(--ink);color:var(--peach-mid);padding:.45rem .7rem;font-size:.73rem;}
+.artwork-card .cap strong{color:var(--peach-dk);}
+
+/* ESSAY */
+.essay-card{background:white;border-radius:14px;padding:1.6rem;box-shadow:0 4px 18px rgba(44,26,14,.1);margin-bottom:1rem;}
+.essay-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:.3rem;}
+.essay-prompt{font-size:.8rem;italic:true;color:var(--mid);margin-bottom:1.1rem;padding-bottom:.8rem;border-bottom:1px solid var(--peach-mid);font-style:italic;}
+.para-label{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;margin-top:.9rem;}
+p.essay-p{font-size:.92rem;line-height:1.85;color:var(--ink);margin-bottom:.8rem;}
+
+/* SENTENCES */
+.s{cursor:pointer;border-radius:4px;padding:0 2px;transition:background .18s,color .18s;position:relative;}
+.s:hover{background:var(--peach-mid);}
+.s.what{background:var(--blue-bg);color:var(--blue);font-weight:500;}
+.s.how{background:var(--green-bg);color:var(--green);font-weight:500;}
+.s.msg{background:var(--purple-bg);color:var(--purple);font-weight:500;}
+.s.synth{background:var(--synth-bg);color:var(--synth);font-weight:500;}
+.s.what::after{content:'WHAT';position:absolute;top:-1.2rem;left:0;font-size:.58rem;font-weight:700;background:var(--blue);color:white;padding:.06rem .32rem;border-radius:3px;white-space:nowrap;display:none;}
+.s.how::after{content:'HOW';position:absolute;top:-1.2rem;left:0;font-size:.58rem;font-weight:700;background:var(--green);color:white;padding:.06rem .32rem;border-radius:3px;white-space:nowrap;display:none;}
+.s.msg::after{content:'MESSAGE';position:absolute;top:-1.2rem;left:0;font-size:.58rem;font-weight:700;background:var(--purple);color:white;padding:.06rem .32rem;border-radius:3px;white-space:nowrap;display:none;}
+.s.synth::after{content:'SYNTHESIS';position:absolute;top:-1.2rem;left:0;font-size:.58rem;font-weight:700;background:var(--synth);color:white;padding:.06rem .32rem;border-radius:3px;white-space:nowrap;display:none;}
+.s.labelled::after{display:block;}
+.show-labels .s.what::after,.show-labels .s.how::after,.show-labels .s.msg::after,.show-labels .s.synth::after{display:block;}
+
+/* SIDEBAR */
+.sidebar{}
+.instr-card{background:var(--cream);border-radius:12px;padding:1.1rem;margin-bottom:1rem;border-left:4px solid var(--terra);}
+.instr-card h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--terra);margin-bottom:.55rem;}
+.instr-card p{font-size:.82rem;line-height:1.55;color:var(--mid);}
+.score-card{background:white;border-radius:12px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 3px 12px rgba(44,26,14,.08);}
+.score-card h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.7rem;}
+.score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
+.score-label{font-size:.8rem;font-weight:600;}
+.score-val{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:600;}
+.score-bar{height:6px;border-radius:3px;margin-top:.2rem;margin-bottom:.6rem;background:var(--peach-mid);overflow:hidden;}
+.score-fill{height:100%;border-radius:3px;transition:width .4s;}
+.func-card{background:white;border-radius:12px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 3px 12px rgba(44,26,14,.08);}
+.func-card h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.7rem;}
+.func-def{display:flex;gap:.6rem;margin-bottom:.55rem;align-items:flex-start;}
+.func-badge{font-size:.65rem;font-weight:700;padding:.18rem .5rem;border-radius:4px;color:white;flex-shrink:0;margin-top:1px;}
+.func-text{font-size:.79rem;line-height:1.5;color:var(--mid);}
+
+/* BUTTON */
+.show-labels-btn{background:var(--ink);color:var(--peach);border:none;border-radius:8px;padding:.6rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;width:100%;margin-bottom:.7rem;transition:opacity .15s;}
+.show-labels-btn:hover{opacity:.85;}
+.task-btn{background:var(--terra);color:white;border:none;border-radius:8px;padding:.55rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;width:100%;margin-bottom:.7rem;transition:background .15s;}
+.task-btn:hover{background:#D4684D;}
+
+/* TASK */
+.task-card{background:var(--cream);border-radius:12px;padding:1.1rem;border-left:4px solid var(--purple);display:none;}
+.task-card.show{display:block;}
+.task-card h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:.55rem;}
+.task-item{font-size:.8rem;line-height:1.55;color:var(--mid);margin-bottom:.38rem;padding-left:.8rem;position:relative;}
+.task-item::before{content:'→';position:absolute;left:0;color:var(--terra);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Model Essay — Guernica + The Third of May, 1808</div>
+    <div class="header-sub">Click any sentence to identify its function · WHAT / HOW / MESSAGE / SYNTHESIS</div>
+  </div>
+</div>
+
+<div class="legend-bar">
+  <span class="legend-label">Click to filter:</span>
+  <button class="leg" style="background:var(--blue)" onclick="filterFunc('what',this)">● WHAT — describe</button>
+  <button class="leg" style="background:var(--green)" onclick="filterFunc('how',this)">● HOW — technique + effect</button>
+  <button class="leg" style="background:var(--purple)" onclick="filterFunc('msg',this)">● MESSAGE — theorist</button>
+  <button class="leg" style="background:var(--synth)" onclick="filterFunc('synth',this)">● SYNTHESIS — connect</button>
+  <button class="reset-all" onclick="resetFilter()">Show all</button>
+</div>
+
+<div class="container">
+  <div>
+    <!-- Artwork images -->
+    <div class="artwork-strip">
+      <div class="artwork-card">
+        <img src="https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg" alt="Guernica by Picasso">
+        <div class="cap"><strong>Guernica</strong> — Pablo Picasso, 1937. Oil on canvas. Museo Reina Sofía, Madrid.</div>
+      </div>
+      <div class="artwork-card">
+        <img src="https://upload.wikimedia.org/wikipedia/en/f/fd/Francisco_de_Goya_y_Lucientes_-_Third_of_May_1808_-_Prado.jpg" alt="The Third of May 1808 by Goya" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Francisco_de_Goya_y_Lucientes_-_Third_of_May_1808_-_Prado.jpg/440px-Francisco_de_Goya_y_Lucientes_-_Third_of_May_1808_-_Prado.jpg'">
+        <div class="cap"><strong>The Third of May, 1808</strong> — Francisco Goya, 1814. Oil on canvas. Museo del Prado, Madrid.</div>
+      </div>
+    </div>
+
+    <!-- Essay -->
+    <div class="essay-card" id="essay">
+      <div class="essay-title">How do artists use visual and symbolic elements to communicate deeper cultural messages?</div>
+      <div class="essay-prompt">Model synthesis essay — Guernica (Picasso, 1937) + The Third of May, 1808 (Goya, 1814) · Click any sentence to colour-code its function.</div>
+
+      <div class="para-label">Paragraph 1 — Guernica (WHAT → HOW → MESSAGE)</div>
+      <p class="essay-p">
+        <span class="s" data-f="what" onclick="click_s(this)">Guernica is a large-scale oil painting rendered entirely in black, white and grey, depicting a chaotic arrangement of distorted human and animal figures including a screaming woman holding a dead child, a wounded horse, and fragmented bodies.</span>
+        <span class="s" data-f="what" onclick="click_s(this)"> The composition is crowded, with overlapping forms and sharp, angular shapes compressed across a single horizontal plane.</span>
+        <span class="s" data-f="how" onclick="click_s(this)"> The monochrome palette removes warmth and resembles the imagery of newspaper photography, reinforcing associations with death and documentation rather than art.</span>
+        <span class="s" data-f="how" onclick="click_s(this)"> The sharp, broken forms create instability and visual chaos, reflecting the destruction and panic of the bombing — exaggerated expressions, open mouths and wide eyes signal extreme pain.</span>
+        <span class="s" data-f="how" onclick="click_s(this)"> The crowded composition creates claustrophobia, making the viewer feel trapped inside the violence rather than observing it from a safe distance.</span>
+        <span class="s" data-f="msg" onclick="click_s(this)"> Through a lens of trauma theory (Judith Herman, Trauma and Recovery, 1992), the painting does not merely represent suffering — it enacts it: the fractured composition mirrors the psychological state of the survivor, unable to order memory into linear narrative.</span>
+        <span class="s" data-f="msg" onclick="click_s(this)"> Guernica does not show war; it performs the experience of those who cannot un-see it.</span>
+      </p>
+
+      <div class="para-label">Paragraph 2 — The Third of May, 1808 (WHAT → HOW → MESSAGE)</div>
+      <p class="essay-p">
+        <span class="s" data-f="what" onclick="click_s(this)">Goya's The Third of May, 1808 depicts a group of civilians being executed by a line of soldiers at night.</span>
+        <span class="s" data-f="what" onclick="click_s(this)"> The soldiers stand in rigid formation with their backs to the viewer, their rifles aimed at a man in a white shirt who raises his arms; a lantern on the ground provides the only source of light.</span>
+        <span class="s" data-f="how" onclick="click_s(this)"> The strong contrast between light and dark draws immediate attention to the central figure — Goya uses chiaroscuro to create a dramatic focal point that commands emotional response.</span>
+        <span class="s" data-f="how" onclick="click_s(this)"> The white clothing of the condemned man functions symbolically: white conventionally signifies innocence, creating an ironic visual argument that those being killed are the morally pure, while the mechanical soldiers — faceless, uniform, without individuality — represent the brutality of state violence.</span>
+        <span class="s" data-f="msg" onclick="click_s(this)"> Michel Foucault argued in Discipline and Punish (1975) that modern power operates not through physical spectacle but through systematic control of bodies — Goya's painting anticipates this argument: the soldiers are disciplined machines, the civilian is a body controlled entirely by the state's decision to eliminate it.</span>
+        <span class="s" data-f="msg" onclick="click_s(this)"> The painting communicates that war is not heroic — it is a mechanism through which the powerful exercise absolute power over the powerless.</span>
+      </p>
+
+      <div class="para-label">Paragraph 3 — Synthesis (COMPARE → CONTRAST HOW → ALIGN MESSAGE)</div>
+      <p class="essay-p">
+        <span class="s" data-f="synth" onclick="click_s(this)">Both Guernica and The Third of May, 1808 present responses to state violence that centre on civilian suffering rather than heroism,</span>
+        <span class="s" data-f="synth" onclick="click_s(this)"> although they differ fundamentally in style and structure.</span>
+        <span class="s" data-f="what" onclick="click_s(this)"> Guernica is abstract and chaotic — multiple distorted figures in a fragmented, non-realist composition —</span>
+        <span class="s" data-f="what" onclick="click_s(this)"> while The Third of May is figurative and focused, depicting a single moment of execution with clear roles of victim and aggressor.</span>
+        <span class="s" data-f="how" onclick="click_s(this)"> Picasso uses distortion, sharp angles, and a monochrome palette to generate visual confusion that mirrors the experience of violence.</span>
+        <span class="s" data-f="how" onclick="click_s(this)"> Goya, in contrast, uses controlled lighting and a single focal point to guide the viewer's gaze deliberately toward one man's terror — achieving emotional impact through clarity rather than chaos.</span>
+        <span class="s" data-f="synth" onclick="click_s(this)"> Despite these contrasting methods, the messages of both works are closely aligned.</span>
+        <span class="s" data-f="synth" onclick="click_s(this)"> Together, they communicate that war is destructive, dehumanising, and primarily harms ordinary people — both works reject any notion of conflict as heroic or glorious.</span>
+        <span class="s" data-f="msg" onclick="click_s(this)"> Read through Foucault's framework, both artists reveal the same underlying argument: that political violence is not an aberration but a function of how power operates on the body.</span>
+        <span class="s" data-f="synth" onclick="click_s(this)"> While Picasso presents this as overwhelming disorder and Goya as controlled precision, both refuse to let the viewer look away from the human cost.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="instr-card">
+      <h3>Your task</h3>
+      <p>Click each sentence to identify its function. Use the legend above to filter by colour. Can you find every WHAT, HOW, MESSAGE and SYNTHESIS move?</p>
+    </div>
+
+    <div class="score-card">
+      <h3>Your progress</h3>
+      <div class="score-row"><span class="score-label" style="color:var(--blue)">WHAT</span><span class="score-val" id="sc-what" style="color:var(--blue)">0/7</span></div>
+      <div class="score-bar"><div class="score-fill" id="sf-what" style="background:var(--blue);width:0%"></div></div>
+      <div class="score-row"><span class="score-label" style="color:var(--green)">HOW</span><span class="score-val" id="sc-how" style="color:var(--green)">0/6</span></div>
+      <div class="score-bar"><div class="score-fill" id="sf-how" style="background:var(--green);width:0%"></div></div>
+      <div class="score-row"><span class="score-label" style="color:var(--purple)">MESSAGE</span><span class="score-val" id="sc-msg" style="color:var(--purple)">0/5</span></div>
+      <div class="score-bar"><div class="score-fill" id="sf-msg" style="background:var(--purple);width:0%"></div></div>
+      <div class="score-row"><span class="score-label" style="color:var(--synth)">SYNTHESIS</span><span class="score-val" id="sc-synth" style="color:var(--synth)">0/5</span></div>
+      <div class="score-bar"><div class="score-fill" id="sf-synth" style="background:var(--synth);width:0%"></div></div>
+    </div>
+
+    <button class="show-labels-btn" onclick="toggleLabels()">Show / hide function labels</button>
+
+    <button class="task-btn" onclick="document.getElementById('task').classList.toggle('show')">Discussion questions ↓</button>
+    <div class="task-card" id="task">
+      <h3>Discuss</h3>
+      <div class="task-item">Find the synthesis move that uses 'Together, they communicate…' — why is this the most important sentence?</div>
+      <div class="task-item">Find a sentence where a theorist is named. Is the theorist applied — or just name-dropped?</div>
+      <div class="task-item">Which HOW sentence does the most work — and why?</div>
+      <div class="task-item">Paragraph 3 contains WHAT, HOW, MSG and SYNTHESIS sentences. Why does a synthesis paragraph need all four?</div>
+      <div class="task-item">If you were writing this essay, which artwork would you choose as your fifth? What would its MESSAGE sentence say?</div>
+    </div>
+
+    <div class="func-card" style="margin-top:.7rem">
+      <h3>Function reminder</h3>
+      <div class="func-def"><span class="func-badge" style="background:var(--blue)">WHAT</span><span class="func-text">Objective description. Medium, scale, subject, composition. Facts only — verifiable.</span></div>
+      <div class="func-def"><span class="func-badge" style="background:var(--green)">HOW</span><span class="func-text">Technique named. Effect on the viewer explained. 'Creates', 'suggests', 'signals' — feeling connected to form.</span></div>
+      <div class="func-def"><span class="func-badge" style="background:var(--purple)">MSG</span><span class="func-text">Theorist named, concept explained, applied to artwork. Reveals deeper cultural meaning.</span></div>
+      <div class="func-def"><span class="func-badge" style="background:var(--synth)">SYNTH</span><span class="func-text">'Both…', 'Together…', 'in contrast…' — connects two artworks into one argument.</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const totals={what:7,how:6,msg:5,synth:5};
+const found={what:0,how:0,msg:0,synth:0};
+let activeFilter=null;
+let labelsOn=false;
+
+function click_s(el){
+  const f=el.dataset.f;
+  if(!el.classList.contains(f)){
+    // First click — reveal correct colour
+    el.classList.add(f);
+    found[f]=Math.min(found[f]+1,totals[f]);
+    updateScores();
+    el.classList.add('labelled');
+  } else {
+    // Toggle label
+    el.classList.toggle('labelled');
+  }
+}
+
+function updateScores(){
+  ['what','how','msg','synth'].forEach(f=>{
+    document.getElementById(`sc-${f}`).textContent=`${found[f]}/${totals[f]}`;
+    document.getElementById(`sf-${f}`).style.width=`${(found[f]/totals[f])*100}%`;
+  });
+}
+
+function filterFunc(f,btn){
+  if(activeFilter===f){
+    // Deactivate
+    activeFilter=null;
+    document.querySelectorAll('.leg').forEach(l=>l.classList.remove('inactive'));
+    document.querySelectorAll('.s').forEach(s=>s.style.opacity='');
+  } else {
+    activeFilter=f;
+    document.querySelectorAll('.leg').forEach(l=>l.classList.add('inactive'));
+    btn.classList.remove('inactive');
+    document.querySelectorAll('.s').forEach(s=>{
+      s.style.opacity=s.dataset.f===f?'1':'0.18';
+    });
+  }
+}
+
+function resetFilter(){
+  activeFilter=null;
+  document.querySelectorAll('.leg').forEach(l=>l.classList.remove('inactive'));
+  document.querySelectorAll('.s').forEach(s=>s.style.opacity='');
+}
+
+function toggleLabels(){
+  labelsOn=!labelsOn;
+  const essay=document.getElementById('essay');
+  if(labelsOn){
+    essay.classList.add('show-labels');
+    // Reveal all colours
+    document.querySelectorAll('.s').forEach(s=>{
+      s.classList.add(s.dataset.f);
+      found[s.dataset.f]=totals[s.dataset.f];
+    });
+    updateScores();
+  } else {
+    essay.classList.remove('show-labels');
+    document.querySelectorAll('.s').forEach(s=>s.classList.remove('labelled'));
+  }
+}
+</script>
+</body>
+</html>
