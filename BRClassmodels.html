@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle Royale &mdash; Class Model Answers</title>
+<style>
+:root {
+  --bg:#0d0505;--surface:#1a0808;--card:#200c0c;--border:#5a1a1a;
+  --red:#c0392b;--gold:#d4a017;--gold-lt:#f0c040;--ow:#f0ede8;--grey:#998888;
+  --green:#1a5a1a;--green-lt:#2a8a2a;--r:10px;--ink:#1A1008;--stain:#C8B89A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ow);font-family:'Georgia',serif;padding-bottom:60px}
+.site-header{background:linear-gradient(180deg,#1a0000,#0d0505);border-bottom:2px solid var(--red);padding:24px 20px 18px;text-align:center}
+.eyebrow{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:6px}
+.site-header h1{font-size:clamp(24px,5vw,40px);color:var(--gold-lt);font-weight:bold}
+.site-header .sub{margin-top:6px;font-family:system-ui,sans-serif;font-size:13px;color:var(--grey)}
+.instructions{max-width:720px;margin:22px auto 0;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-family:system-ui,sans-serif;font-size:14px;line-height:1.6;color:var(--ow)}
+.instructions strong{color:var(--gold-lt)}
+/* Character guide */
+.char-guide{max-width:720px;margin:18px auto 0;padding:0 16px}
+.char-guide-inner{background:#150808;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.char-guide-header{background:#3a0808;padding:10px 18px;font-family:system-ui,sans-serif;font-size:11px;letter-spacing:3px;color:var(--gold);font-weight:bold}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0}
+.char-card{padding:14px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.char-card:last-child{border-right:none}
+.char-name{font-family:system-ui,sans-serif;font-size:14px;font-weight:bold;color:var(--gold-lt);margin-bottom:4px}
+.char-role{font-family:system-ui,sans-serif;font-size:12px;color:var(--red);margin-bottom:5px;font-style:italic}
+.char-desc{font-family:system-ui,sans-serif;font-size:13px;color:var(--ow);line-height:1.5}
+/* Question accordion */
+.q-section{max-width:720px;margin:20px auto 0;padding:0 16px}
+.q-toggle{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 22px;cursor:pointer;text-align:left;transition:border-color .2s,background .2s;display:flex;align-items:center;gap:14px}
+.q-toggle:hover{border-color:var(--red);background:#280e0e}
+.q-toggle.open{border-color:var(--gold);border-bottom-left-radius:0;border-bottom-right-radius:0;background:#220a0a}
+.q-num-badge{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;font-size:14px;font-weight:bold;color:#fff}
+.q-toggle.open .q-num-badge{background:var(--gold);color:var(--ink)}
+.q-text-preview{font-size:16px;color:var(--gold-lt);font-style:italic;line-height:1.4}
+.q-toggle.open .q-text-preview{color:var(--gold)}
+.q-chevron{margin-left:auto;flex-shrink:0;font-size:18px;color:var(--grey);transition:transform .3s}
+.q-toggle.open .q-chevron{transform:rotate(180deg);color:var(--gold)}
+.q-answer{display:none;background:#0a1a0a;border:1px solid var(--gold);border-top:none;border-bottom-left-radius:var(--r);border-bottom-right-radius:var(--r);overflow:hidden}
+.q-answer.open{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.answer-header{background:var(--green);padding:9px 18px;font-family:system-ui,sans-serif;font-size:10px;letter-spacing:3px;color:#aaffaa;font-weight:bold}
+.answer-body{padding:18px 22px}
+.sentence-block{margin-bottom:8px}
+.model-sentence{display:inline;cursor:pointer;border-bottom:2px dashed #2d6a2d;border-radius:2px;padding:1px 3px;font-size:15.5px;line-height:1.9;transition:background .15s,color .15s}
+.model-sentence:hover{background:#1a3a1a;color:var(--gold-lt)}
+.model-sentence.expanded{background:#1a3a1a;color:var(--gold-lt);border-bottom-color:var(--gold)}
+.deep-dive{display:none;margin:8px 0 12px;padding:13px 16px;background:#0d1a0d;border-left:3px solid var(--green-lt);border-radius:0 6px 6px 0;font-family:system-ui,sans-serif;font-size:14px;line-height:1.75;color:#c8e8c8}
+.deep-dive.open{display:block;animation:fadeIn .25s ease}
+.deep-dive p{margin-bottom:8px}
+.deep-dive p:last-child{margin-bottom:0}
+.citation{font-size:12px;color:#7aaa7a;margin-top:8px;border-top:1px solid #1a3a1a;padding-top:6px;font-style:italic}
+.hint{font-family:system-ui,sans-serif;font-size:12px;color:var(--grey);margin-top:14px;font-style:italic}
+.site-footer{max-width:720px;margin:44px auto 0;padding:0 16px;text-align:center;font-family:system-ui,sans-serif;font-size:13px;color:var(--grey);border-top:1px solid var(--border);padding-top:18px}
+@media(max-width:500px){.q-text-preview{font-size:14px}.char-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <p class="eyebrow">HUMN 110 &nbsp;&middot;&nbsp; Arts and Culture &nbsp;&middot;&nbsp; AUPP</p>
+  <h1>Battle Royale &mdash; Class Model Answers</h1>
+  <p class="sub">First 10 minutes &nbsp;&middot;&nbsp; Click a question to reveal the answer</p>
+</header>
+<div class="instructions"><strong>How to use this page:</strong> Click any question to reveal the model answer. Then click any <u>underlined sentence</u> to see a deeper explanation with references. These answers are approximately 2 minutes long when spoken. Read them out loud to practise.</div>
+<div class="char-guide">
+  <div class="char-guide-inner">
+    <div class="char-guide-header">WHO IS WHO &nbsp;&middot;&nbsp; KEY CHARACTERS</div>
+    <div class="char-grid"><div class="char-card"><div class="char-name">Kitano</div><div class="char-role">Teacher turned administrator</div><div class="char-desc">The class teacher who resigns after being stabbed. He reappears as the BR administrator — calm, in control, giving orders to children. He was once their teacher. He is now their killer.</div></div><div class="char-card"><div class="char-name">Shuya Nanahara</div><div class="char-role">Main student — heart of the story</div><div class="char-desc">A kind, protective boy. His father has just died. He tries to protect others throughout the game. He does not want to kill anyone.</div></div><div class="char-card"><div class="char-name">Noriko Nakagawa</div><div class="char-role">Shuya&rsquo;s close friend</div><div class="char-desc">Quiet, loyal and calm. She gives Shuya a small gift on the bus. She represents the connection and warmth that the BR Act is designed to destroy.</div></div><div class="char-card"><div class="char-name">The young teacher (on the bus)</div><div class="char-role">The lost generation</div><div class="char-desc">He has just graduated. He sits with the students on the bus — not above them. He belongs nowhere. He is gassed alongside them. He represents young people with no place in society.</div></div></div>
+  </div>
+</div>
+<div class="q-section">
+  <button class="q-toggle" onclick="toggleQ(this)">
+    <div class="q-num-badge">1</div>
+    <div class="q-text-preview">We saw Kitano sitting alone in an empty classroom staring at the board. Then a student stabs him in the leg. He does not fight back &mdash; he resigns. What does his reaction tell us about the role of a teacher in Japan?</div>
+    <div class="q-chevron">&#9660;</div>
+  </button>
+  <div class="q-answer">
+    <div class="answer-header">MODEL ANSWER &nbsp;&middot;&nbsp; KITANO&rsquo;S RESIGNATION &nbsp;&middot;&nbsp; AUTHORITY AND ITS COLLAPSE</div>
+    <div class="answer-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Kitano sits alone in an empty classroom, staring at the blackboard. There are no students. There are no papers to mark. He is just sitting there, in silence, looking at nothing.</span><div class="deep-dive"><p>This moment comes before the stabbing, and it is just as important. The classroom is supposed to be full of life &mdash; students, noise, learning. It is completely empty. Kitano is sitting in a room that has lost its purpose. He has already lost his reason to be there before anything violent happens. The stabbing is just the physical version of something that has already happened to him socially.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">A student walks in and stabs him in the leg. Kitano does not shout. He does not call for help. He does not try to fight back or run away. His manner stays exactly the same as when he was teaching a class.</span><div class="deep-dive"><p>This is the most important detail in the whole scene. He responds to a physical attack with the same calm, measured tone he would use to give homework instructions. There is no switch. He does not become a different person when he is attacked. His teacher identity is so deeply built into him that even violence does not break it. This tells us something important: his calm is not just a personality trait. It is a social role that has become part of who he is.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">His identity is still closer to a teacher than to a victim, even in this extreme moment. This keeps the audience thinking about roles in society &mdash; about how much of who we are is simply the job we perform.</span><div class="deep-dive"><p>Sociologist Erving Goffman (1959) argued that we all &lsquo;perform&rsquo; our social roles, like actors on a stage. Kitano has performed the role of teacher for so long that the performance has become his identity. When the stage is empty, he still performs. When a student attacks him, he still performs. The role is all he has left. This is what makes the scene so uncomfortable to watch &mdash; because we recognise the performance, and we know what it costs him to keep doing it.</p><div class="citation">Goffman, E. (1959). <em>The presentation of self in everyday life</em>. Doubleday.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">But Kitano&rsquo;s calm is also a reflection of how the older generation in Japan communicated with the younger generation. Adults told young people what to do, calmly and with authority &mdash; and what they were leading them towards was a world with no jobs, no future, and no hope.</span><div class="deep-dive"><p>The Japanese economic bubble collapsed in 1991. Throughout the 1990s, youth unemployment rose sharply. Young people had been told by their parents and teachers: study hard, follow the rules, and society will reward you. That promise was broken. The adults delivered this news with the same calm authority they used for everything else. Kitano, sitting calmly in front of a class that no longer believes in him, is a symbol of exactly this &mdash; authority that has continued to perform itself long after it lost its meaning (Sugimoto, 2010).</p><div class="citation">Sugimoto, Y. (2010). <em>An introduction to Japanese society</em> (3rd ed.). Cambridge University Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">When the students wake up on the island, Kitano is there again &mdash; still calm, still giving instructions, still performing the role of the person in charge. Now the instructions are about killing each other. The tone has not changed at all.</span><div class="deep-dive"><p>This is Fukasaku&rsquo;s sharpest observation. The calm with which Kitano explains the BR Act is the same calm he used to explain exam dates. There is no distinction in his manner between &lsquo;here is your homework&rsquo; and &lsquo;here is how you will survive.&rsquo; Michel Foucault (1977) wrote about how power is most effective when it is invisible &mdash; when it presents itself as normal, reasonable, and just the way things are. Kitano is that kind of power. He does not need to threaten or shout. He simply explains, and the students listen, because that is what you do when a teacher speaks.</p><div class="citation">Foucault, M. (1977). <em>Discipline and punish: The birth of the prison</em> (A. Sheridan, Trans.). Pantheon Books.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">In Cambodia and across the world today, we see the same pattern: people in authority delivering difficult, sometimes devastating news &mdash; policy changes, economic cuts, restrictions on freedom &mdash; in the calm, official language of administration.</span><div class="deep-dive"><p>The calm is not neutral. It is a technique. It signals: this is legitimate, this is normal, this is simply how things work. Kitano has not become a monster. He has remained a civil servant. And that is why the film is so effective as political criticism &mdash; because the most destructive systems are usually run by ordinary people doing their jobs without asking whether the job itself is wrong.</p></div></div><p class="hint">Click any underlined sentence to read a deeper explanation with references.</p></div>
+  </div>
+</div>
+<div class="q-section">
+  <button class="q-toggle" onclick="toggleQ(this)">
+    <div class="q-num-badge">2</div>
+    <div class="q-text-preview">The students on the bus are happy, laughing, taking photos. Their young teacher sits with them &mdash; close, but not quite one of them. Then the gas comes. What does this moment tell us about what Japan has done to this generation?</div>
+    <div class="q-chevron">&#9660;</div>
+  </button>
+  <div class="q-answer">
+    <div class="answer-header">MODEL ANSWER &nbsp;&middot;&nbsp; THE BUS SCENE &nbsp;&middot;&nbsp; THE LOST GENERATION</div>
+    <div class="answer-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The students are laughing, taking photos, and enjoying themselves on the bus. This is the last time we see them as ordinary young people. They do not know what is coming. The audience does not know yet either.</span><div class="deep-dive"><p>This is called dramatic irony &mdash; when the audience knows, or begins to suspect, something that the characters do not. Fukasaku uses it here to make the happiness painful. We watch the students enjoy themselves, and somewhere at the back of our minds we feel the trap closing. This feeling &mdash; of watching innocence before it is destroyed &mdash; is exactly what the film wants us to carry through everything that follows.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Their young teacher is sitting with them, not at the front of the bus, not in a position of authority &mdash; but in the middle of the group, laughing alongside them. He is trying to be part of them, and almost succeeding.</span><div class="deep-dive"><p>His position on the bus is symbolic. A senior teacher would sit at the front, separate, in the authority position. This teacher is in the middle. He is not managing the students. He is trying to belong to them. He has graduated but he has not become an adult in the way society defines it &mdash; with a career, a salary, a role. He is hovering between worlds.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">But the students do not quite accept him as one of them either. He exists in a gap &mdash; too old for school, too young and too lost for the adult world. This makes him a symbol of an entire generation in Japan in the 1990s.</span><div class="deep-dive"><p>After the economic collapse, a generation of young Japanese people found themselves in exactly this position. Sugimoto (2010) documents the rise of the &ldquo;freeter&rdquo; &mdash; a person who moves between part-time and temporary jobs, unable to enter the stable employment system that their parents had benefited from. The young teacher is a freeter with a classroom title. He has a role but no future, a name but no path. He laughs with the students because he genuinely has nowhere else to go.</p><div class="citation">Sugimoto, Y. (2010). <em>An introduction to Japanese society</em> (3rd ed.). Cambridge University Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Fukasaku makes us care about all of them &mdash; students and young teacher together &mdash; before the gas comes. This is deliberate. He is building the emotional cost before the political argument.</span><div class="deep-dive"><p>If the film cut straight to the island without this scene, we would feel fear and excitement. Because the bus scene is here, we feel something different: grief for people we just met, and anger at whoever decided this was acceptable. Roland Barthes (1972) wrote about how culture naturalises things &mdash; makes harmful systems seem normal and inevitable. Fukasaku is doing the opposite: he is making us feel the wrongness of what is happening by first showing us what normal looks like, and then destroying it.</p><div class="citation">Barthes, R. (1972). <em>Mythologies</em> (A. Lavers, Trans.). Hill and Wang.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">When the gas comes, the young teacher is knocked out alongside the students. Fukasaku does not rescue him. He does not give him a different story. He gases him with the rest.</span><div class="deep-dive"><p>This is a political statement. The generation that fell through the gap between youth and adulthood is not separate from the generation being punished by the system. They are the same group. The BR Act does not distinguish between students and their lost, hovering, just-graduated teacher. The system has decided they are all equally expendable. That decision &mdash; made calmly, bureaucratically, by people like Kitano &mdash; is what the film is angry about.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">This is a question that is still being asked everywhere today: what do you do with a generation of educated young people when the economy cannot absorb them?</span><div class="deep-dive"><p>In Cambodia, as across Southeast Asia, graduate unemployment and underemployment are real and growing pressures. Young people who have studied hard and followed the rules are discovering that the promises made to them were not guarantees. The young teacher on that bus is not a Japanese problem from the year 2000. He is a symbol that speaks across cultures and across time &mdash; and that is why this film is still being watched and studied today.</p></div></div><p class="hint">Click any underlined sentence to read a deeper explanation with references.</p></div>
+  </div>
+</div>
+<div class="q-section">
+  <button class="q-toggle" onclick="toggleQ(this)">
+    <div class="q-num-badge">3</div>
+    <div class="q-text-preview">When the students wake up in the classroom, who is standing with Kitano? When else was the army involved in Japanese education? What do you think the director is commenting on?</div>
+    <div class="q-chevron">&#9660;</div>
+  </button>
+  <div class="q-answer">
+    <div class="answer-header">MODEL ANSWER &nbsp;&middot;&nbsp; THE ARMY IN THE CLASSROOM &nbsp;&middot;&nbsp; POWER ENTERING SAFE SPACES</div>
+    <div class="answer-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The students wake up and the space looks familiar. They are in a classroom. They are still wearing their school uniforms. The desks are the same shape. For one second, the brain says: this is school. This is safe.</span><div class="deep-dive"><p>That moment of false recognition is entirely deliberate. Fukasaku puts the students in a familiar educational space so that the arrival of the soldiers is felt as a violation, not just observed as a plot development. If they had woken up in a warehouse or a prison, we would immediately understand they were in danger. Because they wake up in what looks like school, the danger arrives as a betrayal of something that should have been protective.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Then Kitano walks in. And soldiers walk in with him. The two things that should never exist in the same room &mdash; an educational space and armed military authority &mdash; are now sharing one.</span><div class="deep-dive"><p>Schools are supposed to be places of development: where young people grow, learn, and become. Armies are instruments of state power: where people are trained, controlled, and deployed. When these two things share a room, they create what we might call a symbolic collision. The meaning is not subtle. The director is saying: the institution that was supposed to protect these young people has invited their control in through the front door.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">This image was personal for Fukasaku. He was fifteen years old when Japan surrendered in 1945. He watched American military authority enter Japanese institutions &mdash; including schools &mdash; and reshape what education meant.</span><div class="deep-dive"><p>After 1945, American occupying forces rewrote Japanese school curriculum, removed militaristic content, and restructured how authority operated in educational institutions. Fukasaku experienced this as a young person. He did not observe it from a distance. For him, soldiers and classrooms were not a metaphor &mdash; they were a memory. When he puts the army in the school in Battle Royale, he is drawing directly from his own experience of watching adult power redefine what young people were allowed to know and become (Dower, 1999).</p><div class="citation">Dower, J. W. (1999). <em>Embracing defeat: Japan in the wake of World War II</em>. W. W. Norton.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">We do not need to look only at history. This image appears on our screens today. In Iran in 2022, security forces entered university campuses to confront students who were protesting. In Myanmar in 2021, teachers who joined the civil disobedience movement were arrested.</span><div class="deep-dive"><p>Every time armed authority enters an educational space, the same symbolic act takes place: the space designed to develop people is converted into a space designed to control them. The specific country and the specific year change. The violation is the same. Fukasaku made this image in 2000, drawing from 1945. It was relevant then. It is relevant now. A good symbol does not age.</p><div class="citation">Amnesty International. (2022). <em>Iran: Security forces targeting protesters</em>. https://www.amnesty.org/en/latest/news/2022/09/iran-security-forces-targeting-protesters/</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Fukasaku is commenting on something specific: when the older generation decides what the younger generation must do &mdash; calmly, officially, with the full authority of the state &mdash; it sometimes leads them into situations of life or death.</span><div class="deep-dive"><p>The soldiers are not random. They accompany Kitano, the teacher. The person who was once responsible for the students&rsquo; education is now responsible for their survival game. The calm authority of the classroom has become the calm authority of the death competition. Foucault (1977) called this kind of power &lsquo;disciplinary power&rsquo; &mdash; it does not need violence to operate, because it has already shaped people to accept its instructions as normal. Kitano does not need to shout. He just speaks. And the students, trained for years to listen to teachers, listen.</p><div class="citation">Foucault, M. (1977). <em>Discipline and punish: The birth of the prison</em> (A. Sheridan, Trans.). Pantheon Books.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">For your oral exam: the strongest symbols work on two levels at the same time. Name both levels, say why the director chose to put them together, and connect the image to something happening now.</span><div class="deep-dive"><p>Level one: the classroom and the soldiers are literal objects in the scene. Level two: they represent two ideas &mdash; development and control &mdash; that are in direct conflict. The director puts them together to show that the conflict is not abstract. It happens in real rooms, to real young people, in real countries. Name that. Connect it to something your examiner will recognise. That is a complete answer.</p></div></div><p class="hint">Click any underlined sentence to read a deeper explanation with references.</p></div>
+  </div>
+</div>
+<footer class="site-footer">
+  <p>HUMN 110 &nbsp;&middot;&nbsp; Arts and Culture &nbsp;&middot;&nbsp; AUPP</p>
+  <p style="margin-top:5px">Oral exam: Thursday 3 July &nbsp;&middot;&nbsp; See it. Say it. Connect it.</p>
+</footer>
+<script>
+function toggleQ(btn) {
+  var answer = btn.nextElementSibling;
+  var isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.q-toggle').forEach(function(b){ b.classList.remove('open'); });
+  document.querySelectorAll('.q-answer').forEach(function(a){ a.classList.remove('open'); });
+  if (!isOpen) {
+    btn.classList.add('open');
+    answer.classList.add('open');
+    btn.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+function toggleDeep(span) {
+  var dive = span.nextElementSibling;
+  if (!dive || !dive.classList.contains('deep-dive')) return;
+  var isOpen = dive.classList.contains('open');
+  var body = span.closest('.answer-body');
+  body.querySelectorAll('.deep-dive').forEach(function(d){ d.classList.remove('open'); });
+  body.querySelectorAll('.model-sentence').forEach(function(s){ s.classList.remove('expanded'); });
+  if (!isOpen) {
+    dive.classList.add('open');
+    span.classList.add('expanded');
+    dive.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+</script>
+</body>
+</html>

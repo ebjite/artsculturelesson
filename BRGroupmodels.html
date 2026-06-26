@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle Royale &ndash; Group Analysis</title>
+<style>
+:root {
+  --bg:#0d0505;--surface:#1a0808;--card:#200c0c;--border:#5a1a1a;
+  --red:#c0392b;--gold:#d4a017;--gold-lt:#f0c040;--ow:#f0ede8;--grey:#998888;
+  --green:#1a5a1a;--green-lt:#2a8a2a;--r:10px;--ink:#1A1008;--stain:#C8B89A;
+  --teal:#0a4a4a;--teal-lt:#0e7070;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ow);font-family:'Georgia',serif;padding-bottom:60px}
+.site-header{background:linear-gradient(180deg,#001a1a,#0d0505);border-bottom:2px solid var(--teal-lt);padding:24px 20px 18px;text-align:center}
+.eyebrow{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:6px}
+.site-header h1{font-size:clamp(24px,5vw,40px);color:var(--gold-lt);font-weight:bold}
+.site-header .sub{margin-top:6px;font-family:system-ui,sans-serif;font-size:13px;color:var(--grey)}
+.instructions{max-width:760px;margin:22px auto 0;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-family:system-ui,sans-serif;font-size:14px;line-height:1.6;color:var(--ow)}
+.instructions strong{color:var(--gold-lt)}
+.instructions ol{padding-left:20px;margin-top:8px;display:flex;flex-direction:column;gap:5px}
+/* Character guide */
+.char-guide{max-width:760px;margin:18px auto 0;padding:0 16px}
+.char-guide-inner{background:#050f0f;border:1px solid var(--teal);border-radius:var(--r);overflow:hidden}
+.char-guide-header{background:#0a2a2a;padding:10px 18px;font-family:system-ui,sans-serif;font-size:11px;letter-spacing:3px;color:var(--gold);font-weight:bold}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0}
+.char-card{padding:14px 18px;border-right:1px solid #0a3a3a;border-bottom:1px solid #0a3a3a}
+.char-card:last-child{border-right:none}
+.char-name{font-family:system-ui,sans-serif;font-size:14px;font-weight:bold;color:var(--gold-lt);margin-bottom:4px}
+.char-role{font-family:system-ui,sans-serif;font-size:12px;color:var(--teal-lt);margin-bottom:5px;font-style:italic}
+.char-desc{font-family:system-ui,sans-serif;font-size:13px;color:var(--ow);line-height:1.5}
+/* Question cards */
+.q-card{max-width:760px;margin:22px auto 0;padding:0 16px}
+.q-inner{background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.q-header{padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.q-num{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:7px}
+.q-text{font-size:18px;line-height:1.5;color:var(--gold-lt);font-style:italic}
+.scaffold{padding:14px 20px 16px;background:#150a0a;border-bottom:1px solid var(--border)}
+.scaffold-label{font-family:system-ui,sans-serif;font-size:10px;letter-spacing:2px;color:var(--grey);margin-bottom:10px}
+.scaffold-qs{display:flex;flex-direction:column;gap:9px}
+.scaffold-q label{display:block;font-family:system-ui,sans-serif;font-size:14px;color:var(--ow);margin-bottom:4px;line-height:1.4}
+.sq-num{color:var(--gold);font-weight:bold;margin-right:3px}
+.scaffold-q input{width:100%;background:#1a0a0a;border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--ow);font-family:system-ui,sans-serif;font-size:14px;outline:none}
+.scaffold-q input:focus{border-color:var(--gold)}
+.answer-section{padding:14px 20px 18px}
+.answer-label{font-family:system-ui,sans-serif;font-size:13px;color:var(--ow);margin-bottom:8px;display:block}
+textarea{width:100%;min-height:90px;background:#150a0a;border:1px solid var(--border);border-radius:6px;padding:9px 11px;color:var(--ow);font-family:system-ui,sans-serif;font-size:14px;outline:none;resize:vertical;line-height:1.5}
+textarea:focus{border-color:var(--gold)}
+.or-divider{font-family:system-ui,sans-serif;font-size:12px;color:var(--grey);margin:10px 0 6px}
+.record-section{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.record-btn{display:flex;align-items:center;gap:7px;background:#1a0a0a;border:1px solid var(--border);color:var(--grey);font-family:system-ui,sans-serif;font-size:13px;padding:7px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.record-btn:hover{border-color:var(--red);color:var(--ow)}
+.record-btn.recording{border-color:var(--red);color:var(--red);animation:pulse 1.2s infinite}
+.record-btn svg{width:14px;height:14px;fill:currentColor}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.recording-status{font-family:system-ui,sans-serif;font-size:12px;color:var(--grey)}
+audio{max-width:100%;height:36px;margin-top:6px}
+.submit-btn{margin-top:14px;width:100%;padding:13px;background:var(--red);color:#fff;font-family:system-ui,sans-serif;font-size:15px;font-weight:bold;letter-spacing:1px;border:none;border-radius:7px;cursor:pointer;transition:background .2s}
+.submit-btn:hover{background:#a93020}
+.submit-btn:disabled{background:#444;cursor:default}
+.model-reveal{display:none;margin-top:16px;border-radius:var(--r);overflow:hidden;border:1px solid var(--green-lt);animation:fadeIn .4s ease}
+.model-reveal.visible{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.reveal-header{background:var(--green);padding:10px 18px;font-family:system-ui,sans-serif;font-size:11px;letter-spacing:3px;color:#aaffaa;font-weight:bold}
+.reveal-body{background:#0a1a0a;padding:16px 20px}
+.sentence-block{margin-bottom:8px}
+.model-sentence{display:inline;cursor:pointer;border-bottom:2px dashed #2d6a2d;border-radius:2px;padding:1px 3px;font-size:15.5px;line-height:1.9;transition:background .15s,color .15s}
+.model-sentence:hover{background:#1a3a1a;color:var(--gold-lt)}
+.model-sentence.expanded{background:#1a3a1a;color:var(--gold-lt);border-bottom-color:var(--gold)}
+.deep-dive{display:none;margin:8px 0 12px;padding:13px 16px;background:#0d1a0d;border-left:3px solid var(--green-lt);border-radius:0 6px 6px 0;font-family:system-ui,sans-serif;font-size:14px;line-height:1.75;color:#c8e8c8}
+.deep-dive.open{display:block;animation:fadeIn .25s ease}
+.deep-dive p{margin-bottom:8px}
+.deep-dive p:last-child{margin-bottom:0}
+.citation{font-size:12px;color:#7aaa7a;margin-top:8px;border-top:1px solid #1a3a1a;padding-top:6px;font-style:italic}
+.hint{font-family:system-ui,sans-serif;font-size:12px;color:var(--grey);margin-top:14px;font-style:italic}
+.site-footer{max-width:760px;margin:44px auto 0;padding:0 16px;text-align:center;font-family:system-ui,sans-serif;font-size:13px;color:var(--grey);border-top:1px solid var(--border);padding-top:18px}
+@media(max-width:500px){.q-text{font-size:16px}.char-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div style="display:inline-block;background:var(--teal-lt);color:#fff;font-size:11px;font-weight:bold;letter-spacing:2px;padding:3px 12px;border-radius:4px;margin-bottom:6px;font-family:system-ui,sans-serif">CLIP 2 &nbsp;&middot;&nbsp; 11:00 &ndash; 18:00</div>
+  <p class="eyebrow">HUMN 110 &nbsp;&middot;&nbsp; Arts and Culture &nbsp;&middot;&nbsp; Group Analysis</p>
+  <h1>Battle Royale &mdash; Group Models</h1>
+  <p class="sub">Rules Briefing + Bag Grab &nbsp;&middot;&nbsp; Power, surveillance, meritocracy</p>
+</header>
+<div class="instructions"><strong>How to use this page:</strong><ol>
+  <li>Read the main question on each card.</li>
+  <li>Answer the three short guide questions &mdash; discuss before you write.</li>
+  <li>Type your group answer <strong>or</strong> tap the mic to record your voice.</li>
+  <li>Click <strong>Submit</strong> to reveal the model answer.</li>
+  <li>Click any <u>underlined sentence</u> for a deeper explanation with references.</li>
+</ol></div>
+<div class="char-guide">
+  <div class="char-guide-inner">
+    <div class="char-guide-header">WHO IS WHO &nbsp;&middot;&nbsp; KEY CHARACTERS IN THIS CLIP</div>
+    <div class="char-grid"><div class="char-card"><div class="char-name">Kitano</div><div class="char-role">Teacher turned administrator</div><div class="char-desc">The students&rsquo; former class teacher. Now he runs the Battle Royale. He explains the rules calmly &mdash; the same tone he used in school.</div></div><div class="char-card"><div class="char-name">Kawada Shogo</div><div class="char-role">Returning player &mdash; the calm one</div><div class="char-desc">He has survived a Battle Royale before. He is cold and focused from the start. He represents people who have already experienced hardship.</div></div><div class="char-card"><div class="char-name">Shuya Nanahara</div><div class="char-role">Main student &mdash; protective</div><div class="char-desc">Kind, does not want to kill anyone. Works with Kawada. Represents the students who try to resist the system.</div></div><div class="char-card"><div class="char-name">Noriko Nakagawa</div><div class="char-role">Shuya&rsquo;s close friend</div><div class="char-desc">Quiet and loyal. She and Shuya protect each other. She trusts people and survives by following rather than acting alone.</div></div><div class="char-card"><div class="char-name">Mitsuko Souma</div><div class="char-role">Dangerous and independent</div><div class="char-desc">She uses violence and manipulation to survive. The film presents her as threatening &mdash; which says something about how it sees female independence.</div></div></div>
+  </div>
+</div>
+<div class="q-card"><div class="q-inner">
+  <div class="q-header">
+    <p class="q-num">QUESTION 1 OF 5 &nbsp;&middot;&nbsp; RULES BRIEFING + BAG GRAB</p>
+    <p class="q-text">Why does Kitano explain the rules so calmly? What does his calm tell us about power?</p>
+  </div>
+  <div class="scaffold">
+    <p class="scaffold-label">GUIDE QUESTIONS &mdash; discuss these before you write</p>
+    <div class="scaffold-qs"><div class="scaffold-q"><label><span class="sq-num">A.</span> Describe Kitano&rsquo;s tone, face and body language as he explains the BR Act. What mood is he in?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">B.</span> Is calm more frightening than anger in this situation? Why?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">C.</span> Think of someone in authority who uses calm to project power. Why does that work?</label><input type="text" placeholder="Your answer..."></div></div>
+  </div>
+  <div class="answer-section">
+    <span class="answer-label">Your group&rsquo;s answer &mdash; type or record:</span>
+    <textarea placeholder="Write your answer here..."></textarea>
+    <div class="or-divider">&mdash; or record your answer &mdash;</div>
+    <div class="record-section"><button class="record-btn" onclick="toggleRecord(this)"><svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-1 17.93V21h-2v2h6v-2h-2v-2.07A8 8 0 0 0 20 12h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg> Record answer</button><span class="recording-status"></span></div>
+    <button class="submit-btn" onclick="reveal(this)">Submit and reveal model answer</button>
+    <div class="model-reveal">
+      <div class="reveal-header">MODEL ANSWER &nbsp;&middot;&nbsp; CLICK ANY UNDERLINED SENTENCE TO GO DEEPER</div>
+      <div class="reveal-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Kitano stands in front of the students and explains that they must kill each other. He speaks in the same tone he used when he was their teacher.</span><div class="deep-dive"><p>This is the most important detail in the whole scene. There is no change in his manner. He is not angry. He is not excited. He is not apologetic. He is simply informing. The same voice that once told them about exam dates is now telling them about survival rules. The continuity is what makes it horrifying &mdash; because it suggests that to Kitano, there is no fundamental difference between the two types of instruction.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">His identity is still highly tied to being a teacher, even here. He organises the information clearly. He pauses at the right moments. He waits for attention before continuing. His manner is professional.</span><div class="deep-dive"><p>Erving Goffman (1959) argued that we all perform social roles, like actors on a stage. Kitano has performed the teacher role for so long that it has become who he is, not just what he does. Even in a situation where his former students are about to be sent to kill each other, his performance does not break. He stays in character. This is not a choice he makes consciously &mdash; it is simply how deeply the role has shaped him.</p><div class="citation">Goffman, E. (1959). <em>The presentation of self in everyday life</em>. Doubleday.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">This calm reflects something real about how older generations communicated with younger ones in Japan. Authority figures told young people what was expected of them in the same steady, serious tone &mdash; and what was expected of them turned out to be a world with no jobs, no future, and no place for them.</span><div class="deep-dive"><p>The Japanese economic bubble collapsed in 1991. The generation of adults who had built that bubble continued to speak to young people with the same calm authority they had always used &mdash; recommending patience, recommending more study, recommending conformity &mdash; while the system they were describing had already stopped working. Sugimoto (2010) documents how youth disillusionment grew precisely because the calm authoritative voice of the older generation kept promising a reality that did not exist.</p><div class="citation">Sugimoto, Y. (2010). <em>An introduction to Japanese society</em> (3rd ed.). Cambridge University Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Michel Foucault wrote that the most effective power is the power that does not need to announce itself &mdash; the power that presents itself as simply the way things are.</span><div class="deep-dive"><p>Foucault (1977) described how institutions &mdash; schools, prisons, hospitals &mdash; train people to accept authority not through constant force but through routine. You go to class when the bell rings. You sit where you are told. You answer when called on. You do not question the structure because the structure has always been there. Kitano&rsquo;s calm is that structure speaking. It says: this is just how things work. And the students, trained for years to listen to that voice, listen.</p><div class="citation">Foucault, M. (1977). <em>Discipline and punish: The birth of the prison</em> (A. Sheridan, Trans.). Pantheon Books.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The calm is the most dangerous thing about him. An angry authority figure can be argued with. A calm one cannot &mdash; because calm says: there is nothing to argue about. This is simply the situation.</span><div class="deep-dive"><p>Think about how this operates in everyday life. A teacher who raises their voice is showing that they are affected by the situation &mdash; which means the students have power over them. A teacher who stays completely calm is showing that the students&rsquo; reaction is irrelevant to the outcome. Kitano&rsquo;s calm communicates exactly this: whether the students panic, cry, or resist makes no difference. The rules are the rules. The situation is the situation. That total indifference to their response is the most complete form of power.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">In Cambodia and across Southeast Asia, you can see the same dynamic in how institutions communicate difficult information &mdash; calmly, officially, in the language of administration rather than the language of feeling.</span><div class="deep-dive"><p>When a government announces a policy that affects young people &mdash; a change to education, a restriction on freedom of expression, a decision about employment &mdash; it is almost always announced calmly, using official language, through formal channels. The calm is not neutral. It is a technique that says: this decision has already been made, it is legitimate, it is the way things are. Kitano at the front of the classroom is a concentrated image of this dynamic.</p></div></div><p class="hint">Tap any underlined sentence to read a deeper explanation with references.</p></div>
+    </div>
+  </div>
+</div></div><div class="q-card"><div class="q-inner">
+  <div class="q-header">
+    <p class="q-num">QUESTION 2 OF 5 &nbsp;&middot;&nbsp; RULES BRIEFING + BAG GRAB</p>
+    <p class="q-text">The government uses a cheerful cartoon to explain the BR Act. Why is this more frightening than a direct threat?</p>
+  </div>
+  <div class="scaffold">
+    <p class="scaffold-label">GUIDE QUESTIONS &mdash; discuss these before you write</p>
+    <div class="scaffold-qs"><div class="scaffold-q"><label><span class="sq-num">A.</span> What does the cartoon look and sound like? What type of content normally uses this style?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">B.</span> McDonald&rsquo;s uses cartoons and bright colours to advertise food that causes health problems. What is the connection?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">C.</span> Can you name another example where something harmful has been packaged in something fun or familiar?</label><input type="text" placeholder="Your answer..."></div></div>
+  </div>
+  <div class="answer-section">
+    <span class="answer-label">Your group&rsquo;s answer &mdash; type or record:</span>
+    <textarea placeholder="Write your answer here..."></textarea>
+    <div class="or-divider">&mdash; or record your answer &mdash;</div>
+    <div class="record-section"><button class="record-btn" onclick="toggleRecord(this)"><svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-1 17.93V21h-2v2h6v-2h-2v-2.07A8 8 0 0 0 20 12h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg> Record answer</button><span class="recording-status"></span></div>
+    <button class="submit-btn" onclick="reveal(this)">Submit and reveal model answer</button>
+    <div class="model-reveal">
+      <div class="reveal-header">MODEL ANSWER &nbsp;&middot;&nbsp; CLICK ANY UNDERLINED SENTENCE TO GO DEEPER</div>
+      <div class="reveal-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The government explains that students must kill each other using a cartoon. The cartoon has bright colours, cheerful music, and a friendly voice. It looks like something from a children&rsquo;s education programme.</span><div class="deep-dive"><p>Every element of the cartoon&rsquo;s aesthetic has been borrowed from content that is designed to be safe, trustworthy, and helpful. Children&rsquo;s television. School safety videos. Public health announcements. These are formats that we are trained from childhood to associate with things that are good for us. By using this aesthetic to explain a death tournament, the government is borrowing credibility it has not earned.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">This is what we could call commercial violence &mdash; the packaging of something dangerous in the most reassuring presentation possible, so that the audience accepts it before they have fully understood what they are accepting.</span><div class="deep-dive"><p>Roland Barthes (1972) wrote about how culture uses familiar images and languages to make things seem natural and normal that are actually constructed and political. The cheerful cartoon is exactly this: it uses the naturalised language of safe, friendly content to make a violent political decision seem like a straightforward announcement. By the time the students understand what is being said, the form has already told them it is acceptable.</p><div class="citation">Barthes, R. (1972). <em>Mythologies</em> (A. Lavers, Trans.). Hill and Wang.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Think about how McDonald&rsquo;s sells food. The food is linked to serious health problems. But the advertising uses Ronald McDonald, a cheerful clown, bright primary colours, happy families, and playful music. The packaging does not change what the product is. It changes how you feel about receiving it.</span><div class="deep-dive"><p>Schlosser (2001) documented how fast food companies deliberately used child-friendly marketing &mdash; toys, cartoons, bright colours &mdash; to create brand loyalty before children were old enough to evaluate the product critically. Fukasaku applies exactly the same logic to the BR Act. The cartoon is not just a stylistic choice. It is a political observation: our culture has already shown that cheerful packaging can make almost anything acceptable, if you apply it early enough and consistently enough.</p><div class="citation">Schlosser, E. (2001). <em>Fast food nation: The dark side of the all-American meal</em>. Houghton Mifflin.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The juxtaposition &mdash; placing two completely opposite things next to each other &mdash; is the technique. Cheerful cartoon next to murder instructions. The gap between them is so large that it creates horror rather than comfort.</span><div class="deep-dive"><p>Juxtaposition works by making the audience do the work. When two things that do not belong together are placed side by side, the audience&rsquo;s brain has to bridge the gap. In this case, the gap between the form (cheerful, safe, educational) and the content (you must kill your classmates) is so extreme that the bridging process produces shock and discomfort. That discomfort is the film&rsquo;s point. It is asking: how did we get to a world where this is the appropriate format for this announcement?</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">On social media today, we see this technique constantly. Serious or misleading information is packaged in upbeat video formats, trending audio, and casual visual styles that signal &lsquo;this is just a fun video&rsquo; before the content arrives.</span><div class="deep-dive"><p>Research on misinformation consistently finds that format matters as much as content in determining whether people believe something (Wardle &amp; Derakhshan, 2017). A claim made in the visual style of entertainment is processed differently from the same claim made in formal language. The brain responds to the aesthetic cue before it evaluates the argument. Fukasaku understood this in 2000. It is more relevant now than it was then.</p><div class="citation">Wardle, C., &amp; Derakhshan, H. (2017). <em>Information disorder: Toward an interdisciplinary framework</em>. Council of Europe.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">For your oral exam: when you notice an unexpected aesthetic choice in a film &mdash; a cartoon, a bright colour, an upbeat tone in a dark context &mdash; name the contrast, explain why the director made it, and say what feeling it creates in the audience.</span><div class="deep-dive"><p>The technique has a name: juxtaposition. The gap between cheerful form and violent content is not a mistake. It is a deliberate artistic decision that produces a specific effect &mdash; discomfort, complicity, the feeling of having been tricked into accepting something. Name that effect. Connect it to something real. That is a complete oral exam answer.</p></div></div><p class="hint">Tap any underlined sentence to read a deeper explanation with references.</p></div>
+    </div>
+  </div>
+</div></div><div class="q-card"><div class="q-inner">
+  <div class="q-header">
+    <p class="q-num">QUESTION 3 OF 5 &nbsp;&middot;&nbsp; RULES BRIEFING + BAG GRAB</p>
+    <p class="q-text">The collars detonate if students enter a forbidden zone &mdash; even by accident. What does this tell us about the state?</p>
+  </div>
+  <div class="scaffold">
+    <p class="scaffold-label">GUIDE QUESTIONS &mdash; discuss these before you write</p>
+    <div class="scaffold-qs"><div class="scaffold-q"><label><span class="sq-num">A.</span> What is the difference between being punished for something deliberate and being punished by accident?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">B.</span> If you know you might be punished by accident, how does that change how you move through the world?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">C.</span> Where in real life do people modify their behaviour because they are being, or might be, watched?</label><input type="text" placeholder="Your answer..."></div></div>
+  </div>
+  <div class="answer-section">
+    <span class="answer-label">Your group&rsquo;s answer &mdash; type or record:</span>
+    <textarea placeholder="Write your answer here..."></textarea>
+    <div class="or-divider">&mdash; or record your answer &mdash;</div>
+    <div class="record-section"><button class="record-btn" onclick="toggleRecord(this)"><svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-1 17.93V21h-2v2h6v-2h-2v-2.07A8 8 0 0 0 20 12h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg> Record answer</button><span class="recording-status"></span></div>
+    <button class="submit-btn" onclick="reveal(this)">Submit and reveal model answer</button>
+    <div class="model-reveal">
+      <div class="reveal-header">MODEL ANSWER &nbsp;&middot;&nbsp; CLICK ANY UNDERLINED SENTENCE TO GO DEEPER</div>
+      <div class="reveal-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Each student is fitted with a collar that will detonate if they enter a forbidden zone &mdash; even if they enter it by accident, because they were running from danger or lost track of where they were.</span><div class="deep-dive"><p>The distinction between deliberate and accidental is fundamental to most ideas of fairness and justice. We punish people for what they intended to do, not for what happened by chance. The collar removes this distinction entirely. It does not care why you entered the zone. It simply responds to the fact that you did. This is a very specific design choice &mdash; not cruelty for its own sake, but a statement about what this state values: compliance, not intention.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The collar is not mainly a weapon. Its main function is to make students police themselves. Once you are wearing it, you cannot move freely. Every step is a calculation. You are constantly regulating your own movement.</span><div class="deep-dive"><p>Michel Foucault (1977) described the concept of the panopticon &mdash; a prison design where inmates can never be sure whether they are being watched, so they must always behave as if they are. The result is that the prison does not need guards watching constantly. The inmates watch themselves. The collar works in exactly this way. It does not need to kill anyone today to control everyone today. The possibility is enough.</p><div class="citation">Foucault, M. (1977). <em>Discipline and punish: The birth of the prison</em> (A. Sheridan, Trans.). Pantheon Books.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Think about speed cameras on roads. Studies have found that even empty speed camera housings &mdash; boxes with no camera inside &mdash; continue to slow traffic after the cameras have been removed.</span><div class="deep-dive"><p>Drivers learned to associate the shape with possible punishment. The shape alone is enough to change behaviour across a whole road network, permanently, for free. The collar works identically. It does not need to detonate to do its job. It just needs to be there, visible, and known to be capable. The students who have seen a collar go off will be careful forever. The ones who have not will be careful anyway, because they might.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The fact that it detonates even by accident is not additional cruelty &mdash; it is the design. A system that only punishes deliberate acts leaves you free to move as long as you are honest. A system that punishes accidents means you cannot move freely at all.</span><div class="deep-dive"><p>This is the difference between two very different kinds of society. In one, you are free to act as long as you stay within the rules &mdash; and the rules concern your intentions. In the other, your freedom is defined by your position in space and time, regardless of your intentions. The collar creates the second kind of society. You are free to stay exactly where you are told. That is not freedom. That is its opposite.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">On social media right now, most users self-censor &mdash; deleting posts, changing words, avoiding topics &mdash; not because they have been punished, but because they are not certain whether they might be.</span><div class="deep-dive"><p>Research consistently finds that awareness of possible moderation or social consequences causes people to modify their speech before posting, not after punishment (Gillespie, 2018). You do not need to have experienced a consequence to change your behaviour. You only need to believe the consequence is possible. The collar is a visible, physical version of this mechanism &mdash; Fukasaku put it around a neck so we could not pretend we had not noticed it.</p><div class="citation">Gillespie, T. (2018). <em>Custodians of the internet</em>. Yale University Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">For your oral exam: the strongest symbols do two things at once. They are a literal object in the scene, and they represent an idea about how power works. Name both levels, and connect the idea to something real.</span><div class="deep-dive"><p>The collar is literally a device that kills people who cross boundaries. Symbolically, it represents any system of control that operates through the possibility of punishment rather than its certainty &mdash; surveillance cameras, content moderation, social pressure, legal threats. Identify the symbol, name what it represents, connect it to the real world. That structure gives you a two-minute answer.</p></div></div><p class="hint">Tap any underlined sentence to read a deeper explanation with references.</p></div>
+    </div>
+  </div>
+</div></div><div class="q-card"><div class="q-inner">
+  <div class="q-header">
+    <p class="q-num">QUESTION 4 OF 5 &nbsp;&middot;&nbsp; RULES BRIEFING + BAG GRAB</p>
+    <p class="q-text">Every student gets a random bag &mdash; some contain weapons, some contain useless items. Is this system fair?</p>
+  </div>
+  <div class="scaffold">
+    <p class="scaffold-label">GUIDE QUESTIONS &mdash; discuss these before you write</p>
+    <div class="scaffold-qs"><div class="scaffold-q"><label><span class="sq-num">A.</span> What is the same for every student? What is different?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">B.</span> If two runners race but one starts 10 metres ahead &mdash; is the race fair even though the rules are the same?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">C.</span> Think about university entrance exams. All students sit the same test. Does that make the result fair?</label><input type="text" placeholder="Your answer..."></div></div>
+  </div>
+  <div class="answer-section">
+    <span class="answer-label">Your group&rsquo;s answer &mdash; type or record:</span>
+    <textarea placeholder="Write your answer here..."></textarea>
+    <div class="or-divider">&mdash; or record your answer &mdash;</div>
+    <div class="record-section"><button class="record-btn" onclick="toggleRecord(this)"><svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-1 17.93V21h-2v2h6v-2h-2v-2.07A8 8 0 0 0 20 12h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg> Record answer</button><span class="recording-status"></span></div>
+    <button class="submit-btn" onclick="reveal(this)">Submit and reveal model answer</button>
+    <div class="model-reveal">
+      <div class="reveal-header">MODEL ANSWER &nbsp;&middot;&nbsp; CLICK ANY UNDERLINED SENTENCE TO GO DEEPER</div>
+      <div class="reveal-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Every student walks up and takes a bag. The process looks identical for each person. Same island. Same rules. Same starting moment. The system presents itself as completely equal.</span><div class="deep-dive"><p>This is what political philosophers call formal equality &mdash; when everyone follows the same rules. Formal equality is different from substantive equality &mdash; when everyone has a genuinely equal chance at the same outcome. The bag system is formally equal. But a crossbow and a pot lid are not equal. A GPS tracker and a fan are not equal. The equality is in the surface, not in the reality.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The bag is random. A crossbow or a pot lid. A tracker or a fan. The difference between these items is the difference between life and death &mdash; and nobody chose their bag.</span><div class="deep-dive"><p>Rawls (1971) argued that a just system is one where people would agree to the rules before they knew their own position in it. If you did not know whether you would get a crossbow or a pot lid, would you agree to this system? Almost certainly not. Fukasaku uses this image to show exactly what an unjust system looks like when you strip away the language that normally makes it seem acceptable.</p><div class="citation">Rawls, J. (1971). <em>A theory of justice</em>. Harvard University Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">This is a direct image of Japan&rsquo;s exam system. Every student sits the same national university entrance examination. The rules are the same for everyone. But the preparation &mdash; your school, your juku (private cram school), your family&rsquo;s income &mdash; is your bag.</span><div class="deep-dive"><p>Rohlen (1983) documented how Japanese students from wealthy urban families, attending high-performing private high schools with access to expensive juku programmes, dramatically outperformed students from lower-income families &mdash; on the same test, on the same day. The test is identical. The bags are not. The film is not describing a hypothetical injustice. It is describing a real one, using a game as its mirror.</p><div class="citation">Rohlen, T. P. (1983). <em>Japan&rsquo;s high schools</em>. University of California Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The Hunger Games uses the same image. Squid Game uses the same image. Battle Royale invented it first, in 2000. All three arrived at this same picture independently, because the picture is accurate.</span><div class="deep-dive"><p>A competition where everyone starts at the same point but with radically different resources is not a meritocracy. It is a lottery dressed as a meritocracy. Michael Young (1958) coined the word &ldquo;meritocracy&rdquo; as a warning, not an ideal &mdash; describing a society that believed it was fair because it used the same rules for everyone, while ignoring the unequal conditions those rules operated on. All three of these popular stories are making the same argument because their audiences recognise the reality it describes.</p><div class="citation">Young, M. (1994). <em>The rise of the meritocracy</em> (2nd ed.). Transaction Publishers. (Original work published 1958)</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Across Southeast Asia, including Cambodia, education systems face the same structural challenge: the same examination for all students, but very unequal access to the preparation that makes a real difference to the result.</span><div class="deep-dive"><p>Research in Cambodia has documented how private tutoring &mdash; often from the same teachers who deliver the official curriculum &mdash; creates a two-tier system inside what is formally a single, equal process (Brehm &amp; Silova, 2014). Students who can pay for extra preparation perform significantly better on the same tests as students who cannot. The bag is not just a Japanese problem. It is a description of how competition works when it presents itself as equal while operating on unequal ground.</p><div class="citation">Brehm, W., &amp; Silova, I. (2014). Hidden privatisation of public education in Cambodia. <em>Journal for Educational Research Online, 6</em>(1), 116&ndash;144.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">For your oral exam: when you see a symbol, always ask what real social system it is commenting on, and whether that system operates in your own life.</span><div class="deep-dive"><p>The bag is not a plot device to create drama. It is an argument about inequality compressed into a single image. Name the argument. Locate it in the scene. Connect it to a real system &mdash; education, employment, competition, access to resources. Then ask: would the people who design these systems agree to them if they did not know which bag they would receive? That question is the film&rsquo;s question. Make it yours.</p></div></div><p class="hint">Tap any underlined sentence to read a deeper explanation with references.</p></div>
+    </div>
+  </div>
+</div></div><div class="q-card"><div class="q-inner">
+  <div class="q-header">
+    <p class="q-num">QUESTION 5 OF 5 &nbsp;&middot;&nbsp; RULES BRIEFING + BAG GRAB</p>
+    <p class="q-text">Some students immediately panic. Others become cold and focused. What does this difference tell us about class and privilege?</p>
+  </div>
+  <div class="scaffold">
+    <p class="scaffold-label">GUIDE QUESTIONS &mdash; discuss these before you write</p>
+    <div class="scaffold-qs"><div class="scaffold-q"><label><span class="sq-num">A.</span> Why might someone who has always been safe find it harder to cope when safety suddenly disappears?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">B.</span> Kawada has survived a Battle Royale before. What does this tell us about who is actually prepared for a crisis?</label><input type="text" placeholder="Your answer..."></div><div class="scaffold-q"><label><span class="sq-num">C.</span> What skills do you have that you learned because you needed them, not because a school taught them to you?</label><input type="text" placeholder="Your answer..."></div></div>
+  </div>
+  <div class="answer-section">
+    <span class="answer-label">Your group&rsquo;s answer &mdash; type or record:</span>
+    <textarea placeholder="Write your answer here..."></textarea>
+    <div class="or-divider">&mdash; or record your answer &mdash;</div>
+    <div class="record-section"><button class="record-btn" onclick="toggleRecord(this)"><svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-1 17.93V21h-2v2h6v-2h-2v-2.07A8 8 0 0 0 20 12h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg> Record answer</button><span class="recording-status"></span></div>
+    <button class="submit-btn" onclick="reveal(this)">Submit and reveal model answer</button>
+    <div class="model-reveal">
+      <div class="reveal-header">MODEL ANSWER &nbsp;&middot;&nbsp; CLICK ANY UNDERLINED SENTENCE TO GO DEEPER</div>
+      <div class="reveal-body"><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The moment the students understand what is happening, some fall apart immediately. They cry, freeze, or run without direction. Others become still and focused. They start to think.</span><div class="deep-dive"><p>The difference is not intelligence. It is not courage. It is not character. It is prior experience of operating without institutional protection. Some students have been safe their whole lives &mdash; not because of anything they did, but because of the family they were born into and the society that supported them. When that safety disappears, they have no practice at being without it.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The students who panic are those whose entire sense of security has been held in place by systems they never had to think about. The BR game removes those systems. Without them, they have nothing to hold onto.</span><div class="deep-dive"><p>Pierre Bourdieu (1984) described this as habitus &mdash; the deep set of dispositions, instincts, and ways of moving through the world that people develop from their social environment. Students who grew up with stable, protected lives have a habitus built on the assumption that the world is manageable and safe. When that assumption is suddenly removed, the habitus has no response. It was never asked to develop one.</p><div class="citation">Bourdieu, P. (1984). <em>Distinction: A social critique of the judgement of taste</em> (R. Nice, Trans.). Harvard University Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Kawada stays calm. But this is not because he is a better person or a braver person. It is because he has already been through this. He has already survived conditions that broke other people.</span><div class="deep-dive"><p>There is nothing to celebrate about Kawada&rsquo;s readiness. Being prepared for a death game because your life was already hard is not a gift. It is the scar of prior suffering. Fukasaku does not present Kawada as admirable for his calm &mdash; he presents him as evidence of what the system has already done to certain people, long before the island. The island does not create the gap between Kawada and the panicking students. The island just makes the gap visible.</p></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">The film is making a class argument: the skills that help you survive outside the system are the skills the system never teaches you. And only people who already needed them have them.</span><div class="deep-dive"><p>Jackson (1968) described what he called the &ldquo;hidden curriculum&rdquo; of schools &mdash; the unspoken lessons about how to follow instructions, perform compliance, and navigate institutional authority. This curriculum serves students well inside the system. But the skills needed to operate outside the system &mdash; to stay calm under physical threat, to make decisions when the rules have gone &mdash; are not taught in school. They are learned in life. And not everyone&rsquo;s life provides that education.</p><div class="citation">Jackson, P. W. (1968). <em>Life in classrooms</em>. Holt, Rinehart &amp; Winston.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">Think about this in the context of job applications, interviews, or professional situations. People who grew up understanding how institutions work can perform confidence and competence even when the substance is thin. People with genuine skill who lack that social training are often passed over.</span><div class="deep-dive"><p>Rivera (2015) studied elite hiring processes and found that &ldquo;soft skills&rdquo; &mdash; the social ease, conversational fluency, and institutional familiarity that signal belonging &mdash; are primarily class skills, absorbed in certain kinds of families and schools and almost never taught explicitly. The student who grabs their bag and immediately assesses it without panic has this skill. The student who freezes does not. Neither chose which skills to arrive with.</p><div class="citation">Rivera, L. A. (2015). <em>Pedigree: How elite students get elite jobs</em>. Princeton University Press.</div></div></div><div class="sentence-block"><span class="model-sentence" onclick="toggleDeep(this)">For your oral exam: when two characters respond differently to the same event, that difference is always the director&rsquo;s argument about the world, not just about the individuals.</span><div class="deep-dive"><p>Panic versus calm is not a personality comparison. It is a social argument made visible through behaviour. The director is saying: the same event reveals existing inequalities that were always there but hidden by the normal operation of the system. Name that argument. Anchor it in a specific moment from the film. Connect it to something observable in the real world. That is your two-minute answer.</p></div></div><p class="hint">Tap any underlined sentence to read a deeper explanation with references.</p></div>
+    </div>
+  </div>
+</div></div>
+<footer class="site-footer">
+  <p>HUMN 110 &nbsp;&middot;&nbsp; Arts and Culture &nbsp;&middot;&nbsp; AUPP</p>
+  <p style="margin-top:5px">Oral exam: Thursday 3 July &nbsp;&middot;&nbsp; See it. Say it. Connect it.</p>
+</footer>
+<script>
+var MIC_SVG = '<svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-1 17.93V21h-2v2h6v-2h-2v-2.07A8 8 0 0 0 20 12h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg>';
+function reveal(btn) {
+  var section = btn.closest('.answer-section');
+  var textarea = section.querySelector('textarea');
+  var audioEl  = section.querySelector('audio');
+  var hasText  = textarea.value.trim().length > 0;
+  var hasAudio = audioEl && audioEl.src && audioEl.src !== window.location.href;
+  if (!hasText && !hasAudio) {
+    textarea.style.borderColor = '#c0392b';
+    textarea.placeholder = 'Please write or record your answer before revealing.';
+    setTimeout(function(){ textarea.style.borderColor=''; textarea.placeholder='Write your answer here...'; }, 2500);
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Answer revealed';
+  var rev = section.querySelector('.model-reveal');
+  rev.classList.add('visible');
+  rev.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function toggleDeep(span) {
+  var dive = span.nextElementSibling;
+  if (!dive || !dive.classList.contains('deep-dive')) return;
+  var isOpen = dive.classList.contains('open');
+  var body = span.closest('.reveal-body') || span.closest('.answer-body');
+  body.querySelectorAll('.deep-dive').forEach(function(d){ d.classList.remove('open'); });
+  body.querySelectorAll('.model-sentence').forEach(function(s){ s.classList.remove('expanded'); });
+  if (!isOpen) { dive.classList.add('open'); span.classList.add('expanded'); dive.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+}
+var recorders = new Map(), chunkMap = new Map(), recIdx = 0;
+function toggleRecord(btn) {
+  if (!btn.dataset.rid) { btn.dataset.rid = ++recIdx; }
+  var rid = btn.dataset.rid;
+  var ansSection = btn.closest('.answer-section');
+  var status = btn.closest('.record-section').querySelector('.recording-status');
+  if (recorders.has(rid) && recorders.get(rid).state === 'recording') {
+    recorders.get(rid).stop(); btn.classList.remove('recording');
+    btn.innerHTML = MIC_SVG + ' Record answer'; status.textContent = '';
+  } else {
+    if (!navigator.mediaDevices) { status.textContent = 'Mic not supported.'; return; }
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream) {
+      var mr = new MediaRecorder(stream); var ch = [];
+      recorders.set(rid, mr); chunkMap.set(rid, ch);
+      mr.ondataavailable = function(e){ ch.push(e.data); };
+      mr.onstop = function() {
+        stream.getTracks().forEach(function(t){ t.stop(); });
+        var blob = new Blob(ch, {type:'audio/webm'}); var url = URL.createObjectURL(blob);
+        var ex = ansSection.querySelector('audio'); if (ex) ex.remove();
+        var a = document.createElement('audio'); a.controls = true; a.src = url;
+        btn.closest('.record-section').appendChild(a); status.textContent = 'Recording saved.';
+      };
+      mr.start(); btn.classList.add('recording');
+      btn.innerHTML = MIC_SVG + ' Stop recording'; status.textContent = 'Recording...';
+    }).catch(function(){ status.textContent = 'Microphone access denied.'; });
+  }
+}
+</script>
+</body>
+</html>
