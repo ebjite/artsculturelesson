@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Jigsaw Reading: The Gaze and Gender</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Georgia',serif;background:#F5EAE0;min-height:100vh;color:#3A1020;}
+.landing{background:linear-gradient(150deg,#4A1A30 0%,#6B2848 55%,#4A1A30 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+.landing h1{font-size:1.9rem;color:#C9963A;letter-spacing:2px;margin-bottom:6px;}
+.sub{font-size:0.9rem;color:#E8C5A0;font-style:italic;margin-bottom:12px;line-height:1.6;}
+.instr-box{background:rgba(255,255,255,0.09);border-radius:10px;padding:14px 18px;max-width:500px;font-size:0.87rem;color:#E8C5A0;line-height:1.75;margin-bottom:26px;text-align:left;}
+.instr-box strong{color:#C9963A;}
+.grp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;max-width:520px;width:100%;}
+.gBtn{padding:14px 8px;border-radius:12px;border:2px solid rgba(201,150,58,0.3);background:rgba(255,255,255,0.08);font-family:'Georgia',serif;font-size:0.95rem;font-weight:bold;cursor:pointer;color:#fff;transition:all 0.22s;text-align:center;}
+.gBtn:hover{background:rgba(201,150,58,0.2);border-color:#C9963A;}
+.gBtn small{display:block;font-weight:normal;font-size:0.72rem;opacity:0.75;font-style:italic;margin-top:3px;}
+.reader{display:none;max-width:720px;margin:0 auto;padding:14px 14px 44px;}
+.rdr-hdr{border-radius:14px;padding:18px 22px;margin-bottom:16px;color:#fff;}
+.rdr-hdr h2{font-size:1.25rem;font-weight:bold;margin-bottom:3px;}
+.byline{font-size:0.82rem;opacity:0.85;margin-bottom:10px;font-style:italic;}
+.istrip{background:rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;font-size:0.82rem;line-height:1.65;}
+.section{background:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.section-label{font-size:0.78rem;font-weight:bold;color:#C9963A;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.section h3{font-size:0.92rem;font-weight:bold;color:#4A1A30;margin-bottom:10px;}
+/* Article */
+.art-para{margin-bottom:16px;font-size:0.95rem;line-height:1.8;color:#3A1020;}
+.art-para:last-child{margin-bottom:0;}
+.para-hdr{font-size:1rem;font-weight:bold;color:#4A1A30;border-bottom:2px solid #EDD9F0;padding-bottom:5px;margin:20px 0 10px;}
+.para-hdr:first-child{margin-top:0;}
+.para-num-lbl{font-size:0.72rem;font-weight:bold;color:#C9963A;letter-spacing:3px;text-transform:uppercase;margin:18px 0 6px;}
+.para-num-lbl:first-child{margin-top:0;}
+/* Match task */
+.match-instr{font-size:0.83rem;color:#7A5060;font-style:italic;margin-bottom:14px;}
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.match-col-lbl{font-size:0.75rem;font-weight:bold;color:#C9963A;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.match-item{background:#F5EAE0;border:1.5px solid rgba(74,26,48,0.18);border-radius:9px;padding:10px 13px;margin-bottom:7px;cursor:pointer;font-size:0.88rem;line-height:1.45;color:#3A1020;transition:all 0.18s;user-select:none;}
+.match-item:hover{border-color:#C9963A;background:#EDD9F0;}
+.match-item.sel{border-color:#C9963A;background:#EDD9F0;}
+.match-item.ok{border-color:#5A8A5A;background:rgba(90,138,90,0.15);cursor:default;}
+.match-item.bad{border-color:#E87070;background:rgba(232,112,112,0.12);}
+.match-feedback{font-size:0.84rem;font-style:italic;min-height:1.2rem;margin-top:8px;color:#4A1A30;}
+/* Fact questions */
+.fact-item{background:#F5EAE0;border-radius:10px;padding:13px 15px;margin-bottom:10px;border:1px solid rgba(74,26,48,0.12);}
+.fact-q{font-size:0.93rem;color:#3A1020;margin-bottom:9px;line-height:1.5;}
+.fact-q strong{color:#4A1A30;}
+.fact-input-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.fact-input{flex:1;min-width:120px;padding:8px 12px;border:1.5px solid rgba(74,26,48,0.25);border-radius:8px;font-family:'Georgia',serif;font-size:0.92rem;color:#3A1020;background:#fff;outline:none;}
+.fact-input:focus{border-color:#C9963A;}
+.fact-input.ok{border-color:#5A8A5A;background:rgba(90,138,90,0.1);}
+.fact-input.bad{border-color:#E87070;background:rgba(232,112,112,0.08);}
+.fact-check-btn{padding:8px 16px;border-radius:18px;border:none;background:#4A1A30;color:#C9963A;font-family:'Georgia',serif;font-size:0.86rem;cursor:pointer;}
+.fact-check-btn:hover{background:#6B2848;}
+.fact-fb{font-size:0.83rem;font-style:italic;margin-top:6px;min-height:1.1rem;}
+.fact-fb.ok{color:#3A6A3A;}
+.fact-fb.bad{color:#8A2020;}
+/* T/F */
+.tf-item{background:#F5EAE0;border-radius:10px;padding:13px 15px;margin-bottom:10px;border:1px solid rgba(74,26,48,0.12);}
+.tf-q{font-size:0.93rem;color:#3A1020;margin-bottom:9px;line-height:1.5;}
+.tf-q strong{color:#4A1A30;}
+.tf-btns{display:flex;gap:9px;}
+.tf-btn{padding:8px 22px;border-radius:20px;border:1.5px solid rgba(74,26,48,0.25);background:transparent;font-family:'Georgia',serif;font-size:0.88rem;cursor:pointer;transition:all 0.18s;color:#4A1A30;}
+.tf-btn:hover{background:#EDD9F0;}
+.tf-btn.selT{background:#5A8A5A;border-color:#5A8A5A;color:#fff;}
+.tf-btn.selF{background:#8A3A3A;border-color:#8A3A3A;color:#fff;}
+.tf-btn.correct{background:#5A8A5A;border-color:#5A8A5A;color:#fff;cursor:default;}
+.tf-btn.wrong{background:#E87070;border-color:#E87070;color:#fff;cursor:default;}
+.tf-exp{display:none;margin-top:9px;font-size:0.84rem;color:#4A1A30;background:#EDD9F0;border-radius:8px;padding:9px 12px;line-height:1.55;font-style:italic;}
+.tf-exp.show{display:block;}
+.score-row{text-align:center;padding:12px;font-size:0.97rem;font-weight:bold;color:#4A1A30;display:none;margin-top:4px;}
+.check-all-btn{display:block;width:100%;padding:12px;background:linear-gradient(135deg,#4A1A30,#6B2848);color:#fff;border:none;border-radius:10px;font-family:'Georgia',serif;font-size:0.97rem;cursor:pointer;margin-top:6px;letter-spacing:0.5px;}
+.check-all-btn:hover{opacity:0.9;}
+/* Discussion */
+.disc-section{background:linear-gradient(135deg,#4A1A30,#6B2848);border-radius:14px;padding:18px 20px;margin-bottom:16px;color:#F5EAE0;}
+.disc-section h3{color:#C9963A;margin-bottom:13px;font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;}
+.disc-q{background:rgba(255,255,255,0.08);border-radius:8px;padding:11px 14px;margin-bottom:7px;font-size:0.92rem;line-height:1.55;}
+.dnum{font-weight:bold;color:#C9963A;margin-right:6px;}
+/* Refs */
+.refs{background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;font-size:0.81rem;color:#5A3A4A;line-height:1.7;}
+.refs h3{font-size:0.78rem;color:#4A1A30;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:bold;}
+.refs p{margin-bottom:5px;}
+.back-btn{display:block;text-align:center;padding:12px;background:rgba(74,26,48,0.1);border-radius:10px;color:#4A1A30;font-size:0.88rem;cursor:pointer;border:1px solid rgba(74,26,48,0.18);}
+.back-btn:hover{background:rgba(74,26,48,0.18);}
+/* Objectives banner */
+.obj-banner{background:rgba(201,150,58,0.15);border:1px solid rgba(201,150,58,0.4);border-radius:12px;padding:14px 18px;margin-bottom:16px;}
+.obj-banner h3{font-size:0.78rem;color:#C9963A;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.obj-banner li{font-size:0.88rem;color:#3A1020;margin-bottom:4px;margin-left:14px;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="landing" id="landing">
+  <h1>THE GAZE AND GENDER</h1>
+  <p class="sub">Jigsaw Reading Activity &bull; HUMN 110 &bull; Arts and Culture</p>
+  <div class="instr-box">
+    <strong>How this works:</strong><br>
+    1. Select your group letter below.<br>
+    2. Read your article carefully.<br>
+    3. Task 1: Match each subheading to its paragraph.<br>
+    4. Task 2: Find the facts  -  answer 5 specific questions.<br>
+    5. Task 3: True or False  -  8 statements to judge.<br>
+    6. When your teacher says it is time, move to mixed groups and teach the others.
+  </div>
+  <div class="grp-grid">
+    <button class="gBtn" onclick="show('A')">A<br><small>Laura Mulvey</small></button>
+    <button class="gBtn" onclick="show('B')">B<br><small>bell hooks</small></button>
+    <button class="gBtn" onclick="show('C')">C<br><small>E. Ann Kaplan</small></button>
+    <button class="gBtn" onclick="show('D')">D<br><small>Naomi Wolf</small></button>
+    <button class="gBtn" onclick="show('E')">E<br><small>John Berger</small></button>
+    <button class="gBtn" onclick="show('F')">F<br><small>The Manosphere</small></button>
+  </div>
+</div>
+<div id="area"></div>
+<script>
+const GRP={};
+
+GRP.A={
+  color:"linear-gradient(135deg,#4A6A2A,#2A4A10)",
+  title:"Group A: Laura Mulvey: The Male Gaze",
+  byline:"Mulvey, L. (1975). Visual pleasure and narrative cinema. <em>Screen, 16</em>(3), 6-18. https://doi.org/10.1080/00364677508231510",
+  objs:["Define the male gaze","Name two types of pleasure cinema exploits","Identify at least three female stereotypes","Explain what 'to-be-looked-at-ness' means","Understand objectification"],
+  paras:[
+    {hdr:"The Problem with Looking",
+     body:"In 1975, the British filmmaker and critic Laura Mulvey published one of the most influential essays in the history of art and film theory. She argued that mainstream Western cinema had been structured, from its earliest days, around a single point of view: the male gaze. This was not merely a description of who made films. It was a claim about how films were built, how their pleasures were organised, and whose desires they served. For Mulvey, looking is never neutral. The act of looking in cinema is structured so that the audience, assumed to be male and heterosexual, looks at women. Women are the object of the gaze, not its subject."},
+    {hdr:"Two Pleasures Cinema Exploits",
+     body:"Mulvey drew on psychoanalytic theory to explain why watching a film feels pleasurable. She identified two kinds of pleasure. The first is voyeurism: the pleasure of watching secretly, of seeing without being seen. Cinema creates this pleasure by placing the audience in a darkened room facing a lit screen. The spectator watches; the people on screen do not watch back. The second pleasure is scopophilia: the pleasure of looking itself. These two pleasures are not innocent. They are organised around an assumed male viewer who watches, desires, and judges."},
+    {hdr:"Women as Spectacle and Objectification",
+     body:"In classical Hollywood cinema, scopophilia is organised around the female body. Women are presented as spectacle: they exist to be looked at. Their appearance is the point. Mulvey coined the phrase to-be-looked-at-ness to capture this condition. Objectification is the process by which a person is treated as an object rather than a subject. The objectified person is not a full human being with interiority, desires, or agency. They are a body on display, valued for how they appear to others. In cinema, women are routinely objectified: their bodies are shown in fragments, their faces in close-up for emotional reaction, their appearance the camera's primary concern."},
+    {hdr:"Stereotypes the Gaze Produces",
+     body:"The male gaze does not present women as full human beings. It produces a narrow set of recurring types. The erotic object is the most central: a body on display, defined by appearance rather than action or inner life. Beyond this, theorists building on Mulvey have named four key stereotypes. The Virgin is pure, passive, and unthreatening. The Femme Fatale is dangerous precisely because she is desirable: her sexuality gives her power that threatens male control. The Caregiver is selfless and maternal, existing only to serve others. The Decoration is beautiful, passive, and present to please. These stereotypes appear not only in film but across painting, advertising, literature, and music."},
+    {hdr:"Political Stakes and Internalisation",
+     body:"For Mulvey, the male gaze was not just an aesthetic problem. It was a political one. Women who have grown up inside a culture saturated with these images begin to see themselves through male eyes: they internalise the gaze, evaluating their own worth through their appearance. This is not a personal failing. It is the predictable result of a culture that has built looking around male desire since at least the Renaissance. Mulvey's proposed solution was radical: a cinema that refuses to give the male spectator what he expects, that destroys the smooth pleasure of looking and forces critical thought. Her diagnosis, that the gaze is gendered and has real political effects, has proven remarkably durable."}
+  ],
+  facts:[
+    {q:"What year did Mulvey publish her essay 'Visual Pleasure and Narrative Cinema'?", a:["1975"]},
+    {q:"What is the name of the journal her essay was published in?", a:["screen","Screen"]},
+    {q:"What word did Mulvey use to describe the pleasure of watching secretly without being seen?", a:["voyeurism"]},
+    {q:"What phrase did Mulvey coin to describe how women in cinema are positioned as objects of the look?", a:["to-be-looked-at-ness"]},
+    {q:"Name one of the four female stereotypes listed in paragraph 4.", a:["virgin","the virgin","femme fatale","the femme fatale","caregiver","the caregiver","decoration","the decoration"]},
+  ],
+  tf:[
+    {q:"Mulvey argued that mainstream cinema was built for a female spectator.",a:"F",e:"Mulvey argued it was built for an assumed male, heterosexual spectator."},
+    {q:"Objectification means treating a person as a subject with full agency.",a:"F",e:"Objectification means treating a person as an object, valued for appearance rather than inner life or agency."},
+    {q:"Voyeurism is the pleasure of watching without being seen.",a:"T",e:"Correct. Mulvey argued cinema exploits this by placing audiences in darkness facing a lit screen."},
+    {q:"The Femme Fatale is dangerous because her sexuality gives her power that threatens male control.",a:"T",e:"Correct. This is why the Femme Fatale is consistently punished or contained in mainstream film and literature."},
+    {q:"Mulvey argued that women internalise the male gaze and begin to evaluate themselves through male eyes.",a:"T",e:"Correct. This internalisation is one of the key political harms of the male gaze, according to Mulvey."},
+    {q:"The Caregiver stereotype is defined by danger and sexual power.",a:"F",e:"That describes the Femme Fatale. The Caregiver is selfless and maternal, existing to serve others."},
+    {q:"Mulvey's concept of the gaze applies only to cinema and not to other art forms.",a:"F",e:"Later theorists extended the concept to painting, advertising, literature, photography, and many other art forms."},
+    {q:"Mulvey's proposed solution was to make more entertaining films for female audiences.",a:"F",e:"Her solution was deliberately radical: destroy the smooth pleasure of looking to force critical thought."},
+  ],
+  disc:["Explain the male gaze in one sentence. Then give an example from a film, ad, or artwork you know.","What is objectification? Can you think of an example that is NOT a film?","Which of the four female stereotypes do you see most often in Cambodian media?","Mulvey says women internalise the gaze. What does this mean for how women see themselves?","Is the male gaze the same in all cultures, or does it change? Use what you learned and what your group members say."],
+  refs:["Mulvey, L. (1975). Visual pleasure and narrative cinema. <em>Screen, 16</em>(3), 6-18. https://doi.org/10.1080/00364677508231510","Mulvey, L. (2006). <em>Death 24x a second: Stillness and the moving image</em>. Reaktion Books.","Berger, J. (1972). <em>Ways of seeing</em>. BBC and Penguin Books.","Gamman, L., &amp; Marshment, M. (Eds.). (1988). <em>The female gaze: Women as viewers of popular culture</em>. The Women's Press."]
+};
+
+GRP.B={
+  color:"linear-gradient(135deg,#2A4A6A,#1A2A4A)",
+  title:"Group B: bell hooks: The Oppositional Gaze",
+  byline:"hooks, b. (1992). The oppositional gaze: Black female spectators. In <em>Black looks: Race and representation</em> (pp. 115-131). South End Press.",
+  objs:["Understand who the oppositional gaze is for","Name the three stereotypes hooks identifies for Black women","Explain what double exclusion means","Understand identity as shaped by race and gender together","Connect representation to real-world consequences"],
+  paras:[
+    {hdr:"A Theory That Left Someone Out",
+     body:"When feminist critic bell hooks encountered Laura Mulvey's theory of the male gaze, she recognised its power and its blind spot. Mulvey had correctly identified that cinema was built for a male spectator. But the theory assumed that spectator was white, and assumed the female object on screen was also white. Black women were entirely absent from this framework. They were not invited into the pleasures of looking, and they were not given the dignity of being the object of a gaze that found them beautiful. They were either absent from the screen or present only as stereotype."},
+    {hdr:"The History of Looking and Race",
+     body:"hooks traced the roots of this exclusion to the history of racial oppression in the United States. Under slavery and segregation, direct eye contact from a Black person toward a white person was read as defiance and could result in severe punishment or death. The gaze was literally a site of danger. This history did not disappear after legal segregation ended. It persisted in culture, in who was permitted to be seen, how, and by whom. Black people developed a habit of looking with critical distance, watching without fully consuming the pleasure being offered, because that pleasure was not designed for them and often portrayed them with contempt."},
+    {hdr:"The Oppositional Gaze",
+     body:"Out of this history, hooks named the oppositional gaze: the act of looking back critically. Rather than passively consuming a culture that excluded or diminished them, Black women developed a practice of watching with dissatisfaction, with awareness, with resistance. The oppositional gaze is not simply the result of suffering. It is a critical tool. It produces viewers who are less likely to accept what they are shown as natural or neutral, and more likely to ask whose gaze is built into the image and who benefits. hooks extended this concept beyond race to any group that experiences the gaze as something done to them rather than something they exercise freely."},
+    {hdr:"Double Exclusion and Identity",
+     body:"Mulvey's framework offered two positions: identify with the male gaze (the active subject) or identify with the female object (the passive thing being seen). Black women were excluded from both. The female object in mainstream cinema was white. Her beauty, her desirability, her suffering, her triumph were all coded as white experiences. Black women watching these films could not simply identify with the woman on screen. Nor could they adopt the male gaze, which was also racially coded as white. This double exclusion, hooks argued, revealed something important: identity is not shaped by gender alone. Race, class, and other factors shape who we are, how we are seen, and how we see. This framework, where identity is shaped by multiple overlapping systems, is called intersectionality."},
+    {hdr:"Stereotypes, Representation, and Real Stakes",
+     body:"hooks identified three recurring stereotypes of Black women in mainstream media: the mammy, devoted, selfless, and non-threatening; the jezebel, hypersexual and morally suspect; and the angry Black woman, aggressive, irrational, and threatening. These stereotypes appeared not only in film but in literature, advertising, journalism, and everyday social perception. For hooks, this was not merely an aesthetic problem. How people are shown in art and media shapes how they are treated in the world. The stakes of representation are real and political. Genuine change required not just different images but different image-makers: people from marginalised groups behind the camera, controlling how their communities are seen."}
+  ],
+  facts:[
+    {q:"What year did bell hooks publish 'The Oppositional Gaze'?", a:["1992"]},
+    {q:"What is the name of the book the essay appeared in?", a:["black looks","Black Looks","Black Looks: Race and Representation"]},
+    {q:"Name one of the three stereotypes hooks identified for Black women in mainstream media.", a:["mammy","the mammy","jezebel","the jezebel","angry black woman","the angry black woman","angry Black woman"]},
+    {q:"What term is used in paragraph 4 for the framework where identity is shaped by multiple overlapping systems?", a:["intersectionality"]},
+    {q:"hooks says genuine change required people from marginalised groups in what role?", a:["behind the camera","behind camera","image-makers","image makers"]},
+  ],
+  tf:[
+    {q:"bell hooks had no criticisms of Mulvey's theory and agreed with it completely.",a:"F",e:"hooks admired Mulvey's insight but criticised it for ignoring race and assuming a white female subject."},
+    {q:"Under slavery and segregation, direct eye contact from a Black person toward a white person could result in punishment.",a:"T",e:"Correct. This history of danger attached to looking shaped the development of the oppositional gaze."},
+    {q:"The oppositional gaze is a passive form of consumption.",a:"F",e:"hooks described it as a critical, resistant practice: an act of looking back that refuses to accept what is shown as natural."},
+    {q:"Black women in mainstream cinema could easily identify with both the male gaze and the white female object on screen.",a:"F",e:"hooks argued they were excluded from both positions, since both were racially coded as white."},
+    {q:"The jezebel stereotype portrays Black women as hypersexual and morally suspect.",a:"T",e:"Correct. This is one of the three stereotypes hooks identified as recurring representations of Black women."},
+    {q:"Intersectionality means identity is shaped only by gender.",a:"F",e:"Intersectionality, referenced in paragraph 4, means identity is shaped by multiple overlapping systems including race, class, and gender together."},
+    {q:"hooks argued that how people are represented in art and media has no real-world consequences.",a:"F",e:"hooks argued the opposite: representation shapes how people are treated in the world, and the stakes are real and political."},
+    {q:"The oppositional gaze can be experienced by any group that experiences looking as something done to them rather than something they exercise freely.",a:"T",e:"Correct. hooks extended the concept beyond Black women to any marginalised group with this experience."},
+  ],
+  disc:["Explain the oppositional gaze in one sentence. Give an example of a group that might develop it.","What does double exclusion mean? Can you think of a group in Cambodia that might experience something similar?","hooks lists three stereotypes of Black women. Are there similar stereotypes in Cambodian or Asian media?","What is intersectionality? Why does it matter for understanding identity?","hooks says genuine change needs image-makers from marginalised groups. Do you agree? Is that enough?"],
+  refs:["hooks, b. (1992). <em>Black looks: Race and representation</em>. South End Press.","hooks, b. (1994). <em>Outlaw culture: Resisting representations</em>. Routledge.","Collins, P. H. (1990). <em>Black feminist thought: Knowledge, consciousness, and the politics of empowerment</em>. Unwin Hyman.","Crenshaw, K. (1989). Demarginalizing the intersection of race and sex: A black feminist critique of antidiscrimination doctrine, feminist theory and antiracist politics. <em>University of Chicago Legal Forum, 1989</em>(1), 139-167."]
+};
+
+GRP.C={
+  color:"linear-gradient(135deg,#6A4A1A,#4A2A08)",
+  title:"Group C: E. Ann Kaplan: Is the Gaze Male?",
+  byline:"Kaplan, E. A. (1983a). Is the gaze male? In A. Snitow, C. Stansell, &amp; S. Thompson (Eds.), <em>Powers of desire: The politics of sexuality</em> (pp. 309-327). Monthly Review Press. Also: Kaplan, E. A. (1983b). <em>Women and film: Both sides of the camera</em>. Methuen.",
+  objs:["Understand the difference between historical and structural explanations of the gaze","Identify how male stereotypes are also created by the same system","Explain why the Femme Fatale appears across all art forms","Understand what equality in representation would require","Name the trap of looking"],
+  paras:[
+    {hdr:"One Question, Two Very Different Answers",
+     body:"E. Ann Kaplan posed a deceptively simple question: is the gaze male? The answer has two very different forms. If the gaze is male historically, it is male because men have been the artists, directors, and patrons for most of Western history, and male desire has therefore shaped how art represents women. A historical explanation suggests the problem can be solved: put women behind the camera and the gaze will change. But if the gaze is male structurally, then it is embedded in the very grammar of Western visual culture. A female director working inside mainstream film might then simply reproduce the male gaze, because that is the only visual language available to her. Kaplan argued the structural explanation is closer to the truth, which makes the problem harder but not hopeless."},
+    {hdr:"The Trap of Looking and Women's Identity",
+     body:"Kaplan identified what she called the trap of looking. In Western visual culture, looking with authority has been coded as masculine. To look is to evaluate, to judge, to possess. The person who looks holds power; the person being looked at is the object of that power. When a woman looks with authority, when a female character stares directly at the camera or a female artist directs her lens with clear intention, she risks being read as masculine, because culture has no ready language for a female looker who does not borrow from masculine codes. This trap shapes women's identity: to be a woman, in many cultural contexts, is to expect to be looked at rather than to look. Women who refuse this expectation are often penalised or described in masculinised terms."},
+    {hdr:"Stereotypes Across All Art: The Femme Fatale and the Virgin",
+     body:"Kaplan's analysis extended the male gaze far beyond cinema. She argued that the stereotypes the gaze produces are the recurring figures of Western representation across painting, sculpture, literature, music, photography, and advertising. The Femme Fatale, for example, appears in ancient Greek mythology as Circe and Medea, in Renaissance painting as Salome and Judith, in nineteenth-century opera as Carmen, and in twentieth-century film noir as the scheming widow. The Virgin appears in medieval altarpieces, Victorian novels, and contemporary romantic comedies. The Caregiver appears in every art form across every historical period. These are not coincidences. They are the shapes the male gaze consistently gives to women, because these shapes serve male narratives: the dangerous woman must be feared, the pure woman protected, the caring woman used."},
+    {hdr:"Male Stereotypes and the Cost to Men",
+     body:"Kaplan's framework also allows us to ask about male stereotypes. If the gaze is structured so that men look and women are looked at, then men are expected to be active, authoritative, never passive. The dominant male stereotypes are: the warrior, defined by physical power and aggression; the provider, defined by earning and protecting; the stoic, who does not show emotion; and the predator, whose sexual desire defines him. These stereotypes are damaging to men who do not fit them. A man who is passive, emotional, domestic, gay, or disabled is penalised by the same system. The male gaze does not only harm women. It creates a rigid, narrow model of masculinity that many men find suffocating and that makes equality between men and women harder to achieve."},
+    {hdr:"Equality and the Female Gaze as Resistance",
+     body:"Despite the structural problem she identified, Kaplan was not pessimistic. She pointed to moments in art where women successfully resist the objectifying gaze. Frida Kahlo, who painted hundreds of self-portraits, is one of Kaplan's clearest examples: an artist who is simultaneously the creator and the subject, who holds the gaze without flinching, who makes her own pain and desire visible on her own terms. For Kaplan, genuine equality in representation would require not just women behind the camera but a transformation of the visual language itself, so that looking with power is no longer coded as male, and being looked at with dignity is no longer coded as female. This is a long project. It is also, she argued, essential."}
+  ],
+  facts:[
+    {q:"What is the title of Kaplan's 1983 book about women and cinema?", a:["women and film","Women and Film","Women and Film: Both Sides of the Camera"]},
+    {q:"What does Kaplan call the idea that looking with authority has been coded as masculine?", a:["the trap of looking","trap of looking"]},
+    {q:"Name one ancient Greek mythological figure that Kaplan uses as an early example of the Femme Fatale.", a:["circe","Circe","medea","Medea"]},
+    {q:"Name the four male stereotypes listed in paragraph 4.", a:["warrior","provider","stoic","predator"]},
+    {q:"Which artist does Kaplan use as her key example of resistance to the male gaze?", a:["frida kahlo","Frida Kahlo","kahlo","Kahlo"]},
+  ],
+  tf:[
+    {q:"Kaplan argued that putting women behind the camera is always enough to change the male gaze.",a:"F",e:"Kaplan argued the gaze may be structural, meaning a female director working inside mainstream film might still reproduce it."},
+    {q:"The trap of looking means that looking with authority has historically been coded as masculine.",a:"T",e:"Correct. This means women who look with power risk being read as masculine."},
+    {q:"The Femme Fatale stereotype first appeared in twentieth-century cinema and did not exist before.",a:"F",e:"Kaplan traces the Femme Fatale to ancient Greek mythology (Circe, Medea), through Renaissance painting and nineteenth-century opera."},
+    {q:"Male stereotypes identified by Kaplan include the warrior, the provider, the stoic, and the predator.",a:"T",e:"Correct. Kaplan argued these stereotypes are damaging to men who do not fit them."},
+    {q:"Kaplan argued that the male gaze only harms women and has no negative effects on men.",a:"F",e:"Kaplan argued it also harms men by creating a rigid, narrow model of masculinity."},
+    {q:"Frida Kahlo is used by Kaplan as an example of an artist who accepted and reinforced the male gaze.",a:"F",e:"Kahlo is Kaplan's key example of resistance: an artist who controls her own image and refuses passivity."},
+    {q:"Kaplan believed equality would require a transformation of visual language itself, not just more women in the industry.",a:"T",e:"Correct. Kaplan argued genuine equality means changing how looking and being looked at are culturally coded."},
+    {q:"The Caregiver stereotype appears across every art form and historical period.",a:"T",e:"Correct. Kaplan identified the Caregiver as one of the most persistent shapes the male gaze gives to women."},
+  ],
+  disc:["Explain the difference between a historical and structural explanation of the male gaze. Which do you find more convincing?","What is the trap of looking? Can you think of a recent example?","The Femme Fatale appears from ancient Greece to modern film. Why do you think this stereotype has lasted so long?","Kaplan says the gaze also harms men by creating rigid stereotypes. Do you agree?","What would genuine equality in representation look like? What would need to change?"],
+  refs:["Kaplan, E. A. (1983a). Is the gaze male? In A. Snitow, C. Stansell, &amp; S. Thompson (Eds.), <em>Powers of desire: The politics of sexuality</em> (pp. 309-327). Monthly Review Press.","Kaplan, E. A. (1983b). <em>Women and film: Both sides of the camera</em>. Methuen.","De Lauretis, T. (1984). <em>Alice doesn't: Feminism, semiotics, cinema</em>. Indiana University Press.","Modleski, T. (1988). <em>The women who knew too much: Hitchcock and feminist theory</em>. Methuen."]
+};
+
+GRP.D={
+  color:"linear-gradient(135deg,#5A2A5A,#3A1A3A)",
+  title:"Group D: Naomi Wolf: The Beauty Myth and Cultural Standards",
+  byline:"Wolf, N. (1991). <em>The beauty myth: How images of beauty are used against women</em>. William Morrow. Also: Bordo, S. (1993). <em>Unbearable weight: Feminism, Western culture, and the body</em>. University of California Press.",
+  objs:["Understand the beauty myth as a form of political control","Name the Iron Maiden stereotype","Identify how beauty standards differ across cultures","Understand how identity as a woman is shaped by cultural beauty ideals","Recognise feminist art as a form of resistance"],
+  paras:[
+    {hdr:"Beauty as Political Control",
+     body:"In 1991, Naomi Wolf published The Beauty Myth, arguing that the standards of female beauty promoted by Western culture are not natural or neutral. They are a form of social control. As women gained legal and political rights throughout the twentieth century, the right to vote (in the United States in 1920), to work, to own property, and to divorce, a new pressure emerged to replace old restrictions. This pressure operated through images: images of beauty so narrow, so demanding, and so constantly renewed that women found themselves spending enormous amounts of time, money, and emotional energy trying to meet standards that were deliberately impossible to achieve. Wolf argued this was not an accident. It was a response to women's growing power."},
+    {hdr:"The Iron Maiden and Stereotypes of the Body",
+     body:"Wolf identified the most insidious stereotype as what she called the Iron Maiden: the image of a perfect, flawless female body that no real woman could achieve. Unlike earlier female stereotypes, the Virgin or the Femme Fatale, the Iron Maiden is not a character or a role. She is a body. She has no personality, no narrative, no inner life. She exists only to be seen. The philosopher Susan Bordo extended this analysis in 1993, arguing that Western culture positions the thin body as a symbol of self-control and moral worth. The maternal body, rounded and reproductive, was simultaneously celebrated and hidden. The sexual body was displayed for male pleasure while women who expressed their own sexuality freely were penalised. These contradictions, Bordo argued, were not accidents but the result of a culture managing its anxiety about female power through the body."},
+    {hdr:"Beauty Standards Across Cultures",
+     body:"Wolf and other feminist scholars have noted that beauty standards are not universal. They vary enormously across cultures and historical periods, which proves that they are socially constructed rather than natural. In the Wodaabe culture of West Africa, it is men who compete in elaborate beauty contests, wearing makeup, bright colours, and accessories to attract female judges. In Heian-era Japan (794 to 1185), aristocratic beauty standards for women included extremely long hair, very pale skin, and teeth blackened with dye. In Mauritania, a fuller body was historically a marker of wealth, health, and desirability. The Western twentieth-century obsession with thinness is therefore not a universal truth about beauty. It is one culturally specific standard among many, produced at a particular moment in history for particular political reasons."},
+    {hdr:"Identity as a Woman",
+     body:"Wolf's most important claim was that beauty standards shape women's identity from the inside. Women who have grown up surrounded by images of the Iron Maiden begin to apply those standards to themselves. They see their own bodies through the evaluating eye of an imagined male observer. They spend time, money, and emotional energy managing their appearance in ways that men are generally not expected to. This is not vanity. It is the predictable outcome of living inside a culture that has linked a woman's value to her appearance. Wolf argued this was the mechanism through which a whole generation of women, who had won unprecedented political freedoms, found themselves spending more time thinking about their bodies than about their work, their politics, or their relationships."},
+    {hdr:"Feminist Art as Resistance",
+     body:"Wolf and Bordo both identified art as a key site of both reinforcement and resistance. Classical Western painting, from the Renaissance to the nineteenth century, consistently showed the female nude as smooth, passive, available, and displayed for an implied male viewer. These images reinforced the idea that women's bodies exist to be seen rather than to act. But from the 1970s onward, feminist artists began using art to challenge these norms. Judy Chicago's The Dinner Party (1974 to 1979) celebrated women's history and bodies in ways that mainstream culture had suppressed. Barbara Kruger used advertising aesthetics against themselves, placing challenging text over images. Cindy Sherman photographed herself in poses that mimicked and exposed female stereotypes. These artists did not produce comfortable images. They produced images that forced viewers to think about who is looking, who is being looked at, and who benefits."}
+  ],
+  facts:[
+    {q:"What year did Naomi Wolf publish 'The Beauty Myth'?", a:["1991"]},
+    {q:"What year did women gain the right to vote in the United States, according to paragraph 1?", a:["1920"]},
+    {q:"What is the name Wolf gives to the stereotype of the perfect, flawless female body?", a:["iron maiden","the iron maiden","Iron Maiden","The Iron Maiden"]},
+    {q:"In which African culture do men compete in beauty contests to attract female judges?", a:["wodaabe","Wodaabe","the wodaabe","the Wodaabe"]},
+    {q:"Name one of the three feminist artists mentioned in paragraph 5.", a:["judy chicago","Judy Chicago","barbara kruger","Barbara Kruger","cindy sherman","Cindy Sherman"]},
+  ],
+  tf:[
+    {q:"Wolf argued that beauty standards are natural and universal.",a:"F",e:"Wolf argued beauty standards are socially constructed and politically motivated, not natural or universal."},
+    {q:"The Iron Maiden stereotype is defined by personality and narrative role.",a:"F",e:"Wolf described the Iron Maiden as defined entirely by a perfect body ideal. She has no personality or narrative."},
+    {q:"In the Wodaabe culture, men compete in beauty contests to attract female judges.",a:"T",e:"Correct. This example demonstrates that beauty standards are culturally constructed and not fixed."},
+    {q:"Wolf argued that beauty standards became less pressuring as women gained more political rights.",a:"F",e:"Wolf argued the opposite: intensified beauty standards emerged as a response to women's growing political power."},
+    {q:"Bordo argued that the thin body in twentieth-century Western culture was associated with self-control and moral worth.",a:"T",e:"Correct. Bordo identified this connection as a key mechanism through which women's bodies are regulated culturally."},
+    {q:"Wolf argued that women's focus on their appearance is simply a result of natural vanity.",a:"F",e:"Wolf argued it is the predictable outcome of living in a culture that links women's value to their appearance, not a personal failing."},
+    {q:"Feminist artists like Judy Chicago and Cindy Sherman produced comfortable, decorative images.",a:"F",e:"Their work was deliberately challenging and uncomfortable, forcing viewers to think critically about who is looking and who benefits."},
+    {q:"Beauty standards for women in Heian-era Japan included extremely long hair, pale skin, and blackened teeth.",a:"T",e:"Correct. This example shows how dramatically beauty standards differ across cultures and eras."},
+  ],
+  disc:["Explain the beauty myth in one sentence. What is its political purpose, according to Wolf?","What is the Iron Maiden stereotype? Where do you see it today?","Wolf gives examples of beauty standards from the Wodaabe, Heian Japan, and Mauritania. What do these tell us about beauty standards being 'natural'?","How do beauty standards shape women's identity? Do they affect men too?","What makes a feminist artwork different from a decorative artwork? Give an example."],
+  refs:["Wolf, N. (1991). <em>The beauty myth: How images of beauty are used against women</em>. William Morrow.","Bordo, S. (1993). <em>Unbearable weight: Feminism, Western culture, and the body</em>. University of California Press.","Chicago, J. (1996). <em>The dinner party: A symbol of our heritage</em>. Penguin.","Kilbourne, J. (1999). <em>Deadly persuasion: Why women and girls must fight the addictive power of advertising</em>. Free Press."]
+};
+
+GRP.E={
+  color:"linear-gradient(135deg,#2A5A5A,#1A3A3A)",
+  title:"Group E: John Berger: Ways of Seeing",
+  byline:"Berger, J. (1972). <em>Ways of seeing</em>. BBC and Penguin Books. Also: Nochlin, L. (1971). Why have there been no great women artists? <em>ARTnews, 69</em>(9), 22-39.",
+  objs:["Understand 'men act and women appear'","Explain how women internalise the surveyor","Identify male stereotypes in Western art","Understand how class shapes the gaze","Connect seeing to power and equality"],
+  paras:[
+    {hdr:"How We See Is Never Neutral",
+     body:"In 1972, the British art critic John Berger published Ways of Seeing, based on a BBC television series. The book made a simple but radical argument: the way we see works of art is not natural or innocent. It is shaped by ideology, by the power relations, beliefs, and social structures of the culture we live in. We do not simply look at a painting and respond to it. We bring to it a whole set of learned assumptions about who is beautiful, who has power, who deserves to be seen, and whose gaze matters. Berger demonstrated this through close readings of European oil paintings from roughly 1400 to 1900, showing how consistently the same assumptions are built into images that we are taught to see as timeless masterpieces."},
+    {hdr:"Men Act, Women Appear: Identity Through Looking",
+     body:"Berger's most famous observation was that in the European oil painting tradition, women are almost always depicted as being seen. Even when a woman appears to look directly at the viewer, she is really looking at the imagined male owner of the painting who would have displayed it in the privacy of his home. Berger's formulation 'men act and women appear' became one of the most quoted phrases in feminist art theory. He argued that this distinction was so deeply embedded in visual culture that women had internalised it. Women watch themselves being looked at. They are simultaneously the watcher and the watched, the surveyor and the surveyed. A woman navigating public space has a constant awareness of how she appears to others. This double consciousness, he argued, is a defining feature of female identity in Western culture and shapes women's sense of self from childhood onward."},
+    {hdr:"The Male Nude and Male Identity",
+     body:"Berger also examined how male figures are shown in Western art. The male nude is rarely shown in the same passive, displayed way as the female nude. Instead, the male figure is typically shown in action: wrestling, throwing a discus, running, fighting, or standing with the posture of latent authority. Even when still, the male figure projects energy and agency. This reveals something important about male identity as constructed by Western art. Men are defined by what they do. The dominant male types are the warrior, the athlete, the thinker, and the authority: all active, all powerful, all defined by capacity rather than appearance. A man who deviates from these types, who is passive, decorative, or emotional, is marked as lesser or deviant by the same visual culture. Male identity is therefore also constrained by the gaze, though differently from female identity."},
+    {hdr:"Class, the Gaze, and Who Gets to Look",
+     body:"Berger extended the analysis of the gaze beyond gender to class. In the European portrait tradition, the wealthy subject looks out at the viewer with confidence and authority. The poor, when depicted at all, are shown with their eyes downcast or looking up from a position of submission. The gaze is not only gendered. It is also classed. Those with social power are permitted to look directly and hold their gaze. Those without social power are expected to lower their eyes. Berger argued that the European oil painting tradition did not represent all of humanity. It represented the humanity of the powerful: wealthy men, aristocrats, church officials. Everyone else was either absent, or present only as a servant, a curiosity, or an object. This means the gaze in Western art is a record of power, not of universal human experience."},
+    {hdr:"Learning to See Differently",
+     body:"Berger did not leave his readers without hope. He argued that seeing is a skill that can be developed and that critical looking is a form of resistance. If we learn to see how works of art structure the gaze, whose perspective they privilege, what they present as natural and timeless, who they imagine as their viewer, we can refuse to simply accept those structures. The feminist art historian Linda Nochlin made a similar argument in her 1971 essay Why Have There Been No Great Women Artists? She showed that women had been systematically excluded from art training, patronage, and critical recognition, not because they lacked talent but because the institutions of art were built by and for men. Recognising these structures is the first step toward changing them. Equality in art, as in life, requires seeing clearly what has always been there."}
+  ],
+  facts:[
+    {q:"What year was 'Ways of Seeing' published?", a:["1972"]},
+    {q:"What was 'Ways of Seeing' based on before it became a book?", a:["bbc television series","a bbc television series","bbc series","BBC television series","BBC series"]},
+    {q:"What is Berger's most famous phrase about men and women in Western painting?", a:["men act and women appear","men act, women appear"]},
+    {q:"In what year did Linda Nochlin publish 'Why Have There Been No Great Women Artists?'", a:["1971"]},
+    {q:"Name one of the four male types listed in paragraph 3.", a:["warrior","the warrior","athlete","the athlete","thinker","the thinker","authority","the authority"]},
+  ],
+  tf:[
+    {q:"Berger argued that how we see art is natural and unaffected by social structures.",a:"F",e:"Berger argued the opposite: how we see is always shaped by ideology, power relations, and cultural structures."},
+    {q:"In European oil painting, women are almost always shown as seeing subjects who hold the gaze.",a:"F",e:"Berger argued they are shown as surveyed objects. Even when a woman appears to look at the viewer, she is positioned for a male owner's gaze."},
+    {q:"Women have internalised the surveyor, watching themselves through an imagined male eye.",a:"T",e:"Correct. This is Berger's concept of the double consciousness of female identity in Western visual culture."},
+    {q:"The male nude in Western art is typically shown as passive and displayed, like the female nude.",a:"F",e:"Berger observed that the male nude is typically shown in action, projecting agency and energy, never simply displayed."},
+    {q:"Berger argued that the European portrait tradition represented all of humanity equally.",a:"F",e:"Berger argued it represented the humanity of the powerful: wealthy men, aristocrats, and church officials."},
+    {q:"According to Berger, the gaze is shaped by class as well as gender.",a:"T",e:"Correct. Those with social power look with authority; those without are expected to lower their eyes."},
+    {q:"Linda Nochlin argued that women had been excluded from art institutions because they lacked artistic talent.",a:"F",e:"Nochlin argued women were excluded due to structural barriers: lack of training, patronage, and critical recognition, not lack of talent."},
+    {q:"Berger argued that critical looking is a form of resistance.",a:"T",e:"Correct. He argued that seeing the structures built into art is the first step toward refusing and changing them."},
+  ],
+  disc:["Explain 'men act and women appear' in your own words. Give one example from art or media.","Berger says women internalise the surveyor. What does this mean for women's identity?","How are male stereotypes in Western art both different from and connected to female stereotypes?","Berger extends the gaze to class. What does this mean? Can you think of a non-Western example?","Nochlin asked 'Why have there been no great women artists?' What was her answer?"],
+  refs:["Berger, J. (1972). <em>Ways of seeing</em>. BBC and Penguin Books.","Nochlin, L. (1971). Why have there been no great women artists? <em>ARTnews, 69</em>(9), 22-39.","Pollock, G. (1988). <em>Vision and difference: Femininity, feminism and histories of art</em>. Routledge.","Betterton, R. (Ed.). (1987). <em>Looking on: Images of femininity in the visual arts and media</em>. Pandora Press."]
+};
+
+GRP.F={
+  color:"linear-gradient(135deg,#3A3A4A,#1A1A2A)",
+  title:"Group F: The Manosphere: What It Claims, What the Evidence Says",
+  byline:"Ging, D. (2019). Alphas, betas, and incels: Theorizing the masculinities of the manosphere. <em>Men and Masculinities, 22</em>(4), 638-657. https://doi.org/10.1177/1097184X17706401; Marwick, A., &amp; Caplan, R. (2018). Drinking male tears: Language, the manosphere, and networked harassment. <em>Feminist Media Studies, 18</em>(4), 543-559; Kimmel, M. (2013). <em>Angry white men: American masculinity at the end of an era</em>. Nation Books.",
+  objs:["Understand what the manosphere claims and why it is flawed","Identify how it uses and distorts ideas about gender","Recognise its stereotypes of both women and men","Understand why it fails men who follow it","Connect its claims to theories of the gaze and feminism"],
+  paras:[
+    {hdr:"What Is the Manosphere?",
+     body:"The manosphere is a loose network of online communities, content creators, and ideologies built around the belief that men are the real victims of modern society and that feminism has gone too far. It includes self-described pick-up artists (men who treat seducing women as a skill to be learned and optimised), men's rights activists (who argue that legal systems discriminate against men), incels (short for involuntary celibates, men who believe they are denied romantic relationships through no fault of their own and often express hatred toward women as a result), and influencers such as Andrew Tate, who built a media empire in the early 2020s by promoting extreme traditional gender roles. The manosphere is not a single movement and its members often disagree with each other. But they share a core belief: that gender equality has harmed men."},
+    {hdr:"The Myths It Promotes: Alpha, Beta, and the Red Pill",
+     body:"The manosphere uses a mythology borrowed loosely from pop-science evolutionary biology. It divides men into alphas, dominant and sexually successful, and betas, weak, passive, and unattractive to women. Some communities add additional types including the sigma, a lone-wolf alpha who succeeds without social approval, and the omega, utterly rejected. Women in this framework are reduced to a simple calculation: their value is their physical attractiveness (rated numerically by some communities), and they are motivated purely by desire for high-status men. This framework, which its followers call taking the red pill after a scene in the 1999 film The Matrix, claims to reveal uncomfortable truths that polite society suppresses. In reality, it reproduces centuries-old stereotypes: the Femme Fatale (manipulative and only interested in power), the Decoration (valued only for appearance), and a version of the Virgin (pure women to be protected from feminism). The alpha/beta mythology has been rejected by actual evolutionary biologists, including David Mech, whose original 1970 research on wolf pack hierarchy is routinely misappropriated. Mech himself publicly retracted the alpha/beta wolf model in 2008."},
+    {hdr:"How It Harms Men",
+     body:"The manosphere presents itself as a community that helps men. The evidence suggests otherwise. Sociologist Michael Kimmel, who has studied male extremism extensively, found that the anger driving these communities is real: many men genuinely feel economically precarious, socially isolated, and confused about what is expected of them. These are legitimate problems. But the manosphere does not address them. Instead, it channels that anger toward women and toward feminism, which it blames for men's suffering. This prevents men from identifying the actual causes of their problems (deindustrialisation, declining wages, inadequate mental health support, social isolation) and from building real community with other men or with women. Kimmel notes that the men who spend the most time in these communities often become more isolated, more angry, and more unhappy over time, not less. The manosphere sells a fantasy of dominance to men who feel powerless and profits from their continued dissatisfaction."},
+    {hdr:"It Uses the Gaze to Harm Both Genders",
+     body:"The manosphere makes extensive use of the male gaze, not as an analytical tool but as an instruction manual. Women are evaluated by appearance, rated numerically, discussed as objects to be acquired. The language is consistently that of the gaze: she is an HB8 (hot body, rating 8 out of 10), she is a target, she is a conquest. This is objectification in its most explicit form. Men in the manosphere are simultaneously harmed by the same logic. They are told their value depends entirely on their status in a dominance hierarchy: their income, their physical size, their sexual success. Men who do not achieve these metrics are taught they are failures. Rather than challenging the gaze, the manosphere intensifies and weaponises it, using it to sell supplements, courses, and membership fees to men who have been told they are not enough. Researchers Alice Marwick and Robyn Caplan have documented how this content is deliberately designed to be radicalising, moving men from mainstream dissatisfaction toward increasingly extreme views."},
+    {hdr:"What Feminism Actually Argues",
+     body:"The manosphere consistently misrepresents feminism, describing it as a movement that wants to harm men. This is demonstrably false. Feminist scholars including Kaplan, Wolf, and Berger have explicitly argued that rigid gender stereotypes harm men as well as women: that the warrior/provider/stoic model of masculinity is damaging, that men are also constrained by the gaze, that equality benefits everyone. Bell hooks wrote in 2004 that feminist movement is for everyone, arguing that patriarchy, the system that the manosphere celebrates, hurts men by denying them emotional expression, intimacy, and full humanity. The manosphere's appeal is real: it addresses genuine male pain. Its diagnosis, that feminism caused that pain, is wrong. The evidence consistently shows that greater gender equality is associated with better outcomes for men as well as women, including in mental health, life expectancy, and relationship satisfaction (Equality and Human Rights Commission, 2019)."}
+  ],
+  facts:[
+    {q:"What does 'incel' stand for?", a:["involuntary celibate","involuntary celibates"]},
+    {q:"The alpha/beta wolf hierarchy model was publicly retracted by its original researcher. What year did David Mech retract it?", a:["2008"]},
+    {q:"Which sociologist, author of 'Angry White Men', studied the anger driving manosphere communities?", a:["michael kimmel","Michael Kimmel","kimmel","Kimmel"]},
+    {q:"Which film's famous scene did the manosphere borrow the 'red pill' term from?", a:["the matrix","The Matrix","matrix"]},
+    {q:"According to paragraph 5, bell hooks argued that feminist movement is for whom?", a:["everyone","everyone."]},
+  ],
+  tf:[
+    {q:"The manosphere is a unified, organised movement with a single agreed ideology.",a:"F",e:"It is a loose network of communities that often disagree with each other, united mainly by the belief that feminism has harmed men."},
+    {q:"The alpha/beta wolf hierarchy, often cited in the manosphere, was publicly retracted by its original researcher in 2008.",a:"T",e:"Correct. David Mech retracted the model and has asked publishers to stop distributing his original 1970 book."},
+    {q:"The manosphere's framework reduces women's value to physical attractiveness and reduces men's value to dominance hierarchy status.",a:"T",e:"Correct. Both men and women are objectified and stereotyped within the manosphere's framework."},
+    {q:"Research by Michael Kimmel found that men in manosphere communities generally become happier and more socially connected over time.",a:"F",e:"Kimmel found the opposite: men who spend the most time in these communities often become more isolated, angrier, and more unhappy."},
+    {q:"Feminist scholars argue that rigid gender stereotypes harm men as well as women.",a:"T",e:"Correct. Kaplan, Wolf, Berger, and hooks all explicitly argue that the same system that harms women also constrains and damages men."},
+    {q:"The manosphere accurately represents what feminist scholars argue.",a:"F",e:"The manosphere consistently misrepresents feminism. Feminist scholars argue for equality that benefits everyone, including men."},
+    {q:"Greater gender equality is associated with worse outcomes for men, including in mental health.",a:"F",e:"The evidence shows the opposite: greater gender equality is associated with better outcomes for men as well as women, including in mental health and life expectancy."},
+    {q:"Bell hooks argued in 2004 that feminist movement is for everyone, not just women.",a:"T",e:"Correct. hooks explicitly argued that patriarchy hurts men too, by denying them emotional expression and full humanity."},
+  ],
+  disc:["Explain in one sentence what the manosphere claims and why researchers say those claims are wrong.","The manosphere uses the language of the male gaze: rating, targeting, conquering. What does this tell us about how it sees women?","Why does Michael Kimmel say the manosphere fails men who follow it?","Feminist scholars say gender stereotypes harm men too. How does this connect to what your group just read?","Do you think the manosphere's appeal is understandable? What would a better response to male loneliness and isolation look like?"],
+  refs:["Ging, D. (2019). Alphas, betas, and incels: Theorizing the masculinities of the manosphere. <em>Men and Masculinities, 22</em>(4), 638-657. https://doi.org/10.1177/1097184X17706401","Marwick, A., &amp; Caplan, R. (2018). Drinking male tears: Language, the manosphere, and networked harassment. <em>Feminist Media Studies, 18</em>(4), 543-559. https://doi.org/10.1080/14680777.2018.1450568","Kimmel, M. (2013). <em>Angry white men: American masculinity at the end of an era</em>. Nation Books.","hooks, b. (2004). <em>The will to change: Men, masculinity, and love</em>. Atria Books.","Equality and Human Rights Commission. (2019). <em>Gender equality: Research report</em>. EHRC."]
+};
+
+function show(g){
+  document.getElementById('landing').style.display='none';
+  const d=GRP[g];
+  const paraHtml=d.paras.map((p,i)=>`
+    <div class="art-para">
+      <div class="para-num-lbl">Paragraph ${i+1}</div>
+      <p>${p.body}</p>
+    </div>`).join('');
+
+  const shuffled=[...d.paras.map((p,i)=>({hdr:p.hdr,idx:i}))].sort(()=>Math.random()-0.5);
+  const leftHtml=d.paras.map((_,i)=>`<div class="match-item" id="mP-${g}-${i}" onclick="matchPick('${g}','p',${i})">Paragraph ${i+1}</div>`).join('');
+  const rightHtml=shuffled.map((s,i)=>`<div class="match-item" id="mH-${g}-${s.idx}" onclick="matchPick('${g}','h',${s.idx})">${s.hdr}</div>`).join('');
+
+  const factHtml=d.facts.map((f,i)=>`
+    <div class="fact-item">
+      <div class="fact-q"><strong>${i+1}.</strong> ${f.q}</div>
+      <div class="fact-input-row">
+        <input class="fact-input" id="fi-${g}-${i}" placeholder="Type your answer...">
+        <button class="fact-check-btn" onclick="checkFact('${g}',${i})">Check</button>
+      </div>
+      <div class="fact-fb" id="ffb-${g}-${i}"></div>
+    </div>`).join('');
+
+  const tfHtml=d.tf.map((t,i)=>`
+    <div class="tf-item">
+      <div class="tf-q"><strong>${i+1}.</strong> ${t.q}</div>
+      <div class="tf-btns">
+        <button class="tf-btn" id="bT-${g}-${i}" onclick="pickTF('${g}',${i},'T')">True</button>
+        <button class="tf-btn" id="bF-${g}-${i}" onclick="pickTF('${g}',${i},'F')">False</button>
+      </div>
+      <div class="tf-exp" id="te-${g}-${i}">${t.e}</div>
+    </div>`).join('');
+
+  const discHtml=d.disc.map((q,i)=>`<div class="disc-q"><span class="dnum">${i+1}.</span>${q}</div>`).join('');
+  const refsHtml=d.refs.map(r=>`<p>${r}</p>`).join('');
+  const objHtml=d.objs.map(o=>`<li>${o}</li>`).join('');
+
+  document.getElementById('area').innerHTML=`
+<div class="reader" style="display:block">
+  <div class="rdr-hdr" style="background:${d.color}">
+    <h2>${d.title}</h2>
+    <div class="byline">${d.byline}</div>
+    <div class="istrip">Read the article. Complete Task 1 (match headings), Task 2 (find the facts), then Task 3 (true or false). You will teach what you learned to your mixed group.</div>
+  </div>
+
+  <div class="obj-banner">
+    <h3>By the end of this reading you should be able to:</h3>
+    <ul>${objHtml}</ul>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Read the Article</div>
+    ${paraHtml}
+  </div>
+
+  <div class="section" id="task1-${g}">
+    <div class="section-label">Task 1: Match the Subheading to the Paragraph</div>
+    <h3>Which heading belongs to which paragraph? Tap a paragraph number, then tap the heading you think matches it.</h3>
+    <p class="match-instr">The headings are in a random order. Match all five to complete the task.</p>
+    <div class="match-cols">
+      <div><div class="match-col-lbl">Paragraphs</div>${leftHtml}</div>
+      <div><div class="match-col-lbl">Headings</div>${rightHtml}</div>
+    </div>
+    <div class="match-feedback" id="mfb-${g}"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Task 2: Find the Facts</div>
+    <h3>Answer these questions using specific information from the article. Numbers, dates, names, and key terms only.</h3>
+    ${factHtml}
+  </div>
+
+  <div class="section">
+    <div class="section-label">Task 3: True or False?</div>
+    <h3>Read each statement. Decide if it is true or false based on the article. Press Check Answers when done.</h3>
+    <div id="tf-items-${g}">${tfHtml}</div>
+    <div class="score-row" id="sc-${g}"></div>
+    <button class="check-all-btn" onclick="checkAllTF('${g}')">Check All Answers</button>
+  </div>
+
+  <div class="disc-section">
+    <h3>Discussion Questions for Mixed Groups</h3>
+    ${discHtml}
+  </div>
+
+  <div class="refs">
+    <h3>References</h3>
+    ${refsHtml}
+  </div>
+
+  <div class="back-btn" onclick="goBack()">Back to Group Selection</div>
+</div>`;
+  window.scrollTo(0,0);
+  matchState[g]={sel:null,side:null,pairs:{}};
+  tfPicks[g]={};
+}
+
+function goBack(){
+  document.getElementById('area').innerHTML='';
+  document.getElementById('landing').style.display='flex';
+  window.scrollTo(0,0);
+}
+
+const matchState={};
+const tfPicks={};
+
+function matchPick(g,side,idx){
+  const st=matchState[g];
+  const el=document.getElementById(side==='p'?`mP-${g}-${idx}`:`mH-${g}-${idx}`);
+  if(el.classList.contains('ok')) return;
+  if(!st.sel){
+    document.querySelectorAll(`[id^="mP-${g}-"],[id^="mH-${g}-"]`).forEach(e=>e.classList.remove('sel'));
+    el.classList.add('sel');
+    st.sel=idx; st.side=side;
+  } else {
+    if(st.side===side){
+      document.querySelectorAll(`[id^="mP-${g}-"],[id^="mH-${g}-"]`).forEach(e=>e.classList.remove('sel'));
+      el.classList.add('sel');
+      st.sel=idx; st.side=side;
+      return;
+    }
+    const p=side==='p'?idx:st.sel;
+    const h=side==='h'?idx:st.sel;
+    const correct=p===h;
+    const pEl=document.getElementById(`mP-${g}-${p}`);
+    const hEl=document.getElementById(`mH-${g}-${h}`);
+    document.querySelectorAll(`[id^="mP-${g}-"],[id^="mH-${g}-"]`).forEach(e=>e.classList.remove('sel'));
+    if(correct){
+      pEl.classList.add('ok'); hEl.classList.add('ok');
+      st.pairs[p]=h;
+      const total=GRP[g].paras.length;
+      const done=Object.keys(st.pairs).length;
+      document.getElementById(`mfb-${g}`).textContent=done===total?'All matched correctly! Well done.':done+' of '+total+' matched.';
+    } else {
+      pEl.classList.add('bad'); hEl.classList.add('bad');
+      document.getElementById(`mfb-${g}`).textContent='Not quite. Try again.';
+      setTimeout(()=>{pEl.classList.remove('bad');hEl.classList.remove('bad');},900);
+    }
+    st.sel=null; st.side=null;
+  }
+}
+
+function checkFact(g,i){
+  const inp=document.getElementById(`fi-${g}-${i}`);
+  const val=inp.value.trim().toLowerCase();
+  const correct=GRP[g].facts[i].a.map(a=>a.toLowerCase());
+  const ok=correct.some(c=>val===c||val.includes(c)||c.includes(val)&&val.length>2);
+  inp.className='fact-input '+(ok?'ok':'bad');
+  const fb=document.getElementById(`ffb-${g}-${i}`);
+  fb.className='fact-fb '+(ok?'ok':'bad');
+  fb.textContent=ok?'Correct!':'Not quite. Check the article and try again.';
+}
+
+function pickTF(g,i,v){
+  if(!tfPicks[g]) tfPicks[g]={};
+  tfPicks[g][i]=v;
+  document.getElementById(`bT-${g}-${i}`).className='tf-btn'+(v==='T'?' selT':'');
+  document.getElementById(`bF-${g}-${i}`).className='tf-btn'+(v==='F'?' selF':'');
+}
+
+function checkAllTF(g){
+  let ok=0;
+  GRP[g].tf.forEach((item,i)=>{
+    const chosen=(tfPicks[g]||{})[i];
+    document.getElementById(`bT-${g}-${i}`).className='tf-btn '+(item.a==='T'?'correct':(chosen==='T'?'wrong':''));
+    document.getElementById(`bF-${g}-${i}`).className='tf-btn '+(item.a==='F'?'correct':(chosen==='F'?'wrong':''));
+    document.getElementById(`te-${g}-${i}`).classList.add('show');
+    if(chosen===item.a) ok++;
+  });
+  const sc=document.getElementById(`sc-${g}`);
+  sc.style.display='block';
+  sc.textContent='You got '+ok+' out of '+GRP[g].tf.length+' correct.';
+}
+</script>
+</body>
+</html>
