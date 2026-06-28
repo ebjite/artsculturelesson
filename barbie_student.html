@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barbie (2023)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0e0714 0%, #1a0d20 100%);
+    min-height: 100vh;
+    color: #f0f0f0;
+    padding: 40px 20px 60px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.01) 2px,
+      rgba(255,255,255,0.01) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 40px 30px 36px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .course-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ffcc44;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 8px;
+  }
+
+  .instructions {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    font-size: 0.82rem;
+    color: #bbb;
+    line-height: 1.8;
+  }
+
+  .instructions strong { color: #ffcc44; }
+
+  .card {
+    background: rgba(25,10,32,0.75);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 26px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 22px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: #ff6eb055; }
+
+  .q-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #ff6eb0;
+    min-width: 42px;
+    line-height: 1;
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .q-body { flex: 1; }
+
+  .q-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f0f0f0;
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+
+  .followup {
+    font-size: 0.82rem;
+    color: #999;
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .fu-label {
+    font-style: normal;
+    font-weight: 700;
+    color: #ffcc44;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+
+  .ref {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 4px;
+  }
+
+  .ref-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ff6eb0;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+
+  .ref-text {
+    font-size: 0.72rem;
+    color: #888;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .count-bar {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 28px;
+    letter-spacing: 0.05em;
+  }
+
+  .count-bar span { color: #ffcc44; font-weight: 700; }
+
+  
+
+  /* Block all selection, drag, right-click */
+  img { pointer-events: none; }
+  a { pointer-events: none; color: inherit; text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .card { flex-direction: column; gap: 10px; }
+    .q-num { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    
+    <div class="course-tag">HUMN 110 Arts and Culture &nbsp;|&nbsp; Oral Exam &nbsp;|&nbsp; 2-Minute Format</div>
+    <h1>Barbie (2023)</h1>
+    <div class="subtitle">50 Questions &nbsp;&middot;&nbsp; American University of Phnom Penh</div>
+  </header>
+
+  <div class="instructions">
+    <strong>How the oral exam works:</strong> A spinning wheel will select you at random.
+    Your teacher will ask you one question. You have 2 minutes to answer.
+    Your teacher may then ask the follow-up shown in italics.
+    Give reasons. Connect to class theories where possible.
+    There is no single correct answer. The quality of your thinking matters most.
+    References are provided for students who want to read further.
+  </div>
+
+  <div class="count-bar"><span>50</span> questions</div>
+
+  
+    <div class="card" id="q1">
+      <div class="q-num">1</div>
+      <div class="q-body">
+        <div class="q-text">Is Barbie a film or is it art? Give one reason for your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Can something be made by a huge company like Mattel and still be art? What does that question say about how we define art?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Berger, J. (1972). Ways of Seeing. Penguin. / Dissanayake, E. (1988). What Is Art For? University of Washington Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q2">
+      <div class="q-num">2</div>
+      <div class="q-body">
+        <div class="q-text">What does Barbieland represent? What idea or value does it embody, and what does it deliberately leave out?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there an idea of a perfect world that you were taught to believe in growing up? What did it leave out?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">de Beauvoir, S. (1949). The Second Sex. Gallimard. / Friedan, B. (1963). The Feminine Mystique. Norton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q3">
+      <div class="q-num">3</div>
+      <div class="q-body">
+        <div class="q-text">Why does Barbie suddenly think about death at the beginning of the film? Analyse WHY the film begins with this moment, not just what happens.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever had a sudden thought that something you believed was perfect was not actually perfect? How did you feel?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1923). The Ego and the Id. Norton. / Heidegger, M. (1927). Being and Time. Harper and Row.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q4">
+      <div class="q-num">4</div>
+      <div class="q-body">
+        <div class="q-text">Which character do you relate to most in Barbie? Explain why using specific evidence from the film.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a quality in that character that you recognise in yourself, something you are proud of or something you are working on?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q5">
+      <div class="q-num">5</div>
+      <div class="q-body">
+        <div class="q-text">Do you think Barbie is a feminist film? Give one reason for and one reason against.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Has a film, song or advertisement ever made you think differently about gender roles in Cambodia? What was it?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">hooks, b. (2000). Feminism Is for Everybody. South End Press. / Walters, S. (1995). Material Girls: Making Sense of Feminist Cultural Theory. University of California Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q6">
+      <div class="q-num">6</div>
+      <div class="q-body">
+        <div class="q-text">What does Barbie's choice to become human represent? Analyse what she is choosing, what she is giving up, and why the film frames this as a positive ending.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> If you had to give up one thing to become truly free or truly yourself, what would you give up?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1923). The Ego and the Id. Norton. / Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q7">
+      <div class="q-num">7</div>
+      <div class="q-body">
+        <div class="q-text">What does Ken's journey in the film represent? What does he learn, and what does the film ask us to feel for him?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think men in Cambodia face pressure to perform masculinity in specific ways? Give one example.</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Connell, R. (1995). Masculinities. Polity Press. / Butler, J. (1990). Gender Trouble. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q8">
+      <div class="q-num">8</div>
+      <div class="q-body">
+        <div class="q-text">The film is very funny but also very serious. How does the humour help the film make its arguments?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Can you think of a comedian, meme or funny content from Cambodia that also carries a serious message underneath?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bakhtin, M. (1984). Rabelais and His World. Indiana University Press. / Oring, E. (2003). Engaging Humor. University of Illinois Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q9">
+      <div class="q-num">9</div>
+      <div class="q-body">
+        <div class="q-text">What do you think the film's main message is? State it in one clear sentence and defend it.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you agree with that message? Why or why not?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q10">
+      <div class="q-num">10</div>
+      <div class="q-body">
+        <div class="q-text">Weird Barbie is the Barbie who was played with too hard, bent out of shape, hair cut, face drawn on. What does she represent in the film, and why is she the one who sends Barbie on her journey?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever been made to feel too much, too loud, too strange, too different from what was expected? How did you respond?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros. / Foucault, M. (1961). Madness and Civilization. Pantheon Books.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q11">
+      <div class="q-num">11</div>
+      <div class="q-body">
+        <div class="q-text">Barbie arrives in the real world as a cultural outsider. Using Bhabha's third space idea, what happens to her identity when she is between two worlds?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever felt that you belonged to two worlds but fully to neither, two languages, two cultures, two expectations?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge. / Hall, S. (1990). Cultural Identity and Diaspora. Lawrence and Wishart.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q12">
+      <div class="q-num">12</div>
+      <div class="q-body">
+        <div class="q-text">The film opens with a reference to 2001: A Space Odyssey. What does this opening argue about Barbie as a cultural object?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a toy, game or object from your childhood that you think changed how you understood the world?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Kubrick, S. (Director). (1968). 2001: A Space Odyssey [Film]. MGM. / Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q13">
+      <div class="q-num">13</div>
+      <div class="q-body">
+        <div class="q-text">Barbieland is completely pink. What does the film's use of the colour pink communicate, and does the meaning stay stable or does it shift through the film?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a colour in Khmer culture or your personal life that carries a strong meaning? What is it?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Pastoureau, M. (2001). Blue: The History of a Color. Princeton University Press. / Eisenstein, S. (1949). Film Form. Harcourt.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q14">
+      <div class="q-num">14</div>
+      <div class="q-body">
+        <div class="q-text">The houses in Barbieland have no fourth wall. Everything is open and visible. What does this architectural choice represent?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you feel like your life is visible to people around you in ways you cannot control? Give an example.</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Bentham, J. (1791). Panopticon. Payne.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q15">
+      <div class="q-num">15</div>
+      <div class="q-body">
+        <div class="q-text">When Barbie arrives in the real world, the colours change and become less saturated. What does this visual shift communicate?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever moved from a comfortable, familiar environment to somewhere unfamiliar? How did it look and feel different?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Eisenstein, S. (1949). Film Form. Harcourt. / Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q16">
+      <div class="q-num">16</div>
+      <div class="q-body">
+        <div class="q-text">Barbie's feet change from the arched doll position to flat feet as she becomes more human. What does this physical transformation symbolise?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a physical habit, posture or way of dressing that you have changed as you have grown up? What did the change mean?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Entwistle, J. (2000). The Fashioned Body. Polity Press. / Butler, J. (1990). Gender Trouble. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q17">
+      <div class="q-num">17</div>
+      <div class="q-body">
+        <div class="q-text">Ken brings patriarchy back to Barbieland from the real world as if it is a great discovery. What does this sequence say about how systems of power are learned and spread?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever seen an idea, good or bad, spread quickly through your school or community just because someone popular promoted it?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bandura, A. (1977). Social Learning Theory. Prentice Hall. / Whorf, B. (1956). Language, Thought and Reality. MIT Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q18">
+      <div class="q-num">18</div>
+      <div class="q-body">
+        <div class="q-text">When Barbie goes to Mattel for help, she eventually climbs willingly back into the box. What does this moment represent, and why is it significant that she chooses it herself?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever chosen to go back to a limiting situation because it felt safer than the unknown? What did that choice reveal about you?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1923). The Ego and the Id. Norton. / Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q19">
+      <div class="q-num">19</div>
+      <div class="q-body">
+        <div class="q-text">At the end, Barbie receives a new name, Barbara Handler. Why does this naming matter, and what does it symbolise about her journey?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> What does your name mean, and does it feel like part of your identity or something given to you?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Whorf, B. (1956). Language, Thought and Reality. MIT Press. / Sapir, E. (1929). The Status of Linguistics as a Science. Language, 5(4), 207-214.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q20">
+      <div class="q-num">20</div>
+      <div class="q-body">
+        <div class="q-text">The scene where Barbie and Gloria are stared at by men in the real world is deliberately uncomfortable. What is the director doing in this scene and why?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever felt watched or judged in public in a way that made you uncomfortable? What did you do?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q21">
+      <div class="q-num">21</div>
+      <div class="q-body">
+        <div class="q-text">Light in Barbieland is always perfect with no shadows and no harsh angles. What does this tell us about the ideology of the world Barbie lives in?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do advertisements and social media use light in a similar way? Can you give an example?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Berger, J. (1972). Ways of Seeing. Penguin. / Eisenstein, S. (1949). Film Form. Harcourt.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q22">
+      <div class="q-num">22</div>
+      <div class="q-body">
+        <div class="q-text">Does the Barbie film challenge or reproduce the Male Gaze? Use one specific scene to support your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Think about an advertisement, TikTok or film you have seen recently. Who was looking and who was being looked at?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18. / Kaplan, E. (1983). Women and Film. Methuen.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q23">
+      <div class="q-num">23</div>
+      <div class="q-body">
+        <div class="q-text">Ken performs I'm Just Ken, a power ballad about not knowing who he is without Barbie. What does this song reveal about male identity, and why is it both funny and genuinely moving?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think men find it harder or easier than women to admit they do not know who they are? Why?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Connell, R. (1995). Masculinities. Polity Press. / Freud, S. (1923). The Ego and the Id. Norton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q24">
+      <div class="q-num">24</div>
+      <div class="q-body">
+        <div class="q-text">Using Freud's Id, Ego and Superego, analyse Barbie's journey through the film. Which part is in control at the start? Which part wins at the end?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> When you have to make a difficult decision, which part usually wins, what you want, what you should do, or what people expect of you?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1923). The Ego and the Id. Norton. / Freud, S. (1930). Civilization and Its Discontents. Norton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q25">
+      <div class="q-num">25</div>
+      <div class="q-body">
+        <div class="q-text">Ken's deepest desire is simply to be seen and valued. How does his Ego hide this throughout the film, and what does he build to cover it?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever wanted something deeply but hidden it from others? Why? What did you show them instead?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1923). The Ego and the Id. Norton. / Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q26">
+      <div class="q-num">26</div>
+      <div class="q-body">
+        <div class="q-text">Gloria's speech in the film lists impossible contradictory standards women are expected to meet. Identify one poetic device she uses and explain its effect on the audience.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Has anyone ever said something to you, a parent, a friend, a stranger, that stayed with you like a piece of art? What was it?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Rainville, C. (2013). Be a Lady They Said. / hooks, b. (2000). Feminism Is for Everybody. South End Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q27">
+      <div class="q-num">27</div>
+      <div class="q-body">
+        <div class="q-text">Barbie is a product that has entered cultures all over the world. Using Bhabha's third space, what happens to her meaning when she crosses cultural boundaries?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there an American product, image or idea that has entered Cambodia and changed meaning here? What did it become?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge. / Appadurai, A. (1996). Modernity at Large. University of Minnesota Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q28">
+      <div class="q-num">28</div>
+      <div class="q-body">
+        <div class="q-text">Would Barbie have been a popular film in the 1950s? Why or why not? Use specific elements of the film to support your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a film, book or idea that is popular now that you think would have been impossible or dangerous to release in your parents' generation?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Friedan, B. (1963). The Feminine Mystique. Norton. / de Beauvoir, S. (1949). The Second Sex. Gallimard.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q29">
+      <div class="q-num">29</div>
+      <div class="q-body">
+        <div class="q-text">The journey between Barbieland and the real world is itself a significant moment in the film. What does it look like, what does it feel like for Barbie, and what does that transition represent?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever crossed a boundary, physical, cultural, or personal, that changed something about how you saw yourself?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge. / Turner, V. (1969). The Ritual Process. Aldine.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q30">
+      <div class="q-num">30</div>
+      <div class="q-body">
+        <div class="q-text">When Barbie interacts with people in the real world, the construction workers, the teenagers, the Mattel executives, what do these interactions reveal about how the real world sees her?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever arrived somewhere new and realised that people saw you completely differently from how you saw yourself? How did that feel?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros. / Goffman, E. (1959). The Presentation of Self in Everyday Life. Doubleday.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q31">
+      <div class="q-num">31</div>
+      <div class="q-body">
+        <div class="q-text">The Mattel building is presented as a bureaucratic maze run by men in suits. What is the film saying about corporations, creativity, and power?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever had a creative idea that was stopped or changed by someone with authority? How did it feel?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Adorno, T. and Horkheimer, M. (1944). Dialectic of Enlightenment. Stanford University Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q32">
+      <div class="q-num">32</div>
+      <div class="q-body">
+        <div class="q-text">How does status and hierarchy work in Barbieland, and how does it change when the Kens take over? What does this shift reveal?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever seen a hierarchy change in a group, a class, a family, a team? What caused it and what followed?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Bourdieu, P. (1984). Distinction. Harvard University Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q33">
+      <div class="q-num">33</div>
+      <div class="q-body">
+        <div class="q-text">The Be a Lady They Said poem we studied in class lists contradictory demands placed on women. Where do you see the same tension in Barbie? Give a specific example from the film.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Are there double standards in Cambodia, things expected of women but not of men, that you have noticed?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Rainville, C. (2013). Be a Lady They Said. / de Beauvoir, S. (1949). The Second Sex. Gallimard.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q34">
+      <div class="q-num">34</div>
+      <div class="q-body">
+        <div class="q-text">Is Barbie protest art? What is it protesting against, and is the protest effective?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> What is one thing in your community or country that you wish a brave artist would make a film or painting about?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Lippard, L. (1984). Get the Message? A Decade of Art for Social Change. Dutton. / Duncum, P. (2008). Protest Art as Public Pedagogy. Art Education, 61(5).</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q35">
+      <div class="q-num">35</div>
+      <div class="q-body">
+        <div class="q-text">The film ends with Barbie going to the gynaecologist as her first human act. What does this ending reveal about the film's argument regarding the female body?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> What do you think makes a good ending for a film? Does it need to resolve everything?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Grosz, E. (1994). Volatile Bodies. Indiana University Press. / Butler, J. (1990). Gender Trouble. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q36">
+      <div class="q-num">36</div>
+      <div class="q-body">
+        <div class="q-text">Weird Barbie exists outside the social norms of Barbieland. She is excluded from parties, she lives alone, she tells hard truths. What does her position in the social structure reveal about how communities treat people who do not conform?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever felt excluded from a group because you did not fit the expected mould? What did that experience teach you?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1961). Madness and Civilization. Pantheon Books. / Goffman, E. (1963). Stigma. Prentice Hall.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q37">
+      <div class="q-num">37</div>
+      <div class="q-body">
+        <div class="q-text">The real teenage girls are unkind to Barbie when they meet her. What does this scene reveal about how the film represents women's relationships to each other, and why it happens?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever been in a situation where people were unkind to someone new or different? How did it make you feel?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">hooks, b. (2000). Feminism Is for Everybody. South End Press. / Bandura, A. (1977). Social Learning Theory. Prentice Hall.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q38">
+      <div class="q-num">38</div>
+      <div class="q-body">
+        <div class="q-text">Ken discovers horses and becomes obsessed. What does this moment represent in terms of his identity, and why is it both funny and sad?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever become obsessed with something new and then felt embarrassed about it later?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Connell, R. (1995). Masculinities. Polity Press. / Freud, S. (1923). The Ego and the Id. Norton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q39">
+      <div class="q-num">39</div>
+      <div class="q-body">
+        <div class="q-text">Barbie occupies an in-between position throughout the film, not fully Barbieland, not fully the real world. Using Bhabha's third space, what new kind of identity does she produce in that in-between space?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever felt that you are becoming someone new but have not quite arrived there yet, in between an old version of yourself and a new one?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge. / Soja, E. (1996). Thirdspace. Blackwell.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q40">
+      <div class="q-num">40</div>
+      <div class="q-body">
+        <div class="q-text">Choose a scene from Barbie that best represents the film's argument about gender. Describe the scene and explain what it argues.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a moment from a film, book or piece of art that has stayed with you and changed how you think about gender?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Butler, J. (1990). Gender Trouble. Routledge. / Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q41">
+      <div class="q-num">41</div>
+      <div class="q-body">
+        <div class="q-text">Choose a scene from Barbie and analyse it using two different theories from class.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Which theory from this course do you find most useful for understanding the world around you? Why?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18. / Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Freud, S. (1923). The Ego and the Id. Norton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q42">
+      <div class="q-num">42</div>
+      <div class="q-body">
+        <div class="q-text">Some critics said the film is too commercial to be truly feminist. What kind of thinking does this criticism represent, and how would you respond to it?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever had an opinion challenged in a way that made you realise your thinking was more black-and-white than you thought?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">hooks, b. (2000). Feminism Is for Everybody. South End Press. / Adorno, T. and Horkheimer, M. (1944). Dialectic of Enlightenment. Stanford University Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q43">
+      <div class="q-num">43</div>
+      <div class="q-body">
+        <div class="q-text">If you had to photograph one single image from this film and put it in a gallery as protest art, which would you choose, what would you call it, and why?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> If you could photograph one image from your own life and put it in a gallery as art, what would you capture?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Lippard, L. (1984). Get the Message? A Decade of Art for Social Change. Dutton. / Berger, J. (1972). Ways of Seeing. Penguin.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q44">
+      <div class="q-num">44</div>
+      <div class="q-body">
+        <div class="q-text">Ruth Handler says she created Barbie so girls could imagine their futures. Is that what Barbie has actually done? Use the film to support your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> What is one thing from your childhood, a toy, a game, a story, that shaped how you imagined your future?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Gerwig, G. (Director). (2023). Barbie [Film]. Warner Bros. / Bandura, A. (1977). Social Learning Theory. Prentice Hall.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q45">
+      <div class="q-num">45</div>
+      <div class="q-body">
+        <div class="q-text">What does Barbie tell us about how cultural identity is constructed and performed? Choose a scene and use it to build your argument.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you feel like you perform a version of yourself in public that is different from who you are privately? What causes that difference?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Goffman, E. (1959). The Presentation of Self in Everyday Life. Doubleday. / Hall, S. (1990). Cultural Identity and Diaspora. Lawrence and Wishart.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q46">
+      <div class="q-num">46</div>
+      <div class="q-body">
+        <div class="q-text">How does the film use visual style, the colours, the sets, the costumes, to make its argument? Choose one specific visual element and analyse it.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Think about your own midterm work. Have you used visual choices deliberately to communicate meaning? What are they?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Eisenstein, S. (1949). Film Form. Harcourt. / Berger, J. (1972). Ways of Seeing. Penguin.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q47">
+      <div class="q-num">47</div>
+      <div class="q-body">
+        <div class="q-text">The film was made by a woman director, Greta Gerwig, and written by a woman. Does the gender of the creator change what the film is able to say? Why or why not?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think the identity of the artist changes how we receive their work? Can you think of an example?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">hooks, b. (2000). Feminism Is for Everybody. South End Press. / Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q48">
+      <div class="q-num">48</div>
+      <div class="q-body">
+        <div class="q-text">What does Barbie tell us about the relationship between an object and the culture that creates it? Choose a specific moment in the film to anchor your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there an object from Cambodian culture, an everyday thing, that you think tells a strong story about who Cambodians are?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Appadurai, A. (1986). The Social Life of Things. Cambridge University Press. / Baudrillard, J. (1968). The System of Objects. Verso.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q49">
+      <div class="q-num">49</div>
+      <div class="q-body">
+        <div class="q-text">If Barbie were set in Cambodia, what would change and what would stay the same? Be specific about at least two things.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a story from Cambodian women's experience that you think deserves to be told in a major film?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge. / Hall, S. (1990). Cultural Identity and Diaspora. Lawrence and Wishart.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q50">
+      <div class="q-num">50</div>
+      <div class="q-body">
+        <div class="q-text">Make a case for or against this statement: Barbie is the most important feminist film of the 21st century.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Who in your life, a woman you know personally, do you think would benefit most from seeing this film? Why?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">hooks, b. (2000). Feminism Is for Everybody. South End Press. / Walters, S. (1995). Material Girls: Making Sense of Feminist Cultural Theory. University of California Press.</span></div>
+        
+      </div>
+    </div>
+</div>
+
+<script>
+  // Block right-click
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+  // Block common copy shortcuts
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && ['c','a','u','s','p'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+  // Block drag
+  document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+  // Obscure text with zero-width characters on load (visual doesn't change but breaks naive paste)
+  function obscure(node) {
+    if (node.nodeType === 3) {
+      var t = node.textContent;
+      var out = '';
+      for (var i = 0; i < t.length; i++) {
+        out += t[i];
+        if (i % 4 === 3) out += '\u200b';
+      }
+      node.textContent = out;
+    } else {
+      node.childNodes.forEach(obscure);
+    }
+  }
+  document.querySelectorAll('.q-text, .followup, .ref-text').forEach(obscure);
+</script>
+</body>
+</html>

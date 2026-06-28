@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle Royale (2000)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0d0608 0%, #1a0a0a 100%);
+    min-height: 100vh;
+    color: #f0f0f0;
+    padding: 40px 20px 60px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.01) 2px,
+      rgba(255,255,255,0.01) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 40px 30px 36px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .course-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #f0a030;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 8px;
+  }
+
+  .instructions {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    font-size: 0.82rem;
+    color: #bbb;
+    line-height: 1.8;
+  }
+
+  .instructions strong { color: #f0a030; }
+
+  .card {
+    background: rgba(30,10,10,0.7);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 26px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 22px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: #e0555555; }
+
+  .q-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #e05555;
+    min-width: 42px;
+    line-height: 1;
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .q-body { flex: 1; }
+
+  .q-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f0f0f0;
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+
+  .followup {
+    font-size: 0.82rem;
+    color: #999;
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .fu-label {
+    font-style: normal;
+    font-weight: 700;
+    color: #f0a030;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+
+  .ref {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 4px;
+  }
+
+  .ref-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #e05555;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+
+  .ref-text {
+    font-size: 0.72rem;
+    color: #888;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .count-bar {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 28px;
+    letter-spacing: 0.05em;
+  }
+
+  .count-bar span { color: #f0a030; font-weight: 700; }
+
+  
+
+  /* Block all selection, drag, right-click */
+  img { pointer-events: none; }
+  a { pointer-events: none; color: inherit; text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .card { flex-direction: column; gap: 10px; }
+    .q-num { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    
+    <div class="course-tag">HUMN 110 Arts and Culture &nbsp;|&nbsp; Oral Exam &nbsp;|&nbsp; 2-Minute Format</div>
+    <h1>Battle Royale (2000)</h1>
+    <div class="subtitle">50 Questions &nbsp;&middot;&nbsp; American University of Phnom Penh</div>
+  </header>
+
+  <div class="instructions">
+    <strong>How the oral exam works:</strong> A spinning wheel will select you at random.
+    Your teacher will ask you one question. You have 2 minutes to answer.
+    Your teacher may then ask the follow-up shown in italics.
+    Give reasons. Connect to class theories where possible.
+    There is no single correct answer. The quality of your thinking matters most.
+    References are provided for students who want to read further.
+  </div>
+
+  <div class="count-bar"><span>50</span> questions</div>
+
+  
+    <div class="card" id="q1">
+      <div class="q-num">1</div>
+      <div class="q-body">
+        <div class="q-text">Is Battle Royale a film, or is it art? Give one reason for your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever seen something at school or in your community that crosses the line between entertainment and art? What made it feel different?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Berger, J. (1972). Ways of Seeing. Penguin. / Dissanayake, E. (1988). What Is Art For? University of Washington Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q2">
+      <div class="q-num">2</div>
+      <div class="q-body">
+        <div class="q-text">In simple words, what is the BR Act? Why did the government create it?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> If Cambodia introduced a similar law for students, do you think people would accept it or resist it? Why?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company. / Takami, K. (1999). Battle Royale. Viz Media.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q3">
+      <div class="q-num">3</div>
+      <div class="q-body">
+        <div class="q-text">Who do you think is the most important character in the film, and why? Use a specific scene to support your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Does that character remind you of anyone in your own life? A friend, a teacher, or even yourself?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q4">
+      <div class="q-num">4</div>
+      <div class="q-body">
+        <div class="q-text">Do you think the stress shown in Battle Royale could happen in Cambodia? Use the film to build your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever felt pressure from your school, family or society that felt unfair? How did you respond?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Giroux, H. (2009). Youth in a Suspect Society. Palgrave Macmillan.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q5">
+      <div class="q-num">5</div>
+      <div class="q-body">
+        <div class="q-text">By the end of the film, do you think Shuya is a good person? Use one specific scene to support your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Think of a time when you had to choose between doing what was right and doing what was safe. What did you choose?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q6">
+      <div class="q-num">6</div>
+      <div class="q-body">
+        <div class="q-text">The film begins with a news broadcast showing the previous winner smiling and holding a doll. What does this opening image communicate about the world of the film?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> When you watch news in Cambodia, do you ever feel it is showing you only part of the truth?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Debord, G. (1967). The Society of the Spectacle. Zone Books. / Baudrillard, J. (1994). Simulacra and Simulation. University of Michigan Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q7">
+      <div class="q-num">7</div>
+      <div class="q-body">
+        <div class="q-text">What does the collar worn by the students represent? What does it say about the relationship between the body and power?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Are there things in your daily life that you wear or carry that represent control or belonging, like a uniform or ID?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Entwistle, J. (2000). The Fashioned Body. Polity Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q8">
+      <div class="q-num">8</div>
+      <div class="q-body">
+        <div class="q-text">Kitano eats one of Noriko's cookies each time a student dies, and eats the last one as he himself dies. What does this ritual mean, and what does it tell us about his character?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever had a ritual, something small and repeated, that helped you cope with something difficult?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company. / Turner, V. (1969). The Ritual Process. Aldine.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q9">
+      <div class="q-num">9</div>
+      <div class="q-body">
+        <div class="q-text">At the end of the film, Kitano pulls what appears to be a gun on Noriko, but it is a water pistol. What is the film doing in this moment?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever been in a situation where you realised something you feared was not what it seemed? How did you feel?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q10">
+      <div class="q-num">10</div>
+      <div class="q-body">
+        <div class="q-text">Is Kitano a villain? Give two reasons, one for and one against, using specific evidence from the film.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever had a relationship with an authority figure who seemed cruel but may have had a reason you did not fully understand?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q11">
+      <div class="q-num">11</div>
+      <div class="q-body">
+        <div class="q-text">The classroom scene, when students first wake up surrounded by soldiers, is designed to overwhelm. What does the presence of the army in that room communicate?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever been in a situation where authority made you feel physically small or powerless? What did that feel like?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Althusser, L. (1971). Ideology and Ideological State Apparatuses. Monthly Review Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q12">
+      <div class="q-num">12</div>
+      <div class="q-body">
+        <div class="q-text">The young teacher who accompanied the class on the bus is killed at the start of the game. What does his death represent, and why does the film include him?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever seen someone in authority fail to protect people who depended on them? How did that make you feel?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Giroux, H. (2003). The Abandoned Generation. Palgrave Macmillan.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q13">
+      <div class="q-num">13</div>
+      <div class="q-body">
+        <div class="q-text">Kitano announces the death zones and rules over the tannoy every morning. What does this daily announcement ritual communicate about power and normalisation?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Are there announcements, rituals or routines in your school or community that you follow without questioning? What would happen if you did question them?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Bourdieu, P. (1977). Outline of a Theory of Practice. Cambridge University Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q14">
+      <div class="q-num">14</div>
+      <div class="q-body">
+        <div class="q-text">Kiriyama goes blind after shrapnel from an explosion wounds him, but continues killing. What does this moment show us about how the film portrays violence?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever seen someone so committed to a goal that they seemed unable to stop, even when it was clearly harmful?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q15">
+      <div class="q-num">15</div>
+      <div class="q-body">
+        <div class="q-text">Shuya's father died by suicide before the game began, killed by the government for resisting the regime. How does the film use this backstory to shape how we understand Shuya's choices on the island?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there something that happened before you arrived at university that shapes how you respond to pressure today?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company. / Hall, S. (1990). Cultural Identity and Diaspora. Lawrence and Wishart.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q16">
+      <div class="q-num">16</div>
+      <div class="q-body">
+        <div class="q-text">In the lighthouse, an alliance of girls forms and then destroys itself through misunderstanding and panic. What does the structure of this scene argue about trust under pressure?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever been in a group situation where trust broke down? What caused it?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company. / hooks, b. (2000). Feminism Is for Everybody. South End Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q17">
+      <div class="q-num">17</div>
+      <div class="q-body">
+        <div class="q-text">Megumi is one of the first students killed, by Mitsuko who pretended to want an alliance. What does this death establish about how the film uses gender and survival?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever trusted someone who later turned out not to be what they seemed? What did you learn from that?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q18">
+      <div class="q-num">18</div>
+      <div class="q-body">
+        <div class="q-text">Battle Royale represents women through several archetypes: Noriko (passive, trusting), Mitsuko (aggressive, manipulative), Yukie (protective, organising). What do these different representations tell us about how the film thinks about gender?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think the women in your life are often placed into similar categories, good, bad, passive, aggressive? Where does that come from?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">de Beauvoir, S. (1949). The Second Sex. Gallimard. / Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q19">
+      <div class="q-num">19</div>
+      <div class="q-body">
+        <div class="q-text">In the scene where Takako runs from Kazushi, what does this moment show us about power, gender, and what the game forces people to become?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think men and women respond differently to extreme pressure? What shapes your view?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18. / Butler, J. (1990). Gender Trouble. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q20">
+      <div class="q-num">20</div>
+      <div class="q-body">
+        <div class="q-text">The hacker group, Mimura and his friends, try to use technology to destroy the game from the inside. What does their identity as tech students represent, and why does the film include them?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you believe technology can be used to resist power? Can you think of an example from real life?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Castells, M. (2010). The Rise of the Network Society. Wiley-Blackwell.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q21">
+      <div class="q-num">21</div>
+      <div class="q-body">
+        <div class="q-text">The film was made in Japan in 2000. What specific parts of Japanese culture does it reflect, and how does it use those cultural details to make a wider argument?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there something about Cambodian culture, a specific pressure or expectation, that you think a Cambodian filmmaker should be brave enough to address?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Napier, S. (2005). Anime from Akira to Howl's Moving Castle. Palgrave Macmillan. / Richie, D. (2001). A Hundred Years of Japanese Film. Kodansha.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q22">
+      <div class="q-num">22</div>
+      <div class="q-body">
+        <div class="q-text">What does the island represent as a space? It is not a school, not a war zone, and not a prison. It is something in between. What new kinds of identity do the students produce in that in-between space?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever been in a situation where your normal identity did not quite fit but you had not fully become something new either?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge. / Soja, E. (1996). Thirdspace. Blackwell.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q23">
+      <div class="q-num">23</div>
+      <div class="q-body">
+        <div class="q-text">The panopticon is a structure where people are watched but cannot see who is watching. How does this idea function in Battle Royale? Give one specific example from the film.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Where in your daily life do you feel like you are being watched without being able to see who is watching?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Bentham, J. (1791). Panopticon. Payne.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q24">
+      <div class="q-num">24</div>
+      <div class="q-body">
+        <div class="q-text">Freud described three parts of the human psyche: the Id (what we want), the Ego (what we show), and the Superego (what controls us). Choose one character and analyse which part dominates their behaviour.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Which of the three parts do you think is strongest in you right now? Give an example.</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1923). The Ego and the Id. Norton. / Freud, S. (1930). Civilization and Its Discontents. Norton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q25">
+      <div class="q-num">25</div>
+      <div class="q-body">
+        <div class="q-text">Mitsuko is driven by survival instinct with no apparent mercy. What does the film reveal about why she became this way, and does knowing this change how we judge her?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever done something impulsive that you understand differently now that you know more about the context?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1930). Civilization and Its Discontents. Norton. / Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q26">
+      <div class="q-num">26</div>
+      <div class="q-body">
+        <div class="q-text">Laura Mulvey's Male Gaze theory says films often frame women as objects for male viewing pleasure. Does Battle Royale reproduce or challenge this? Use one specific scene.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Think about a film, advertisement or social media account you follow. Do you see the Male Gaze there? Describe it.</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Mulvey, L. (1975). Visual Pleasure and Narrative Cinema. Screen, 16(3), 6-18.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q27">
+      <div class="q-num">27</div>
+      <div class="q-body">
+        <div class="q-text">The students in Battle Royale come from one cultural system but are placed in a space governed by completely different rules. What new kinds of behaviour and identity emerge from that collision?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever been in a situation where the rules you grew up with suddenly did not apply? How did you respond?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge. / Hall, S. (1990). Cultural Identity and Diaspora. Lawrence and Wishart.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q28">
+      <div class="q-num">28</div>
+      <div class="q-body">
+        <div class="q-text">What does the ending of the film represent? Think about what survives, what changes, and what does not.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you generally feel optimistic or pessimistic about the future of young people in Cambodia? What shapes your view?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q29">
+      <div class="q-num">29</div>
+      <div class="q-body">
+        <div class="q-text">Could Battle Royale be classified as protest art? What is it protesting against? Use a specific scene to support your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> If you made a piece of protest art about one thing in Cambodia today, what would it be about?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Duncum, P. (2008). Protest Art as Public Pedagogy. Art Education, 61(5). / Lippard, L. (1984). Get the Message? A Decade of Art for Social Change. Dutton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q30">
+      <div class="q-num">30</div>
+      <div class="q-body">
+        <div class="q-text">What does Battle Royale tell us about humans and cultural identity? Choose one scene and apply your thoughts to it.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there something about Cambodian cultural identity that you think would be tested or revealed under extreme pressure?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Hall, S. (1990). Cultural Identity and Diaspora. Lawrence and Wishart. / Bhabha, H. (1994). The Location of Culture. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q31">
+      <div class="q-num">31</div>
+      <div class="q-body">
+        <div class="q-text">The film was made in 2000. Do you think it still matters today? Use one idea from the film and one example from the real world to support your answer.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> What film, song or artwork from the past do you think still speaks to your generation today?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q32">
+      <div class="q-num">32</div>
+      <div class="q-body">
+        <div class="q-text">Choose a scene from Battle Royale that you think best represents the film's argument. Describe the scene and explain what it argues.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a moment from a film, book or piece of art that has stayed with you and that you think about often? What is it?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q33">
+      <div class="q-num">33</div>
+      <div class="q-body">
+        <div class="q-text">Choose a character from Battle Royale and argue that they are the film's moral centre. Use at least two scenes.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Who is the moral centre of your own friend group or family, the person whose judgement everyone trusts? What makes them that person?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q34">
+      <div class="q-num">34</div>
+      <div class="q-body">
+        <div class="q-text">The film is based on a novel. What does the film version gain from being visual, and what might it lose?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever read a book and then seen the film? Which did you prefer, and why?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Takami, K. (1999). Battle Royale. Viz Media. / Bazin, A. (1967). What Is Cinema? University of California Press.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q35">
+      <div class="q-num">35</div>
+      <div class="q-body">
+        <div class="q-text">Kawada survived a previous Battle Royale at the cost of his girlfriend and came back to destroy the system. What does his return represent, and what does it cost him?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever gone back to a situation you knew would be painful because you felt you had to?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q36">
+      <div class="q-num">36</div>
+      <div class="q-body">
+        <div class="q-text">What does Battle Royale tell us about the relationship between adults and young people? Choose a scene and build your answer from it.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you ever feel misunderstood or feared by older generations? What causes that gap?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Giroux, H. (2009). Youth in a Suspect Society. Palgrave Macmillan. / Foucault, M. (1975). Discipline and Punish. Pantheon Books.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q37">
+      <div class="q-num">37</div>
+      <div class="q-body">
+        <div class="q-text">The keigo, formal levels of politeness in Japanese, breaks down in the lighthouse scene as the girls' alliance collapses. What does this tell us about the relationship between language and social order?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Is there a Khmer word or phrase that carries a social meaning you cannot easily translate into English?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Whorf, B. (1956). Language, Thought and Reality. MIT Press. / Sapir, E. (1929). The Status of Linguistics as a Science. Language, 5(4), 207-214.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q38">
+      <div class="q-num">38</div>
+      <div class="q-body">
+        <div class="q-text">Kitano's final act is to eat the last of Noriko's cookies, answer his daughter's phone call, and die alone. What does this ending say about him as a character?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think people who do terrible things can still be lonely and human? Does that change how we should judge them?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company. / Freud, S. (1930). Civilization and Its Discontents. Norton.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q39">
+      <div class="q-num">39</div>
+      <div class="q-body">
+        <div class="q-text">If you had to choose one image from Battle Royale to represent the entire film in a museum, what would it be and why?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> If you had to choose one image, object or symbol from your own life to represent who you are, what would you choose?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Berger, J. (1972). Ways of Seeing. Penguin.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q40">
+      <div class="q-num">40</div>
+      <div class="q-body">
+        <div class="q-text">The film cuts between extreme violence and very quiet, gentle moments. Why does the director make this structural choice, and what does it ask of the audience?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you seen a piece of art, a painting, a song, or a poem that uses contrast in a similar way? What effect did it have on you?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Eisenstein, S. (1949). Film Form. Harcourt. / Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q41">
+      <div class="q-num">41</div>
+      <div class="q-body">
+        <div class="q-text">Noriko survives partly because she trusts Shuya completely. Is trust a strength or a weakness in Battle Royale, and what does the film seem to think?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> In your own life, do you find it easy or difficult to trust people? Has that changed over time?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q42">
+      <div class="q-num">42</div>
+      <div class="q-body">
+        <div class="q-text">If Battle Royale were remade and set in Cambodia, what would change and what would stay the same? Be specific.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> What is one social pressure in Cambodia that you think a filmmaker should be brave enough to address?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Bhabha, H. (1994). The Location of Culture. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q43">
+      <div class="q-num">43</div>
+      <div class="q-body">
+        <div class="q-text">Director Kinji Fukasaku said he made this film based on childhood memories of watching adults die during World War Two. Does knowing this change how you analyse the film?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever understood a piece of art differently after learning about the artist's life? What changed?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company. / Wallas, G. (1926). The Art of Thought. Harcourt Brace.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q44">
+      <div class="q-num">44</div>
+      <div class="q-body">
+        <div class="q-text">What does Battle Royale tell us about what culture does to people under pressure? Choose a scene and use it to build your argument.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think Cambodian culture would protect people in a crisis, or would it be the first thing to disappear?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Hall, S. (1990). Cultural Identity and Diaspora. Lawrence and Wishart. / Bhabha, H. (1994). The Location of Culture. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q45">
+      <div class="q-num">45</div>
+      <div class="q-body">
+        <div class="q-text">Kiriyama volunteered for the game. Unlike every other student, he chose to be there. What does his presence in the film argue about violence, identity and choice?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you think some people are shaped by their experiences to become dangerous, or do you think it is always a choice? What shapes your view?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Freud, S. (1920). Beyond the Pleasure Principle. Norton. / Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q46">
+      <div class="q-num">46</div>
+      <div class="q-body">
+        <div class="q-text">The film uses the school as both setting and symbol. What does the school represent in Battle Royale, and what does it mean that the game begins in a classroom?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> How do you feel about the institution of school itself? Does it protect young people or control them, or both?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Althusser, L. (1971). Ideology and Ideological State Apparatuses. Monthly Review Press. / Foucault, M. (1975). Discipline and Punish. Pantheon Books.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q47">
+      <div class="q-num">47</div>
+      <div class="q-body">
+        <div class="q-text">Kawada tells Shuya that his girlfriend died smiling, and he came back to understand why. What does this reveal about grief, meaning, and why people resist systems that harm them?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you ever done something difficult or painful because it felt like the only way to honour someone or something you lost?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q48">
+      <div class="q-num">48</div>
+      <div class="q-body">
+        <div class="q-text">Choose any scene from Battle Royale and analyse it using two different theories from class.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Which theory from this course do you find most useful for understanding the world around you? Why?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Foucault, M. (1975). Discipline and Punish. Pantheon Books. / Freud, S. (1923). The Ego and the Id. Norton. / Bhabha, H. (1994). The Location of Culture. Routledge.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q49">
+      <div class="q-num">49</div>
+      <div class="q-body">
+        <div class="q-text">Make a case for or against this statement: Battle Royale shows us that humans are, at their core, good.</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Do you personally believe that people are fundamentally good or fundamentally selfish? Has anything in your life shaped that belief?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Rousseau, J.J. (1762). The Social Contract. / Hobbes, T. (1651). Leviathan. / Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company.</span></div>
+        
+      </div>
+    </div>
+    <div class="card" id="q50">
+      <div class="q-num">50</div>
+      <div class="q-body">
+        <div class="q-text">Battle Royale has been compared to The Hunger Games, which came later. Without judging which is better, what does Battle Royale do with its survival premise that makes it specifically a film about culture, identity and power?</div>
+        <div class="followup"><span class="fu-label">Follow-up:</span> Have you read or seen something that was clearly inspired by something else but became its own thing? What made it distinct?</div>
+        <div class="ref"><span class="ref-label">Further Reading</span><span class="ref-text">Fukasaku, K. (Director). (2000). Battle Royale [Film]. Toei Company. / Collins, S. (2008). The Hunger Games. Scholastic.</span></div>
+        
+      </div>
+    </div>
+</div>
+
+<script>
+  // Block right-click
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+  // Block common copy shortcuts
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && ['c','a','u','s','p'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+  // Block drag
+  document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+  // Obscure text with zero-width characters on load (visual doesn't change but breaks naive paste)
+  function obscure(node) {
+    if (node.nodeType === 3) {
+      var t = node.textContent;
+      var out = '';
+      for (var i = 0; i < t.length; i++) {
+        out += t[i];
+        if (i % 4 === 3) out += '\u200b';
+      }
+      node.textContent = out;
+    } else {
+      node.childNodes.forEach(obscure);
+    }
+  }
+  document.querySelectorAll('.q-text, .followup, .ref-text').forEach(obscure);
+</script>
+</body>
+</html>
