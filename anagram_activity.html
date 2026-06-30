@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Guess the Word — HUMN 110</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Georgia,serif;background:linear-gradient(135deg,#2D1240 0%,#4A1A60 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;color:#F5E6D0;}
+h1{font-size:1.5rem;color:#D4A020;letter-spacing:2px;margin-bottom:4px;text-align:center;margin-top:8px;}
+.sub{font-size:0.82rem;color:#C8A8E0;font-style:italic;margin-bottom:18px;text-align:center;}
+.progress{display:flex;gap:8px;justify-content:center;margin-bottom:18px;}
+.pip{width:32px;height:7px;border-radius:4px;background:rgba(255,255,255,0.15);transition:background 0.3s;}
+.pip.done{background:#D4A020;}
+.pip.current{background:#C8A8E0;}
+.card{background:rgba(255,255,255,0.09);border-radius:16px;padding:22px 18px 18px;max-width:480px;width:100%;}
+.meaning{font-size:1.05rem;color:#F5E6D0;line-height:1.65;margin-bottom:18px;text-align:center;font-style:italic;border-bottom:1px solid rgba(212,160,32,0.25);padding-bottom:16px;}
+/* Guess */
+.guess-row{display:flex;gap:8px;margin-bottom:10px;}
+.guess-input{flex:1;padding:10px 13px;border-radius:10px;border:2px solid rgba(212,160,32,0.35);background:rgba(255,255,255,0.1);font-family:Georgia,serif;font-size:1rem;color:#F5E6D0;outline:none;-webkit-appearance:none;}
+.guess-input:focus{border-color:#D4A020;}
+.guess-input:disabled{opacity:0.5;}
+.guess-btn{padding:10px 16px;border-radius:10px;border:none;background:#D4A020;color:#1A0A2E;font-family:Georgia,serif;font-size:0.9rem;font-weight:bold;cursor:pointer;white-space:nowrap;}
+.guess-btn:disabled{opacity:0.4;cursor:default;}
+.feedback{text-align:center;font-size:0.92rem;min-height:1.3rem;margin-bottom:12px;font-weight:bold;transition:color 0.2s;}
+.feedback.wrong{color:#E87878;}
+.feedback.right{color:#78E878;}
+/* Anagram */
+.anagram-area{display:none;margin-top:4px;}
+.anagram-area.show{display:block;}
+.anagram-hint{font-size:0.82rem;color:#C8A8E0;text-align:center;margin-bottom:10px;font-style:italic;}
+.zone-label{font-size:0.72rem;color:#C8A8E0;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:6px;}
+.pool-zone{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;min-height:44px;padding:8px;background:rgba(0,0,0,0.18);border-radius:10px;margin-bottom:10px;}
+.drop-zone{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;min-height:48px;padding:8px;background:rgba(212,160,32,0.08);border:2px dashed rgba(212,160,32,0.35);border-radius:10px;margin-bottom:12px;transition:border-color 0.2s;}
+.drop-zone.drag-over{border-color:#D4A020;background:rgba(212,160,32,0.15);}
+.tile{padding:9px 12px;background:#4A2A70;border-radius:8px;font-size:1.05rem;font-weight:bold;color:#F5E6D0;cursor:pointer;border:2px solid rgba(212,160,32,0.25);transition:all 0.15s;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+.tile:hover{background:#5A3A80;border-color:#D4A020;}
+.tile.in-drop{background:#2A5A2A;border-color:#78E878;}
+.tile.selected{background:#6A3A90;border-color:#D4A020;transform:scale(1.08);}
+.check-btn{display:block;width:100%;padding:11px;border-radius:10px;border:1px solid rgba(212,160,32,0.4);background:rgba(212,160,32,0.12);color:#D4A020;font-family:Georgia,serif;font-size:0.95rem;cursor:pointer;transition:background 0.2s;}
+.check-btn:hover{background:rgba(212,160,32,0.25);}
+/* Correct */
+.correct-card{display:none;text-align:center;padding:16px;background:rgba(40,120,40,0.18);border-radius:12px;border:1px solid rgba(78,180,78,0.4);margin-top:10px;}
+.correct-card.show{display:block;}
+.correct-word{font-size:2rem;font-weight:bold;color:#78E878;letter-spacing:5px;margin-bottom:10px;}
+.correct-exp{font-size:0.88rem;color:#C8E8C8;line-height:1.55;}
+/* Next */
+.next-btn{display:none;max-width:480px;width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#D4A020,#E8B830);color:#1A0A2E;font-family:Georgia,serif;font-size:1.05rem;font-weight:bold;cursor:pointer;margin-top:14px;}
+.next-btn.show{display:block;}
+/* Done */
+.done-card{display:none;max-width:480px;width:100%;text-align:center;background:rgba(255,255,255,0.08);border-radius:16px;padding:30px 20px;}
+.done-card.show{display:flex;flex-direction:column;align-items:center;}
+.done-card h2{font-size:1.5rem;color:#D4A020;margin-bottom:10px;}
+.done-card p{color:#C8A8E0;font-size:0.95rem;line-height:1.6;}
+</style>
+</head>
+<body>
+<h1>Guess the Word</h1>
+<p class="sub">HUMN 110 &bull; Read the meaning. What is the word?</p>
+<div class="progress" id="prog"></div>
+<div class="card" id="card"></div>
+<button class="next-btn" id="nextBtn" onclick="nextWord()">Next &rarr;</button>
+<div class="done-card" id="doneCard">
+  <h2>All 6 words!</h2>
+  <p>You know the vocabulary for today.<br>Return to the class.</p>
+</div>
+
+<script>
+const WORDS=[
+  {w:"VOYEURISM",m:"The pleasure of watching others secretly, without their knowledge.",e:"In film theory, the audience takes a voyeuristic position. We watch without being seen. Foucault shows that watching is never neutral — it is always about power."},
+  {w:"HYSTERICAL",m:"Uncontrollably emotional — a label historically applied to women who challenged authority.",e:"From the Greek for 'womb'. For centuries, women who refused social norms were labelled hysterical and confined. Foucault: the label is a tool of power, not a medical fact."},
+  {w:"VISCERAL",m:"Raw, physical, instinctive — coming from deep inside before thought or judgement.",e:"A visceral reaction is Freud's ID speaking. It is what you feel before your ego filters it for public life."},
+  {w:"OSTRACIZED",m:"Pushed out by society for being different, dangerous, or inconvenient.",e:"In ancient Athens, citizens voted to exile someone by writing on a broken pot. Foucault traces this impulse across history: every era removes those who do not fit."},
+  {w:"PRIMAL",m:"Original, primitive — the most basic drives that existed before civilization shaped them.",e:"Freud's ID is primal. Eros (life, pleasure, sex) and Thanatos (death, aggression). These drives existed before parents, culture, or religion taught you what to want."},
+  {w:"SANCTUARY",m:"A safe place — somewhere protected from the rules and judgement of the outside world.",e:"Originally a sacred space where even criminals could not be pursued. Today: anywhere you feel free from the panopticon. A place where you stop performing for the watcher."}
+];
+
+let cur=0, solved=[], selTile=null, selFrom=null;
+
+function buildProg(){
+  document.getElementById('prog').innerHTML=WORDS.map((_,i)=>
+    `<div class="pip ${solved.includes(i)?'done':i===cur?'current':''}"></div>`
+  ).join('');
+}
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+
+function buildCard(){
+  if(cur>=WORDS.length){
+    document.getElementById('card').style.display='none';
+    document.getElementById('nextBtn').className='next-btn';
+    document.getElementById('doneCard').className='done-card show';
+    return;
+  }
+  const w=WORDS[cur];
+  const letters=shuffle(w.w.split(''));
+  document.getElementById('card').innerHTML=`
+    <div class="meaning">${w.m}</div>
+    <div class="guess-row">
+      <input class="guess-input" id="gi" placeholder="Type your guess..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button class="guess-btn" id="gb" onclick="checkGuess()">Check</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="anagram-area" id="aa">
+      <div class="anagram-hint">Tap a letter to select it, then tap where you want it to go.</div>
+      <div class="zone-label">Available letters</div>
+      <div class="pool-zone" id="pool"></div>
+      <div class="zone-label">Your answer</div>
+      <div class="drop-zone" id="drop"></div>
+      <button class="check-btn" onclick="checkAnagram()">Check arrangement</button>
+    </div>
+    <div class="correct-card" id="cc">
+      <div class="correct-word" id="cw"></div>
+      <div class="correct-exp" id="ce"></div>
+    </div>
+  `;
+  // Build tiles in pool
+  const pool=document.getElementById('pool');
+  letters.forEach(l=>{
+    const t=document.createElement('div');
+    t.className='tile';
+    t.textContent=l;
+    t.addEventListener('click',()=>tileTap(t,'pool'));
+    pool.appendChild(t);
+  });
+  document.getElementById('gi').addEventListener('keydown',e=>{if(e.key==='Enter')checkGuess();});
+  buildProg();
+}
+
+function tileTap(tile,from){
+  // If tile is selected, move it
+  if(selTile){
+    // move selTile to the zone that contains tile (or the opposite zone)
+    const targetZone=from==='pool'?document.getElementById('pool'):document.getElementById('drop');
+    const poolZone=document.getElementById('pool');
+    const dropZone=document.getElementById('drop');
+    if(selTile===tile){
+      // Deselect
+      selTile.classList.remove('selected');
+      selTile=null; selFrom=null;
+      return;
+    }
+    // Move selTile: if tile is in pool, move selTile to pool before tile; if in drop, move to drop before tile
+    if(tile.classList.contains('tile')){
+      const parentZone=tile.parentNode;
+      parentZone.insertBefore(selTile,tile);
+      selTile.classList.remove('selected');
+      // Update styling
+      selTile.classList.toggle('in-drop', parentZone.id==='drop');
+      selTile=null; selFrom=null;
+    }
+  } else {
+    // Select this tile
+    selTile=tile;
+    selFrom=from;
+    tile.classList.add('selected');
+  }
+}
+
+function dropTileToZone(zoneId){
+  if(!selTile) return;
+  const zone=document.getElementById(zoneId);
+  zone.appendChild(selTile);
+  selTile.classList.remove('selected');
+  selTile.classList.toggle('in-drop', zoneId==='drop');
+  // Update click handler zone context
+  selTile.onclick=()=>tileTap(selTile, zoneId==='drop'?'drop':'pool');
+  selTile=null; selFrom=null;
+}
+
+// Tap on zones themselves to drop selected tile there
+function setupZoneTaps(){
+  setTimeout(()=>{
+    const pool=document.getElementById('pool');
+    const drop=document.getElementById('drop');
+    if(pool) pool.addEventListener('click',e=>{if(e.target===pool&&selTile)dropTileToZone('pool');});
+    if(drop) drop.addEventListener('click',e=>{if(e.target===drop&&selTile)dropTileToZone('drop');});
+  },50);
+}
+
+function checkGuess(){
+  const val=document.getElementById('gi').value.trim().toUpperCase().replace(/\s/g,'');
+  if(val===WORDS[cur].w){showCorrect();return;}
+  document.getElementById('fb').className='feedback wrong';
+  document.getElementById('fb').textContent='Not quite. Try the letter tiles below.';
+  document.getElementById('aa').className='anagram-area show';
+  setupZoneTaps();
+}
+
+function checkAnagram(){
+  const drop=document.getElementById('drop');
+  const ans=[...drop.querySelectorAll('.tile')].map(t=>t.textContent).join('');
+  if(ans===WORDS[cur].w){showCorrect();}
+  else{
+    document.getElementById('fb').className='feedback wrong';
+    document.getElementById('fb').textContent='Not quite. Keep rearranging.';
+  }
+}
+
+function showCorrect(){
+  const w=WORDS[cur];
+  document.getElementById('cc').className='correct-card show';
+  document.getElementById('cw').textContent=w.w;
+  document.getElementById('ce').textContent=w.e;
+  document.getElementById('fb').className='feedback right';
+  document.getElementById('fb').textContent='Correct!';
+  const gi=document.getElementById('gi'); if(gi)gi.disabled=true;
+  const gb=document.getElementById('gb'); if(gb)gb.disabled=true;
+  solved.push(cur);
+  buildProg();
+  document.getElementById('nextBtn').className='next-btn show';
+}
+
+function nextWord(){
+  cur++;
+  document.getElementById('nextBtn').className='next-btn';
+  selTile=null; selFrom=null;
+  buildCard();
+}
+
+buildCard();
+</script>
+</body>
+</html>
