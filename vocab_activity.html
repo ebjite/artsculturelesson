@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fashion as Art: Key Words Activity</title>
+<style>
+  :root {
+    --accent: #C026D3;
+    --dark: #15161F;
+    --muted: #5B5C6B;
+    --bg1: #EEEFF8;
+    --bg2: #E3E6F5;
+    --card: #FFFFFF;
+    --correct: #1D9E75;
+    --wrong: #E24B4A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    color: var(--dark);
+    margin: 0;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    color: var(--accent);
+    font-style: italic;
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+  section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(60, 20, 90, 0.08);
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 0;
+    color: var(--dark);
+  }
+  .step-label {
+    display: inline-block;
+    background: #F6E6FB;
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  #score {
+    font-weight: bold;
+    color: var(--accent);
+  }
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .match-col button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1.5px solid #ddd;
+    background: #fafafa;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .match-col button:hover { border-color: var(--accent); }
+  .match-col button.selected { border-color: var(--accent); background: #F6E6FB; }
+  .match-col button.correct { border-color: var(--correct); background: #E4F5EE; color: var(--correct); cursor: default; }
+  .match-col button.wrong-flash { border-color: var(--wrong); background: #FCEAEA; }
+  .blank-item { margin-bottom: 18px; }
+  .blank-item p { margin: 0 0 6px 0; font-size: 15.5px; line-height: 1.5; }
+  .blank-item select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    font-size: 15px;
+  }
+  .blank-item select.correct { border-color: var(--correct); background: #E4F5EE; }
+  .blank-item select.wrong { border-color: var(--wrong); background: #FCEAEA; }
+  .sentence-item { margin-bottom: 16px; }
+  .sentence-item label { display: block; font-weight: bold; margin-bottom: 6px; color: var(--accent); }
+  .sentence-item textarea {
+    width: 100%;
+    min-height: 50px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1.5px solid #ccc;
+    font-size: 15px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .check-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .check-btn:hover { opacity: 0.9; }
+  .feedback { margin-top: 10px; font-size: 14px; color: var(--muted); }
+  .done-banner {
+    display: none;
+    background: #E4F5EE;
+    color: var(--correct);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Fashion as Art: Key Words</h1>
+  <p class="subtitle">Match the meaning, fill the blanks, then make your own sentences.</p>
+
+  <section>
+    <span class="step-label">STEP 1: MATCH</span>
+    <h2>Match each word to its meaning</h2>
+    <p style="color:var(--muted); margin-top:-6px;">Click a word, then click its meaning. Score: <span id="score">0</span> / 9</p>
+    <div class="match-grid">
+      <div class="match-col" id="wordCol"></div>
+      <div class="match-col" id="defCol"></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="step-label">STEP 2: FILL IN THE BLANKS</span>
+    <h2>Choose the correct word for each sentence</h2>
+    <div id="blankArea"></div>
+    <button class="check-btn" onclick="checkBlanks()">Check answers</button>
+    <div class="feedback" id="blankFeedback"></div>
+  </section>
+
+  <section>
+    <span class="step-label">STEP 3: CREATE</span>
+    <h2>Write your own sentence for each word</h2>
+    <p style="color:var(--muted); margin-top:-6px;">Use each word correctly in a sentence about fashion or art.</p>
+    <div id="sentenceArea"></div>
+    <button class="check-btn" onclick="showDone()">I'm finished</button>
+    <div class="done-banner" id="doneBanner">Nice work. Show your sentences to a partner and check them together.</div>
+  </section>
+</div>
+
+<script>
+const words = [
+  { word: "Presupposition", def: "A hidden assumption built into a question or image" },
+  { word: "Matrilineal", def: "Family line and inheritance passed through the mother" },
+  { word: "Passive", def: "Not acting, being acted upon" },
+  { word: "Inheritance", def: "Property or status passed down through a family" },
+  { word: "Implicit", def: "Suggested or implied, not stated directly" },
+  { word: "Explicit", def: "Stated clearly and directly" },
+  { word: "Vulnerability", def: "The state of being easily hurt or exposed" },
+  { word: "Infer", def: "To figure out something using clues, not being told directly" },
+  { word: "Perception", def: "The way someone sees or understands something" },
+];
+
+// ---------- Step 1: Match ----------
+let selectedWord = null;
+let matchedCount = 0;
+const wordCol = document.getElementById("wordCol");
+const defCol = document.getElementById("defCol");
+const shuffledDefs = [...words].sort(() => Math.random() - 0.5);
+
+words.forEach((w, i) => {
+  const btn = document.createElement("button");
+  btn.textContent = w.word;
+  btn.dataset.word = w.word;
+  btn.onclick = () => selectWord(btn, w.word);
+  wordCol.appendChild(btn);
+});
+
+shuffledDefs.forEach((w) => {
+  const btn = document.createElement("button");
+  btn.textContent = w.def;
+  btn.dataset.def = w.def;
+  btn.dataset.word = w.word;
+  btn.onclick = () => selectDef(btn);
+  defCol.appendChild(btn);
+});
+
+function selectWord(btn, word) {
+  if (btn.classList.contains("correct")) return;
+  document.querySelectorAll("#wordCol button").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  selectedWord = word;
+}
+
+function selectDef(btn) {
+  if (!selectedWord || btn.classList.contains("correct")) return;
+  if (btn.dataset.word === selectedWord) {
+    btn.classList.add("correct");
+    document.querySelector(`#wordCol button[data-word="${CSS.escape(selectedWord)}"]`).classList.add("correct");
+    matchedCount++;
+    document.getElementById("score").textContent = matchedCount;
+  } else {
+    btn.classList.add("wrong-flash");
+    setTimeout(() => btn.classList.remove("wrong-flash"), 500);
+  }
+  document.querySelectorAll("#wordCol button").forEach(b => b.classList.remove("selected"));
+  selectedWord = null;
+}
+
+// ---------- Step 2: Fill in the blanks ----------
+const blanks = [
+  { sentence: "The advertisement makes a ___ that beauty means being thin.", answer: "Presupposition" },
+  { sentence: "In a ___ society, women choose their own partners and hold family authority.", answer: "Matrilineal" },
+  { sentence: "The model's ___ pose makes her look like she is waiting to be looked at.", answer: "Passive" },
+  { sentence: "In some cultures, land and title pass through ___ from mother to daughter.", answer: "Inheritance" },
+  { sentence: "The message was ___, so you had to read between the lines.", answer: "Implicit" },
+  { sentence: "The sign was ___, it stated the rule directly with no confusion.", answer: "Explicit" },
+  { sentence: "The fragmented, close-up camera shots create a sense of ___.", answer: "Vulnerability" },
+  { sentence: "From the lighting and pose alone, we can ___ that the photographer wanted to show power.", answer: "Infer" },
+  { sentence: "Everyone's ___ of beauty is shaped by the culture they grew up in.", answer: "Perception" },
+];
+
+const blankArea = document.getElementById("blankArea");
+blanks.forEach((b, i) => {
+  const div = document.createElement("div");
+  div.className = "blank-item";
+  const [before, after] = b.sentence.split("___");
+  const select = document.createElement("select");
+  select.id = "blank" + i;
+  select.innerHTML = '<option value="">choose a word</option>' +
+    [...words].sort(() => Math.random() - 0.5).map(w => `<option value="${w.word}">${w.word}</option>`).join("");
+  const p = document.createElement("p");
+  p.appendChild(document.createTextNode(before));
+  p.appendChild(select);
+  p.appendChild(document.createTextNode(after));
+  div.appendChild(p);
+  div.dataset.answer = b.answer;
+  blankArea.appendChild(div);
+});
+
+function checkBlanks() {
+  let correct = 0;
+  document.querySelectorAll(".blank-item").forEach((div) => {
+    const select = div.querySelector("select");
+    select.classList.remove("correct", "wrong");
+    if (select.value === div.dataset.answer) {
+      select.classList.add("correct");
+      correct++;
+    } else if (select.value !== "") {
+      select.classList.add("wrong");
+    }
+  });
+  document.getElementById("blankFeedback").textContent =
+    correct + " out of 9 correct. Fix the red ones and check again.";
+}
+
+// ---------- Step 3: Own sentences ----------
+const sentenceArea = document.getElementById("sentenceArea");
+words.forEach((w) => {
+  const div = document.createElement("div");
+  div.className = "sentence-item";
+  const label = document.createElement("label");
+  label.textContent = w.word;
+  const textarea = document.createElement("textarea");
+  textarea.placeholder = "Write your sentence here";
+  div.appendChild(label);
+  div.appendChild(textarea);
+  sentenceArea.appendChild(div);
+});
+
+function showDone() {
+  document.getElementById("doneBanner").style.display = "block";
+}
+</script>
+</body>
+</html>
