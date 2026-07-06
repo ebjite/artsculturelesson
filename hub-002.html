@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semester Review Treasure Hunt — Class 002</title>
+<style>
+  :root {
+    --emerald: #0B3D2E;
+    --deepteal: #145C45;
+    --gold: #D4AF37;
+    --cream: #F4F1E6;
+    --charcoal: #16241E;
+    --danger: #C0392B;
+    --dim: #4a5c54;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Calibri", Arial, sans-serif;
+    background: linear-gradient(135deg, #0B3D2E 0%, #06212A 100%);
+    color: var(--cream);
+    min-height: 100vh;
+    padding-bottom: 70px;
+  }
+  header { padding: 22px 20px 10px; text-align: center; }
+  header .kicker { letter-spacing: 3px; font-size: 12px; color: var(--gold); font-weight: 700; text-transform: uppercase; }
+  header h1 { font-family: Cambria, Georgia, serif; font-size: 26px; margin: 6px 0 2px; }
+  header p { color: #9FB8AE; font-size: 13px; margin: 0; }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 40px; }
+
+  .card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .card.light { background: #FFFFFF; color: var(--charcoal); }
+
+  h2.screen-title { font-family: Cambria, Georgia, serif; font-size: 22px; margin: 0 0 12px; }
+  .muted { color: #9FB8AE; font-size: 13px; }
+  .card.light .muted { color: #6f7a75; }
+
+  #groupGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
+  @media (min-width: 480px) { #groupGrid { grid-template-columns: repeat(3, 1fr); } }
+  .group-btn {
+    background: var(--deepteal); color: var(--cream); border: none; border-radius: 14px;
+    padding: 18px 8px; font-size: 16px; font-weight: 700; font-family: Cambria, Georgia, serif;
+    cursor: pointer;
+  }
+  .group-btn:active { transform: scale(0.96); }
+
+  label { display: block; font-size: 13px; margin: 10px 0 4px; color: var(--gold); font-weight: 700; }
+  input[type=text], textarea, select {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08); color: var(--cream); font-size: 15px; font-family: inherit;
+  }
+  .card.light input[type=text], .card.light textarea, .card.light select {
+    background: #f4f4f4; color: var(--charcoal); border: 1px solid #ddd;
+  }
+  textarea { min-height: 70px; resize: vertical; }
+
+  button.primary {
+    background: var(--gold); color: var(--charcoal); border: none; border-radius: 10px;
+    padding: 13px 18px; font-size: 16px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px;
+  }
+  button.secondary {
+    background: rgba(255,255,255,0.1); color: var(--cream); border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px; padding: 11px 16px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px;
+  }
+  button.next-dim {
+    background: rgba(255,255,255,0.05); color: var(--dim); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 11px 16px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px;
+  }
+  button.next-ready {
+    background: var(--gold); color: var(--charcoal); border: 2px solid var(--gold);
+    border-radius: 10px; padding: 13px 16px; font-size: 16px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+
+  button.link-btn {
+    display: inline-block; background: var(--emerald); color: #fff; text-decoration: none;
+    border-radius: 10px; padding: 12px 16px; font-size: 15px; font-weight: 700; text-align: center; width: 100%; margin-top: 8px;
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .timer-box {
+    position: sticky; top: 0; z-index: 20; background: var(--emerald); border-radius: 12px;
+    padding: 10px 14px; text-align: center; margin-bottom: 14px; border: 2px solid var(--gold);
+  }
+  .timer-box .t { font-size: 30px; font-weight: 800; color: var(--gold); font-family: Cambria, Georgia, serif; }
+  .timer-box.warning { animation: flash 0.6s infinite; }
+  .timer-box.frozen { border-color: var(--danger); }
+  .timer-box.frozen .t { color: var(--danger); }
+  @keyframes flash { 0%,100% { background: var(--emerald); } 50% { background: var(--danger); } }
+
+  .frozen-note { color: var(--danger); font-weight: 700; text-align: center; margin-bottom: 10px; display: none; }
+  .frozen-note.show { display: block; }
+
+  .choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .choice-chip {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25); color: var(--cream);
+    border-radius: 20px; padding: 8px 14px; font-size: 13px; cursor: pointer;
+  }
+  .choice-chip.selected { background: var(--gold); color: var(--charcoal); border-color: var(--gold); }
+
+  .presenter-name, .word-display { font-size: 24px; font-weight: 800; text-align: center; color: var(--gold); margin: 14px 0; font-family: Cambria, Georgia, serif; }
+  .score-badge { text-align: center; font-size: 15px; color: var(--cream); margin-bottom: 8px; }
+
+  #groupNamesBtn {
+    position: fixed; bottom: 14px; right: 14px; z-index: 30;
+    background: var(--gold); color: var(--charcoal); border: none; border-radius: 24px;
+    padding: 12px 18px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    cursor: pointer; display: none;
+  }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 40;
+    align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: var(--emerald); border: 2px solid var(--gold); border-radius: 16px; padding: 20px; max-width: 420px; width: 100%; }
+
+  .poem-block { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 14px; font-style: italic; font-size: 14px; line-height: 1.6; margin: 10px 0; }
+
+  .confirm-msg { text-align: center; font-weight: 700; color: var(--gold); margin-top: 8px; display: none; }
+  .confirm-msg.show { display: block; }
+
+  .qbtn-row { display: flex; gap: 8px; margin: 10px 0; }
+  .qbtn-row button { flex: 1; }
+
+  .mcq-option {
+    display: block; width: 100%; text-align: left; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.2); color: var(--cream); border-radius: 10px;
+    padding: 12px; margin-top: 8px; font-size: 15px; cursor: pointer;
+  }
+  .mcq-option.correct { background: #1f6b3f; border-color: #2e8b57; }
+  .mcq-option.incorrect { background: #6b2a24; border-color: var(--danger); }
+  .mcq-feedback { margin-top: 10px; font-weight: 700; }
+  .mcq-feedback.ok { color: #6fd08c; }
+  .mcq-feedback.no { color: #ff8a80; }
+
+  .instructions-block { line-height: 1.6; font-size: 15px; }
+  .instructions-block ul { padding-left: 20px; }
+
+  footer.credit { text-align: center; color: #6f8a7f; font-size: 11px; padding: 16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kicker">Semester Review</div>
+  <h1>The Treasure Hunt</h1>
+  <p>Class 002</p>
+</header>
+
+<div class="wrap" id="app"></div>
+
+<button id="groupNamesBtn" onclick="openNamesModal()">✏️ Group Names</button>
+
+<div class="modal-overlay" id="namesModal">
+  <div class="modal-box">
+    <h2 class="screen-title" style="color:var(--gold);">Edit Group Names</h2>
+    <div id="namesModalFields"></div>
+    <button class="primary" onclick="saveNamesModal()">Save</button>
+    <button class="secondary" onclick="closeNamesModal()">Close</button>
+  </div>
+</div>
+
+<footer class="credit">Submissions save locally and send to your teacher's sheet automatically.</footer>
+
+<script>
+/* ============ CONFIG ============ */
+const CLASS_LABEL = "002";
+const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+
+const groupNamesList = ["Dora", "Indiana Jones", "Lara Croft", "Moana", "Frodo",
+  "Nathan Drake", "Robin Hood", "Sherlock Holmes", "Katniss", "Percy Jackson"];
+
+const FEMINISM_ARTWORKS = [
+  "Botticelli - Birth of Venus", "Manet - Olympia", "Klimt - The Kiss",
+  "Kahlo - The Broken Column", "Cindy Sherman - Untitled Film Still",
+  "Beyonce - Lemonade", "Die Antwoord - Cookie Thumper", "Zanele Muholi - Somnyama Ngonyama"
+];
+
+const SAPIR_WORDS = [
+  { word: "Saudade", lang: "Portuguese", pron: "sow-DAH-jee",
+    truth: "A deep, nostalgic longing for someone or something absent.",
+    lie: "A traditional Portuguese fisherman's dance performed at festivals." },
+  { word: "Komorebi", lang: "Japanese", pron: "koh-moh-REH-bee",
+    truth: "Sunlight filtering through the leaves of trees.",
+    lie: "The sound rain makes falling on a tin roof." },
+  { word: "Waldeinsamkeit", lang: "German", pron: "vald-EYN-zahm-kite",
+    truth: "The feeling of being pleasantly alone in the woods.",
+    lie: "A formal ceremony of forgiveness between neighbours." },
+  { word: "Hiraeth", lang: "Welsh", pron: "HEER-eye-th",
+    truth: "A deep longing for a home or homeland, tinged with grief.",
+    lie: "A type of woven blanket given as a wedding gift." },
+  { word: "Hygge", lang: "Danish", pron: "HOO-gah",
+    truth: "Cosy contentment from enjoying simple things with people you like.",
+    lie: "An open faced sandwich eaten only in winter." },
+  { word: "Iktsuarpok", lang: "Inuktitut", pron: "eek-SOO-ar-pok",
+    truth: "The anticipation that makes you keep checking if someone is coming.",
+    lie: "The practice of building a small ice shelter for one night." },
+];
+
+const BAD_POEM = `I remember when I walked into this class,
+I did not want to learn, I just needed to pass.
+Then Pollock splattered paint upon my brain,
+And now abstract expression I explain.
+The gaze it watches, it watches me too,
+Rating my coffee, my face, my whole vibe, it's true.
+Sapir said words shape the mind you see,
+Now hiraeth and saudade live inside of me.
+AI it helps me, AI it helps you,
+But documentation is something we all must do.`;
+
+const POSTER_COUNT = 8;
+
+var STATIONS = [
+  { id: "gallery", name: "Creative Process: 8 Posters", minutes: 10,
+    overview: "Look at all 8 posters around the room, in any order. For each one, record the artwork name and artist. Then answer one open question about their incubation stage, and one question on whether you agree it counts as art. You must complete all 8 before you submit.",
+    mcqs: [
+      { q: "How many posters do you need to complete?", options: ["4", "6", "8", "10"], correct: 2 },
+      { q: "What do you record first for each poster?", options: ["Colour and size", "Artwork name and artist", "Price and location", "Teacher's opinion"], correct: 1 },
+      { q: "What two questions do you answer for each poster?", options: ["Their incubation stage, and if you agree it's art", "Favourite colour and food", "Where they studied and worked", "How much the poster cost"], correct: 0 },
+    ] },
+  { id: "sapir", name: "Sapir-Whorf: Call My Bluff", minutes: 8,
+    overview: "You'll play Call My Bluff with 6 untranslatable words. For each word, two students are picked as presenters, Team A. Pass the phone to them and press the button once Team B, the rest of the group, cannot see the screen. Team A will see a true meaning and a false meaning, then present both to the group in any order, using their imagination to make both sound convincing. Team B must ask 3 questions, clicking a button each time a question is asked, before guessing who told the truth. After the guess, the phone passes to a new pair for the next word.",
+    mcqs: [
+      { q: "How many questions must Team B ask before guessing?", options: ["1", "2", "3", "5"], correct: 2 },
+      { q: "What happens to the phone after each word?", options: ["It stays with the same pair", "It passes to a new pair", "The teacher takes it", "Nothing changes"], correct: 1 },
+      { q: "What should the presenters do with the false meaning?", options: ["Skip it", "Say it half-heartedly", "Make it convincing using imagination", "Tell the group it's false"], correct: 2 },
+    ] },
+  { id: "feminism", name: "Feminism and Art Presentations", minutes: 7,
+    overview: "You'll present your assigned artwork from the feminism board. The app picks a random presenting order, one member at a time, tap Next Presenter to reveal who's up. If two of you share an artwork, split it: one covers symbolism, the other covers technique or context. After everyone presents, vote together on 4 polls, then write a sentence justifying one choice.",
+    mcqs: [
+      { q: "If two of you have the same artwork, what should you do?", options: ["Present the same thing twice", "Split it into different aspects", "Skip one person's turn", "Choose a new artwork"], correct: 1 },
+      { q: "How is the presenting order decided?", options: ["Alphabetical", "Randomly by the app", "The teacher decides", "Tallest first"], correct: 1 },
+    ] },
+  { id: "fashion", name: "Fashion Sway + Gemini Remix", minutes: 7,
+    overview: "Share your chosen fashion piece with your group. Open Gemini and design one combined look using everyone's picks. Describe the look in your own words, then paste the link to the Gemini image.",
+    mcqs: [
+      { q: "What tool do you use to combine the looks?", options: ["Suno", "Gemini", "Magic School", "Canvas"], correct: 1 },
+      { q: "What do you paste in at the end?", options: ["A photo file", "A link to your Gemini image", "Your phone number", "Nothing"], correct: 1 },
+    ] },
+  { id: "nosedive", name: "Nosedive: Truth or Dare", minutes: 6,
+    overview: "Open the Magic School link and join the truth or dare game based on Nosedive. Play a few rounds as a group, then write a one-line reflection on whether our world is close to Nosedive.",
+    mcqs: [
+      { q: "What show is this game based on?", options: ["Black Mirror: Nosedive", "Friends", "The Office", "Stranger Things"], correct: 0 },
+      { q: "What do you write at the end?", options: ["A drawing", "A one-line reflection", "A song", "Nothing"], correct: 1 },
+    ] },
+  { id: "suno", name: "Suno Song Showcase", minutes: 8,
+    overview: "You may leave the classroom to listen to each other's songs, but do not go far, and keep an eye on the timer. Decide whose song was your favourite and why. Then you'll see a badly written verse. Rewrite it fully in your own improved version. Finally, choose style tags and copy your lyrics and tags to paste into Suno.",
+    mcqs: [
+      { q: "Can you leave the classroom for this task?", options: ["No, stay in your seat", "Yes, but stay close and watch the timer", "Yes, for the whole lesson", "Only the teacher can leave"], correct: 1 },
+      { q: "What do you do with the badly written verse?", options: ["Ignore it", "Rewrite it fully in your own words", "Copy it exactly", "Delete it"], correct: 1 },
+      { q: "What do you do after choosing your style tags?", options: ["Nothing", "Copy lyrics and tags, then paste into Suno", "Submit only the tags", "Email the teacher"], correct: 1 },
+    ] },
+  { id: "debate", name: "Is Fashion Art? Mini Debate", minutes: 7,
+    overview: "Split for and against inside your group. Each side gives a 60 second opening statement. After debating, write a short summary of who won and why.",
+    mcqs: [
+      { q: "How long is each opening statement?", options: ["10 seconds", "60 seconds", "5 minutes", "No limit"], correct: 1 },
+      { q: "What do you write after the debate?", options: ["Nothing", "A summary of who won and why", "A new debate topic", "A drawing"], correct: 1 },
+    ] },
+];
+
+/* ============ STATE ============ */
+var currentGroup = null;
+var state = null;
+let timerHandle = null;
+let timerSeconds = 0;
+let frozen = false;
+
+function storageKey(g) { return `th_${CLASS_LABEL}_${g}`; }
+
+function loadState(g) {
+  const raw = localStorage.getItem(storageKey(g));
+  if (raw) return JSON.parse(raw);
+  return {
+    members: ["", "", "", ""],
+    namesSubmitted: false,
+    taskOrder: orderFor(g),
+    taskIndex: 0,
+    data: {},
+  };
+}
+function saveState() { localStorage.setItem(storageKey(currentGroup), JSON.stringify(state)); }
+
+function seedFromName(name) { return [...name].reduce((a, c) => a + c.charCodeAt(0), 0); }
+function orderFor(groupName) {
+  const seed = seedFromName(groupName);
+  return STATIONS.map((s, i) => ({ id: s.id, k: (seed * (i + 7) + i * 13) % 97 }))
+    .sort((a, b) => a.k - b.k).map(x => x.id);
+}
+
+/* ============ SUBMIT HELPER ============ */
+async function sendToSheet(stationId, payload) {
+  const record = {
+    class: CLASS_LABEL, group: currentGroup, station: stationId,
+    members: state.members, timestamp: new Date().toISOString(), data: payload
+  };
+  let sent = false;
+  if (SCRIPT_URL && SCRIPT_URL.indexOf("http") === 0) {
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(record)
+      });
+      sent = true;
+    } catch (e) { sent = false; }
+  }
+  localStorage.setItem(`submission_${CLASS_LABEL}_${currentGroup}_${stationId}`, JSON.stringify(record));
+  return { sent, record };
+}
+
+/* ============ APP SHELL ============ */
+const app = document.getElementById("app");
+
+function renderGroupGrid() {
+  document.getElementById("groupNamesBtn").style.display = "none";
+  app.innerHTML = `
+    <div class="card">
+      <p style="margin:0 0 4px;font-size:15px;">Tap your group's name.</p>
+      <div id="groupGrid"></div>
+    </div>`;
+  const grid = document.getElementById("groupGrid");
+  groupNamesList.forEach(g => {
+    const btn = document.createElement("button");
+    btn.className = "group-btn";
+    btn.textContent = g;
+    btn.onclick = () => selectGroup(g);
+    grid.appendChild(btn);
+  });
+}
+
+function selectGroup(g) {
+  currentGroup = g;
+  state = loadState(g);
+  saveState();
+  document.getElementById("groupNamesBtn").style.display = "block";
+  if (!state.namesSubmitted) renderNameEntry();
+  else renderTaskOverview();
+}
+
+function renderNameEntry() {
+  app.innerHTML = `
+    <div class="card">
+      <h2 class="screen-title">${currentGroup}: Who's Here?</h2>
+      <p class="muted">Enter all 4 names before you start.</p>
+      <div id="nameFields"></div>
+      <button class="primary" onclick="submitNames()">Submit Names</button>
+    </div>`;
+  const wrap = document.getElementById("nameFields");
+  for (let i = 0; i < 4; i++) {
+    const div = document.createElement("div");
+    div.innerHTML = `<label>Member ${i + 1}</label>
+      <input type="text" id="nameInput${i}" value="${state.members[i] || ""}" placeholder="Name">`;
+    wrap.appendChild(div);
+  }
+}
+
+function submitNames() {
+  const names = [];
+  for (let i = 0; i < 4; i++) names.push(document.getElementById("nameInput" + i).value.trim());
+  if (names.some(n => !n)) { alert("Fill in all 4 names first."); return; }
+  state.members = names;
+  state.namesSubmitted = true;
+  saveState();
+  renderTaskOverview();
+}
+
+function openNamesModal() {
+  if (!currentGroup) return;
+  const wrap = document.getElementById("namesModalFields");
+  wrap.innerHTML = "";
+  for (let i = 0; i < 4; i++) {
+    const div = document.createElement("div");
+    div.innerHTML = `<label style="color:var(--cream);">Member ${i + 1}</label>
+      <input type="text" id="modalName${i}" value="${state.members[i] || ""}">`;
+    wrap.appendChild(div);
+  }
+  document.getElementById("namesModal").classList.add("show");
+}
+function saveNamesModal() {
+  for (let i = 0; i < 4; i++) state.members[i] = document.getElementById("modalName" + i).value.trim();
+  saveState();
+  closeNamesModal();
+}
+function closeNamesModal() { document.getElementById("namesModal").classList.remove("show"); }
+
+/* ============ TASK OVERVIEW ============ */
+function renderTaskOverview() {
+  clearTimerUI();
+  if (state.taskIndex >= state.taskOrder.length) { renderAllDone(); return; }
+  const stId = state.taskOrder[state.taskIndex];
+  const st = STATIONS.find(s => s.id === stId);
+  app.innerHTML = `
+    <div class="card">
+      <p class="muted">Task ${state.taskIndex + 1} of ${state.taskOrder.length}</p>
+      <h2 class="screen-title">${st.name}</h2>
+      <div class="instructions-block">${st.overview}</div>
+      <p class="muted" style="margin-top:10px;">${st.minutes} minutes once the timer starts. First, answer a few quick check questions.</p>
+      <button class="primary" onclick="renderMcqGate('${st.id}', 0)">Start</button>
+    </div>`;
+}
+
+function renderAllDone() {
+  clearTimerUI();
+  app.innerHTML = `
+    <div class="card">
+      <h2 class="screen-title">🎉 Congratulations!</h2>
+      <p>All Stations Complete.</p>
+    </div>`;
+}
+
+function nextTask() {
+  state.taskIndex += 1;
+  saveState();
+  renderTaskOverview();
+}
+
+/* ============ MCQ COMPREHENSION GATE ============ */
+function renderMcqGate(stId, qIndex) {
+  const st = STATIONS.find(s => s.id === stId);
+  const mcqs = st.mcqs || [];
+  if (qIndex >= mcqs.length) { startTask(stId); return; }
+  const mq = mcqs[qIndex];
+  app.innerHTML = `
+    <div class="card">
+      <p class="muted">Quick check ${qIndex + 1} of ${mcqs.length}</p>
+      <h2 class="screen-title">${mq.q}</h2>
+      <div id="mcqOptions"></div>
+      <div class="mcq-feedback" id="mcqFeedback"></div>
+    </div>`;
+  const wrap = document.getElementById("mcqOptions");
+  mq.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "mcq-option";
+    btn.textContent = opt;
+    btn.onclick = () => checkMcq(stId, qIndex, i, btn);
+    wrap.appendChild(btn);
+  });
+}
+
+function checkMcq(stId, qIndex, chosenIndex, btnEl) {
+  const st = STATIONS.find(s => s.id === stId);
+  const mq = st.mcqs[qIndex];
+  const feedback = document.getElementById("mcqFeedback");
+  const allBtns = document.querySelectorAll("#mcqOptions .mcq-option");
+  allBtns.forEach(b => b.disabled = true);
+  if (chosenIndex === mq.correct) {
+    btnEl.classList.add("correct");
+    feedback.textContent = "Correct!";
+    feedback.className = "mcq-feedback ok";
+    setTimeout(() => renderMcqGate(stId, qIndex + 1), 700);
+  } else {
+    btnEl.classList.add("incorrect");
+    feedback.textContent = "Not quite. Read the instructions again.";
+    feedback.className = "mcq-feedback no";
+    setTimeout(() => renderMcqGate(stId, qIndex), 1100);
+  }
+}
+
+/* ============ TIMER ENGINE ============ */
+function clearTimerUI() {
+  if (timerHandle) clearInterval(timerHandle);
+  timerHandle = null; frozen = false;
+}
+
+function startTimer(minutes, onFreeze) {
+  timerSeconds = minutes * 60;
+  frozen = false;
+  renderTimerBar();
+  timerHandle = setInterval(() => {
+    timerSeconds -= 1;
+    renderTimerBar();
+    if (timerSeconds === 20) beep();
+    if (timerSeconds <= 0) {
+      clearInterval(timerHandle);
+      frozen = true;
+      const bar = document.getElementById("timerBar");
+      if (bar) { bar.classList.add("frozen"); bar.classList.remove("warning"); }
+      document.querySelectorAll(".freeze-target").forEach(el => el.disabled = true);
+      const note = document.getElementById("frozenNote");
+      if (note) note.classList.add("show");
+      if (onFreeze) onFreeze();
+    }
+  }, 1000);
+}
+
+function renderTimerBar() {
+  const bar = document.getElementById("timerBar");
+  if (!bar) return;
+  const m = Math.floor(Math.max(timerSeconds, 0) / 60);
+  const s = Math.max(timerSeconds, 0) % 60;
+  bar.querySelector(".t").textContent = `${m}:${s.toString().padStart(2, "0")}`;
+  bar.classList.toggle("warning", timerSeconds <= 20 && timerSeconds > 0);
+}
+
+function beep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    osc.start(); osc.stop(ctx.currentTime + 0.25);
+  } catch (e) {}
+}
+
+function timerBarHtml() {
+  return `<div class="timer-box" id="timerBar"><div class="t">--:--</div></div>
+    <p class="frozen-note" id="frozenNote">Time's up. You can only submit now.</p>`;
+}
+
+/* ============ START TASK DISPATCH ============ */
+function startTask(id) {
+  clearTimerUI();
+  const st = STATIONS.find(s => s.id === id);
+  const renderers = {
+    gallery: renderGallery, sapir: renderSapir, feminism: renderFeminism,
+    fashion: renderFashion, nosedive: renderNosedive, suno: renderSuno, debate: renderDebate,
+  };
+  renderers[id](st);
+  startTimer(st.minutes);
+}
+
+function submitFooter(stationId, collectFn) {
+  return `
+    <button class="primary" onclick="doSubmit('${stationId}', ${collectFn}, this)">Submit Data</button>
+    <div class="confirm-msg" id="confirmMsg">✓ Saved</div>
+    <button class="next-dim" id="nextBtn" onclick="nextTask()">Move to Next Task</button>`;
+}
+
+async function doSubmit(stationId, collectFn, btn) {
+  const payload = collectFn();
+  if (btn) { btn.disabled = true; btn.textContent = "Submitting..."; }
+  const result = await sendToSheet(stationId, payload);
+  if (btn) { btn.textContent = result.sent ? "Submitted!" : "Saved (offline copy kept)"; }
+  const msg = document.getElementById("confirmMsg");
+  if (msg) msg.classList.add("show");
+  const nextBtn = document.getElementById("nextBtn");
+  if (nextBtn) { nextBtn.classList.remove("next-dim"); nextBtn.classList.add("next-ready"); }
+}
+
+/* ============ STATION: GALLERY (8 posters) ============ */
+let galleryIdx = 0, galleryData = [];
+function renderGallery(st) {
+  galleryIdx = 0; galleryData = [];
+  app.innerHTML = `${timerBarHtml()}<div class="card light" id="galleryCard"></div>`;
+  renderGalleryPoster();
+}
+function renderGalleryPoster() {
+  const card = document.getElementById("galleryCard");
+  card.innerHTML = `
+    <p class="muted">Poster ${galleryIdx + 1} of ${POSTER_COUNT}</p>
+    <h2 class="screen-title">Creative Process Poster</h2>
+    <label>Artwork name</label>
+    <input type="text" id="g_art" class="freeze-target">
+    <label>Artist</label>
+    <input type="text" id="g_artist" class="freeze-target">
+    <label>What was their incubation stage like?</label>
+    <textarea id="g_incubation" class="freeze-target"></textarea>
+    <label>Do you agree this is art? Why?</label>
+    <textarea id="g_apply" class="freeze-target"></textarea>
+    <button class="primary freeze-target" id="galleryNextBtn" onclick="galleryNext()">
+      ${galleryIdx < POSTER_COUNT - 1 ? "Save and Next Poster" : "Save Last Poster"}
+    </button>
+  `;
+}
+function galleryNext() {
+  galleryData.push({
+    poster: galleryIdx + 1,
+    artwork: document.getElementById("g_art").value,
+    artist: document.getElementById("g_artist").value,
+    incubation: document.getElementById("g_incubation").value,
+    apply: document.getElementById("g_apply").value,
+  });
+  galleryIdx += 1;
+  if (galleryIdx < POSTER_COUNT) {
+    renderGalleryPoster();
+  } else {
+    const card = document.getElementById("galleryCard");
+    card.innerHTML = `
+      <h2 class="screen-title">All 8 Posters Done</h2>
+      <p>Ready to submit your full set.</p>
+      ${submitFooter("gallery", "collectGallery")}
+    `;
+  }
+}
+function collectGallery() { return galleryData; }
+
+/* ============ STATION: SAPIR-WHORF ============ */
+let sapirIndex = 0, sapirScore = 0, sapirPresenters = [];
+
+function renderSapir(st) {
+  sapirIndex = 0; sapirScore = 0;
+  app.innerHTML = `${timerBarHtml()}<div class="card"><div id="sapirBody"></div></div>`;
+  renderSapirPassGate();
+}
+
+function pickPresenters() {
+  const idxs = [0, 1, 2, 3].sort(() => Math.random() - 0.5).slice(0, 2);
+  return idxs.map(i => state.members[i] || `Member ${i + 1}`);
+}
+
+function renderSapirPassGate() {
+  sapirPresenters = pickPresenters();
+  const body = document.getElementById("sapirBody");
+  body.innerHTML = `
+    <div class="score-badge">Word ${sapirIndex + 1} of 6 · Score: ${sapirScore}</div>
+    <p>Pass the phone to <b>${sapirPresenters[0]}</b> and <b>${sapirPresenters[1]}</b> (Team A).</p>
+    <p>Click below once the rest of the group, Team B, cannot see the screen.</p>
+    <button class="primary freeze-target" onclick="renderSapirWord()">Team B Can't See. Reveal Word.</button>
+  `;
+}
+
+function renderSapirWord() {
+  const w = SAPIR_WORDS[sapirIndex];
+  const body = document.getElementById("sapirBody");
+  body.innerHTML = `
+    <div class="score-badge">Word ${sapirIndex + 1} of 6 · Score: ${sapirScore}</div>
+    <div class="word-display">${w.word}</div>
+    <p class="muted">Say it like: ${w.pron} (${w.lang})</p>
+    <p><b>Meaning A:</b> ${w.truth}</p>
+    <p><b>Meaning B:</b> ${w.lie}</p>
+    <p class="muted">Team A: one of you says Meaning A, the other says Meaning B, any order. Make both sound convincing, use your imagination for extra detail.</p>
+    <p style="margin-top:10px;"><b>Team B: hide this screen now.</b> Ask 3 questions total. Click the matching button each time a question is asked.</p>
+    <div class="qbtn-row">
+      <button class="secondary freeze-target" id="q1" onclick="sapirAsk(1)">Question 1 asked</button>
+      <button class="secondary freeze-target" id="q2" onclick="sapirAsk(2)" disabled>Question 2 asked</button>
+      <button class="secondary freeze-target" id="q3" onclick="sapirAsk(3)" disabled>Question 3 asked</button>
+    </div>
+    <div id="guessArea"></div>
+  `;
+}
+
+function sapirAsk(n) {
+  document.getElementById("q" + n).disabled = true;
+  if (n < 3) document.getElementById("q" + (n + 1)).disabled = false;
+  if (n === 3) {
+    document.getElementById("guessArea").innerHTML = `
+      <p style="margin-top:10px;"><b>Team B: who told the truth?</b></p>
+      <button class="secondary freeze-target" onclick="sapirGuess(true)">${sapirPresenters[0]} told the truth</button>
+      <button class="secondary freeze-target" onclick="sapirGuess(false)">${sapirPresenters[1]} told the truth</button>
+    `;
+  }
+}
+
+function sapirGuess(guessedFirstIsTrue) {
+  if (guessedFirstIsTrue) sapirScore += 1;
+  const w = SAPIR_WORDS[sapirIndex];
+  document.getElementById("guessArea").innerHTML += `
+    <p style="margin-top:8px;">The true meaning was: <b>${w.truth}</b></p>
+    <button class="primary freeze-target" onclick="sapirNext()">Next Word</button>`;
+}
+
+function sapirNext() {
+  sapirIndex += 1;
+  if (sapirIndex < SAPIR_WORDS.length) renderSapirPassGate();
+  else renderSapirWrap();
+}
+
+function renderSapirWrap() {
+  const body = document.getElementById("sapirBody");
+  body.innerHTML = `
+    <div class="score-badge">Final Score: ${sapirScore} / 6</div>
+    <label>Favourite word</label>
+    <select id="sp_fav" class="freeze-target">
+      ${SAPIR_WORDS.map(w => `<option>${w.word}</option>`).join("")}
+    </select>
+    <label>What does it reveal about that language's worldview?</label>
+    <textarea id="sp_why" class="freeze-target"></textarea>
+    <label>Hypothetical: an intercultural couple, one knows this concept, one does not. What breaks down? (1-2 sentences)</label>
+    <textarea id="sp_hyp" class="freeze-target"></textarea>
+    ${submitFooter("sapir", "collectSapir")}
+  `;
+}
+function collectSapir() {
+  return {
+    score: sapirScore,
+    favourite: document.getElementById("sp_fav").value,
+    why: document.getElementById("sp_why").value,
+    hypothetical: document.getElementById("sp_hyp").value,
+  };
+}
+
+/* ============ STATION: FEMINISM ============ */
+let femOrder = [], femIndex = 0;
+function renderFeminism(st) {
+  femOrder = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+  femIndex = 0;
+  app.innerHTML = `
+    ${timerBarHtml()}
+    <div class="card">
+      <p class="muted">Sharing the same artwork as a groupmate? Split it: symbolism vs technique or context.</p>
+      <div id="femBody"></div>
+    </div>`;
+  renderFemPresenter();
+}
+function renderFemPresenter() {
+  const body = document.getElementById("femBody");
+  const name = state.members[femOrder[femIndex]] || `Member ${femOrder[femIndex] + 1}`;
+  body.innerHTML = `
+    <p class="muted">Presenter ${femIndex + 1} of 4</p>
+    <div class="presenter-name">${name}</div>
+    <button class="primary freeze-target" onclick="femNext()">Next Presenter</button>
+  `;
+}
+function femNext() {
+  femIndex += 1;
+  if (femIndex < 4) renderFemPresenter();
+  else renderFemPolls();
+}
+function renderFemPolls() {
+  const body = document.getElementById("femBody");
+  const opts = FEMINISM_ARTWORKS.map(a => `<option>${a}</option>`).join("");
+  body.innerHTML = `
+    <p><b>All presented. Now vote as a group.</b></p>
+    <label>Most resists the male gaze</label>
+    <select id="f_resist" class="freeze-target">${opts}</select>
+    <label>Most reinforces the male gaze</label>
+    <select id="f_reinforce" class="freeze-target">${opts}</select>
+    <label>Most valuable as art</label>
+    <select id="f_valuable" class="freeze-target">${opts}</select>
+    <label>Most "cancelled"</label>
+    <select id="f_cancel" class="freeze-target">${opts}</select>
+    <label>Write a sentence to justify one of your choices</label>
+    <textarea id="f_justify" class="freeze-target"></textarea>
+    ${submitFooter("feminism", "collectFeminism")}
+  `;
+}
+function collectFeminism() {
+  return {
+    resists: document.getElementById("f_resist").value,
+    reinforces: document.getElementById("f_reinforce").value,
+    valuable: document.getElementById("f_valuable").value,
+    cancelled: document.getElementById("f_cancel").value,
+    justify: document.getElementById("f_justify").value,
+  };
+}
+
+/* ============ STATION: FASHION ============ */
+function renderFashion(st) {
+  app.innerHTML = `
+    ${timerBarHtml()}
+    <div class="card light">
+      <h2 class="screen-title">${st.name}</h2>
+      <p>Share your chosen fashion piece with the group.</p>
+      <a class="link-btn" href="https://gemini.google.com" target="_blank">Open Gemini</a>
+      <p style="margin-top:10px;">Design one look combining everyone's picks in Gemini, then bring it back here.</p>
+      <label>Describe the combined look</label>
+      <textarea id="fa_label" class="freeze-target"></textarea>
+      <label>Paste the link to your Gemini image (Drive or share link)</label>
+      <input type="text" id="fa_link" class="freeze-target" placeholder="https://...">
+      ${submitFooter("fashion", "collectFashion")}
+    </div>`;
+}
+function collectFashion() {
+  return {
+    label: document.getElementById("fa_label").value,
+    imageLink: document.getElementById("fa_link").value,
+  };
+}
+
+/* ============ STATION: NOSEDIVE ============ */
+function renderNosedive(st) {
+  app.innerHTML = `
+    ${timerBarHtml()}
+    <div class="card light">
+      <h2 class="screen-title">${st.name}</h2>
+      <p>Join the game and play a few rounds of truth or dare.</p>
+      <a class="link-btn" href="https://student.magicschool.ai/s/join?joinCode=zhQoVQ" target="_blank">Join Magic School Game</a>
+      <label style="margin-top:14px;">Is our world closer to Nosedive than we admit? One line.</label>
+      <textarea id="nd_reflect" class="freeze-target"></textarea>
+      ${submitFooter("nosedive", "collectNosedive")}
+    </div>`;
+}
+function collectNosedive() { return { reflection: document.getElementById("nd_reflect").value }; }
+
+/* ============ STATION: SUNO ============ */
+let sunoTags = { instrument: new Set(), emotion: null, genre: null, voice: null };
+
+function renderSuno(st) {
+  sunoTags = { instrument: new Set(), emotion: null, genre: null, voice: null };
+  app.innerHTML = `
+    ${timerBarHtml()}
+    <div class="card">
+      <h2 class="screen-title">${st.name}</h2>
+      <p><b>You may leave the classroom to listen to the songs.</b> Do not go far. Keep an eye on that timer!</p>
+      <label>Whose song was your favourite?</label>
+      <select id="s_fav" class="freeze-target">
+        ${state.members.map(m => `<option>${m}</option>`).join("")}
+      </select>
+      <label>Why?</label>
+      <textarea id="s_favwhy" class="freeze-target"></textarea>
+
+      <p style="margin-top:14px;"><b>This verse is badly written. Rewrite and improve it.</b></p>
+      <div class="poem-block">${BAD_POEM.replace(/\n/g, "<br>")}</div>
+      <label>Your improved rewrite</label>
+      <textarea id="s_rewrite" class="freeze-target" style="min-height:130px;"></textarea>
+
+      <p style="margin-top:14px;"><b>Style tags for Suno</b></p>
+      <label>Instruments (pick any)</label>
+      <div class="choice-row" id="s_instruments"></div>
+      <label>Emotion</label>
+      <div class="choice-row" id="s_emotion"></div>
+      <label>Genre</label>
+      <div class="choice-row" id="s_genre"></div>
+      <label>Voice</label>
+      <div class="choice-row" id="s_voice"></div>
+
+      <button class="secondary freeze-target" onclick="copySunoText()">Copy Lyrics + Style Tags</button>
+      <a class="link-btn" href="https://suno.com" target="_blank">Open Suno</a>
+      <div class="confirm-msg" id="sunoCopyMsg">✓ Copied</div>
+
+      ${submitFooter("suno", "collectSuno")}
+    </div>`;
+
+  buildChipRow("s_instruments", ["Guitar", "Piano", "Drums", "Synth", "Strings"], "instrument", true);
+  buildChipRow("s_emotion", ["Happy", "Sad", "Angry", "Nostalgic", "Hopeful"], "emotion", false);
+  buildChipRow("s_genre", ["Pop", "Hip-hop", "Folk", "Rock", "Lo-fi"], "genre", false);
+  buildChipRow("s_voice", ["Male", "Female", "Duet", "Choir"], "voice", false);
+}
+
+function buildChipRow(containerId, options, key, multi) {
+  const row = document.getElementById(containerId);
+  options.forEach(opt => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "choice-chip freeze-target";
+    chip.textContent = opt;
+    chip.onclick = () => {
+      if (multi) {
+        if (sunoTags[key].has(opt)) { sunoTags[key].delete(opt); chip.classList.remove("selected"); }
+        else { sunoTags[key].add(opt); chip.classList.add("selected"); }
+      } else {
+        sunoTags[key] = opt;
+        [...row.children].forEach(c => c.classList.remove("selected"));
+        chip.classList.add("selected");
+      }
+    };
+    row.appendChild(chip);
+  });
+}
+
+function copySunoText() {
+  const lyrics = document.getElementById("s_rewrite").value;
+  const tags = `Instruments: ${[...sunoTags.instrument].join(", ") || "any"}. Emotion: ${sunoTags.emotion || "any"}. Genre: ${sunoTags.genre || "any"}. Voice: ${sunoTags.voice || "any"}.`;
+  const text = lyrics + "\n\n[Style] " + tags;
+  if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+  document.getElementById("sunoCopyMsg").classList.add("show");
+}
+
+function collectSuno() {
+  return {
+    favourite: document.getElementById("s_fav").value,
+    favouriteWhy: document.getElementById("s_favwhy").value,
+    rewrite: document.getElementById("s_rewrite").value,
+    styleTags: {
+      instrument: [...sunoTags.instrument], emotion: sunoTags.emotion,
+      genre: sunoTags.genre, voice: sunoTags.voice
+    },
+  };
+}
+
+/* ============ STATION: DEBATE ============ */
+function renderDebate(st) {
+  app.innerHTML = `
+    ${timerBarHtml()}
+    <div class="card light">
+      <h2 class="screen-title">${st.name}</h2>
+      <p>Split for and against inside your group. Give 60 second opening statements each side.</p>
+      <button class="secondary freeze-target" id="startDebateBtn" onclick="beginDebate()">Click to Start Debating</button>
+      <div id="debateWrap" style="display:none;">
+        <label>Summary: who won, and why?</label>
+        <textarea id="d_summary" class="freeze-target"></textarea>
+        ${submitFooter("debate", "collectDebate")}
+      </div>
+    </div>`;
+}
+function beginDebate() {
+  document.getElementById("startDebateBtn").disabled = true;
+  document.getElementById("debateWrap").style.display = "block";
+}
+function collectDebate() { return { summary: document.getElementById("d_summary").value }; }
+
+/* ============ BOOT ============ */
+renderGroupGrid();
+</script>
+</body>
+</html>
