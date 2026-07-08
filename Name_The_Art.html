@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Name Every Artwork</title>
+<style>
+:root{ --navy:#1E2761; --navy2:#141B47; --teal:#1C7293; --gold:#F0B429; --cream:#FBF8F2; --ink:#22283B; --line:#DAD3C3; --green:#2F8F5B; --red:#C0392B; }
+*{box-sizing:border-box;}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Georgia,serif;line-height:1.6;}
+header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:1.6rem 1.5rem 1.2rem;}
+header h1{margin:0 0 .15rem;font-size:1.4rem;}
+header p{margin:0;color:#C9D4EA;font-family:Arial,sans-serif;font-size:.85rem;}
+main{max-width:800px;margin:0 auto;padding:1.5rem;}
+.timerbar{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:1rem;text-align:center;font-family:Arial,sans-serif;margin-bottom:1.2rem;}
+.timer{font-size:2rem;font-weight:900;color:var(--navy);margin:.2rem 0;}
+button.big{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:.7rem 1.3rem;font-weight:700;font-size:.9rem;cursor:pointer;font-family:Arial,sans-serif;}
+button.big:disabled{background:#ccc;}
+.card{background:#fff;border-radius:10px;padding:1.4rem 1.6rem;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:1.2rem;font-family:Arial,sans-serif;}
+.card h2{margin-top:0;color:var(--navy);font-size:1.1rem;}
+.sub{font-size:.85rem;color:#888;margin-bottom:1rem;}
+textarea{width:100%;min-height:180px;padding:.8rem;border:1px solid var(--line);border-radius:8px;font-family:Arial,sans-serif;font-size:.95rem;}
+.resultgrid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1rem;}
+.hitlist,.misslist{padding:.8rem;border-radius:8px;}
+.hitlist{background:#EAF6EC;}
+.misslist{background:#FBEAEA;}
+.hitlist h3{color:var(--green);margin:0 0 .4rem;font-size:.9rem;}
+.misslist h3{color:var(--red);margin:0 0 .4rem;font-size:.9rem;}
+.item{font-size:.85rem;padding:.15rem 0;}
+.score{text-align:center;font-size:1.3rem;font-weight:900;color:var(--navy);margin:1rem 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Name Every Artwork</h1>
+  <p>Search Canvas, list everything we studied this semester, then check yourself</p>
+</header>
+<main>
+  <div class="timerbar">
+    <div style="font-weight:700;color:#666;">Search timer</div>
+    <div class="timer" id="timerDisplay">10:00</div>
+    <button class="big" id="timerBtn" onclick="startTimer()">Start 10 minute timer</button>
+  </div>
+
+  <div class="card">
+    <h2>Your List</h2>
+    <div class="sub">One artwork, film, song, or piece per line. Titles are enough, you do not need the creator or date.</div>
+    <textarea id="userList" placeholder="Starry Night&#10;Piss Christ&#10;Battle Royale&#10;..."></textarea>
+    <p style="margin-top:1rem;"><button class="big" onclick="checkList()">Check my list</button></p>
+  </div>
+
+  <div class="card" id="resultsCard" style="display:none;">
+    <div class="score" id="scoreLine"></div>
+    <div id="markList"></div>
+    <div class="resultgrid">
+      <div class="hitlist">
+        <h3>Found</h3>
+        <div id="hitItems"></div>
+      </div>
+      <div class="misslist">
+        <h3>Missed</h3>
+        <div id="missItems"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Bonus: Can't Remember a Title?</h2>
+    <div class="sub">Describe it here instead, what it showed, who might have made it, what lesson it was in. We will try to work out what it was.</div>
+    <textarea id="bonusBox" style="min-height:100px;" placeholder="It was a black and white photo of..."></textarea>
+    <p style="margin-top:.8rem;"><button class="big" onclick="submitBonus()">Submit description</button></p>
+    <div class="copiedmsg" id="bonusMsg" style="font-weight:700;color:#2F8F5B;margin-top:.5rem;"></div>
+  </div>
+</main>
+
+<script>
+var masterList = [
+  "Apsara Dance",
+  "Dia de los Muertos altars",
+  "Islamic Geometric Art",
+  "Starry Night",
+  "These Thoughts May Disappear",
+  "Jerusalema Flash Dances",
+  "Piss Christ",
+  "Metamorphosis of Narcissus",
+  "The Dark Side of the Moon",
+  "Spirited Away",
+  "One Piece",
+  "Minecraft",
+  "Jackson Pollock drip paintings",
+  "Yayoi Kusama dot motifs",
+  "Pacita Abad layered paintings",
+  "Birth of Venus",
+  "Olympia",
+  "The Kiss",
+  "The Broken Column",
+  "Untitled Film Still",
+  "Lemonade",
+  "Cookie Thumper",
+  "Somnyama Ngonyama",
+  "Be a Lady They Said",
+  "Goya's Madhouse",
+  "Battle Royale",
+  "Nosedive, Black Mirror",
+  "Deutschland",
+  "Cambodian hol textiles",
+  "Foot Binding",
+  "Steel wool photography",
+  "David Bowie, Ziggy Stardust",
+  "Leang Seckon, Return Home",
+  "Tracey Emin, My Bed",
+  "Banksy, Love is in the Air",
+  "Banksy, Kissing Coppers",
+  "Sopheap Pich, woven sculpture",
+  "Banksy, Flag Statue, Waterloo Place",
+  "Nighthawks, Hopper",
+  "The Calling of St Matthew, Caravaggio",
+  "The Pantheon oculus",
+  "Light Prop for an Electric Stage, Moholy-Nagy",
+  "Bon Om Touk water festival lights",
+];
+
+var t = 600, tid;
+function startTimer(){
+  document.getElementById('timerBtn').disabled = true;
+  tid = setInterval(function(){
+    t--;
+    var m = Math.floor(t/60), s = t%60;
+    document.getElementById('timerDisplay').textContent = m+":"+(s<10?"0":"")+s;
+    if(t<=0){ clearInterval(tid); document.getElementById('timerDisplay').textContent = "Time!"; }
+  }, 1000);
+}
+
+function normalise(s){
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function checkList(){
+  var raw = document.getElementById('userList').value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+  var normRaw = raw.map(normalise);
+
+  var hits = [];
+  var misses = [];
+  var markLines = [];
+  masterList.forEach(function(item){
+    var normItem = normalise(item);
+    var found = normRaw.some(function(r){
+      return r.length > 3 && (normItem.indexOf(r) !== -1 || r.indexOf(normItem) !== -1);
+    });
+    if(found){ hits.push(item); markLines.push('<div class="item" style="color:#2F8F5B;font-weight:700;">YES &mdash; '+item+'</div>'); }
+    else { misses.push(item); markLines.push('<div class="item" style="color:#C0392B;font-weight:700;">NO &mdash; '+item+'</div>'); }
+  });
+
+  document.getElementById('markList').innerHTML = markLines.join('');
+  document.getElementById('hitItems').innerHTML = hits.map(function(h){ return '<div class="item">\u2713 '+h+'</div>'; }).join('') || '<div class="item">None yet</div>';
+  document.getElementById('missItems').innerHTML = misses.map(function(m){ return '<div class="item">\u2717 '+m+'</div>'; }).join('') || '<div class="item">Nothing missed, well done</div>';
+  document.getElementById('scoreLine').textContent = hits.length + ' of ' + masterList.length + ' found';
+  document.getElementById('resultsCard').style.display = 'block';
+}
+
+function submitBonus(){
+  var box = document.getElementById('bonusBox');
+  var val = box.value.trim();
+  if(!val) return;
+  document.getElementById('bonusMsg').textContent = "Saved: \"" + val + "\". Show this to your teacher or ask the class.";
+  box.value = '';
+}
+</script>
+</body>
+</html>
