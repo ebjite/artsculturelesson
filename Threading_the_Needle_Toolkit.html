@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Threading the Needle: Essay Engine</title>
+<style>
+:root{
+  --navy:#1E2761; --navy2:#141B47; --teal:#1C7293; --gold:#F0B429; --cream:#FBF8F2;
+  --ink:#22283B; --line:#DAD3C3; --green:#2F8F5B; --red:#C0392B;
+  --theory:#2B5FAD; --theme:#2F8F5B; --thesis:#C0392B; --concept:#B8860B;
+  --artwork:#7B4FA0; --transition:#1C8C8C; --counter:#B5541E;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Georgia,serif;line-height:1.6;}
+header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:1.6rem 1.5rem 1.2rem;position:sticky;top:0;z-index:50;}
+header h1{margin:0 0 .15rem;font-size:1.5rem;}
+header p{margin:0;color:#C9D4EA;font-family:Arial,sans-serif;font-size:.85rem;}
+nav.tabs{display:flex;gap:.4rem;background:var(--navy2);padding:0 1.5rem;position:sticky;top:74px;z-index:49;}
+nav.tabs button{background:none;border:none;color:#AAB4D4;padding:.7rem .9rem;font-family:Arial,sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;}
+nav.tabs button.active{color:#fff;border-bottom-color:var(--gold);}
+main{max-width:1000px;margin:0 auto;padding:1.5rem 1.5rem 5rem;}
+.mode{display:none;} .mode.active{display:block;}
+.stage{display:none;background:#fff;border-radius:10px;padding:1.4rem 1.6rem;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:1.4rem;}
+.stage.unlocked{display:block;animation:fade .4s;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.stage h2{margin-top:0;color:var(--navy);font-size:1.15rem;}
+.stage .sub{font-family:Arial,sans-serif;font-size:.85rem;color:#888;margin-top:-.6rem;margin-bottom:.9rem;}
+
+details.essaybox{background:#fff;border-radius:10px;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+details.essaybox>summary{cursor:pointer;padding:.8rem 1.2rem;font-weight:700;color:var(--navy);font-family:Arial,sans-serif;list-style:none;}
+details.essaybox>summary::-webkit-details-marker{display:none;}
+details.essaybox>summary:before{content:"Show / hide the essay";color:var(--gold);}
+.essay-body{padding:0 1.4rem 1.4rem;}
+.essay-body p{text-align:justify;text-indent:1.5em;margin:0 0 .9rem;}
+.para-label{font-family:Arial,sans-serif;font-size:.75rem;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:.15rem;}
+
+.timerwrap{text-align:center;font-family:Arial,sans-serif;}
+.timer{font-size:2.6rem;font-weight:900;color:var(--navy);margin:.6rem 0;}
+button.big{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:.7rem 1.4rem;font-weight:700;font-size:.95rem;cursor:pointer;font-family:Arial,sans-serif;}
+button.big:disabled{background:#ccc;cursor:not-allowed;}
+button.ghost{background:none;border:2px solid var(--navy);color:var(--navy);border-radius:8px;padding:.6rem 1.2rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
+
+.parachoice{margin-bottom:.9rem;font-family:Arial,sans-serif;}
+.parachoice label{display:block;font-weight:700;margin-bottom:.25rem;color:var(--navy);}
+select{font-family:Arial,sans-serif;padding:.4rem;border-radius:6px;border:1px solid var(--line);width:100%;max-width:420px;}
+select.correct{border-color:var(--green);background:#EAF6EC;}
+select.wrong{border-color:var(--red);background:#FBEAEA;}
+
+table.scan{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:.85rem;}
+table.scan th{background:var(--navy);color:#fff;padding:.5rem;text-align:left;}
+table.scan td{padding:.4rem .5rem;border-bottom:1px solid var(--line);}
+table.scan input{width:100%;padding:.3rem;border:1px solid var(--line);border-radius:4px;}
+
+.opt{display:inline-block;margin:.25rem .4rem .25rem 0;padding:.45rem .8rem;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-family:Arial,sans-serif;font-size:.85rem;}
+.opt.correct{background:#DCEEDC;border-color:var(--green);}
+.opt.wrong{background:#F6DADA;border-color:var(--red);}
+.qitem{margin-bottom:.9rem;}
+.qcat{display:inline-block;font-family:Arial,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#fff;background:var(--transition);padding:.1rem .5rem;border-radius:10px;margin-bottom:.3rem;}
+.qcat.content{background:var(--artwork);}
+
+.sent{cursor:pointer;padding:1px 2px;border-radius:3px;}
+.sent:hover{background:#F0EAD6;}
+.sent.tagged{font-weight:600;}
+.sent.correct{background:#DCEEDC;}
+.sent.wrong{background:#F6DADA;}
+.tagpop{display:inline-block;background:#fff;border:1px solid var(--navy);border-radius:6px;padding:.2rem;margin-left:.2rem;font-family:Arial,sans-serif;font-size:.75rem;}
+.taglegend{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;font-family:Arial,sans-serif;font-size:.78rem;}
+.taglegend span{padding:.2rem .55rem;border-radius:999px;color:#fff;}
+
+.clickable-word{cursor:pointer;padding:1px 3px;border-radius:3px;border-bottom:2px dotted var(--gold);}
+.clickable-word:hover{background:#F0EAD6;}
+.clickable-word.revealed{cursor:default;border-bottom:none;background:#FFF3CE;font-weight:700;}
+.para-locked{font-weight:700;}
+.revealbank{font-family:Arial,sans-serif;font-size:.8rem;color:#888;margin:.4rem 0 1rem;min-height:1.4rem;}
+
+.chipbank{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;font-family:Arial,sans-serif;}
+.chip{background:var(--gold);color:#3a2f00;padding:.4rem .8rem;border-radius:20px;font-weight:700;font-size:.8rem;cursor:grab;user-select:none;}
+.chip.placed{opacity:.35;cursor:default;}
+.chartgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;font-family:Arial,sans-serif;}
+.chartcol{border:2px dashed var(--line);border-radius:8px;padding:.5rem;min-height:80px;}
+.chartcol h4{margin:.1rem 0 .4rem;font-size:.78rem;color:var(--navy);}
+.chartcol.over{border-color:var(--teal);background:#EEF7F8;}
+.placedchip{background:var(--teal);color:#fff;padding:.25rem .5rem;border-radius:14px;font-size:.7rem;margin:.12rem;display:inline-block;}
+
+.gradebox{border:2px solid var(--line);border-radius:8px;padding:.7rem .9rem;margin-bottom:.8rem;font-family:Arial,sans-serif;}
+.gradebox .cap{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fff;background:var(--navy);display:inline-block;padding:.15rem .55rem;border-radius:10px;margin-bottom:.5rem;}
+.gradebox textarea{width:100%;min-height:50px;font-family:Arial,sans-serif;padding:.5rem;border:1px solid var(--line);border-radius:6px;font-size:.88rem;}
+.answerpair{display:flex;gap:.7rem;margin-top:.5rem;}
+.answerpair>div{flex:1;}
+.answerpair .yourbox{background:#FAF7EF;border-radius:6px;padding:.5rem;font-size:.85rem;}
+.answerpair .keybox{background:#EAF6EC;border-radius:6px;padding:.5rem;font-size:.85rem;border:1px dashed var(--green);}
+.gradebox .selfgrade{margin-top:.5rem;display:flex;align-items:center;gap:.5rem;font-size:.8rem;}
+.scaleguide{font-family:Arial,sans-serif;font-size:.8rem;background:#F0EAD6;border-radius:8px;padding:.8rem 1rem;margin-bottom:1.2rem;}
+.scaleguide b{display:block;margin-bottom:.3rem;color:var(--navy);}
+
+.tree{display:flex;flex-direction:column;align-items:center;font-family:Arial,sans-serif;}
+.node{background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:.6rem .9rem;min-width:200px;text-align:center;font-size:.9rem;}
+.node[contenteditable="true"]:empty:before{content:attr(data-ph);color:#aaa;font-style:italic;}
+.node-theory{border:2px solid var(--theory);} .node-theme{border:2px solid var(--theme);}
+.node-thesis{border:2px solid var(--thesis);min-width:480px;} .node-counter{border:2px dashed var(--counter);min-width:480px;margin-top:.4rem;}
+.connector{width:2px;height:20px;background:var(--line);}
+.branches{display:flex;gap:1.6rem;margin-top:.4rem;flex-wrap:wrap;justify-content:center;}
+.branch{display:flex;flex-direction:column;align-items:center;width:230px;}
+.node-concept{border:2px solid var(--concept);width:100%;} .node-artwork{border:2px solid var(--artwork);width:100%;margin-top:.4rem;}
+.node-proof{border:2px solid var(--transition);width:100%;margin-top:.4rem;font-size:.8rem;}
+.node-cap{font-family:Arial,sans-serif;font-size:.65rem;font-weight:700;color:#999;text-transform:uppercase;margin-bottom:.15rem;}
+
+.orgpicker{display:flex;gap:.6rem;margin-bottom:.6rem;font-family:Arial,sans-serif;flex-wrap:wrap;}
+.orgpicker button{border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:8px;padding:.5rem 1rem;font-weight:700;cursor:pointer;font-size:.85rem;}
+.orgpicker button.sel{background:var(--navy);color:#fff;}
+.orghint{font-family:Arial,sans-serif;font-size:.83rem;background:#F0EAD6;border-radius:8px;padding:.6rem .9rem;margin-bottom:1rem;min-height:1.4rem;}
+.org{display:none;} .org.active{display:block;}
+.witness{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem;}
+.witnessbox{width:250px;background:#fff;border:2px solid var(--artwork);border-radius:8px;padding:.6rem;text-align:center;font-family:Arial,sans-serif;font-size:.85rem;}
+.pyramidrow{border:2px solid var(--concept);border-radius:8px;padding:.5rem 1rem;margin:.4rem auto;text-align:center;font-family:Arial,sans-serif;background:#fff;}
+
+.zonewrap{display:flex;gap:.6rem;flex-wrap:wrap;font-family:Arial,sans-serif;margin-top:.8rem;}
+.zone{flex:1;min-width:170px;border:2px dashed var(--line);border-radius:8px;padding:.5rem;min-height:100px;}
+.zone h4{margin:.1rem 0 .4rem;font-size:.78rem;color:var(--navy);}
+.zone.over{border-color:var(--teal);background:#EEF7F8;}
+
+.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;font-family:Arial,sans-serif;}
+.toolbar button{border:none;border-radius:6px;padding:.5rem .9rem;font-weight:700;font-size:.8rem;cursor:pointer;}
+.btn-load{background:var(--teal);color:#fff;} .btn-clear{background:#B5541E;color:#fff;} .btn-dl{background:var(--navy);color:#fff;}
+
+.artrow{display:flex;gap:.5rem;margin-bottom:.5rem;font-family:Arial,sans-serif;align-items:center;}
+.artrow span.num{width:1.6rem;font-weight:700;color:var(--navy);}
+.artrow input{flex:1;padding:.4rem;border:1px solid var(--line);border-radius:6px;font-size:.85rem;}
+.artcounter{font-family:Arial,sans-serif;font-weight:700;padding:.5rem;border-radius:6px;background:#F6DADA;color:#C0392B;text-align:center;margin-top:.6rem;}
+.artcounter.done{background:#DCEEDC;color:#2F8F5B;}
+
+.outlinerow{display:flex;gap:.6rem;margin-bottom:.45rem;font-family:Arial,sans-serif;align-items:flex-start;}
+.outlinerow .onum{width:1.8rem;font-weight:700;color:var(--navy);padding-top:.4rem;}
+.outlinerow .olabel{width:230px;font-weight:700;color:var(--navy);padding-top:.4rem;font-size:.85rem;}
+.outlinerow input{flex:1;padding:.4rem;border:1px solid var(--line);border-radius:6px;font-size:.85rem;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:10px;padding:1.5rem;max-width:700px;width:90%;max-height:85vh;overflow:auto;font-family:Arial,sans-serif;}
+.modal-box textarea{width:100%;min-height:300px;font-family:monospace;font-size:.8rem;padding:.7rem;border:1px solid var(--line);border-radius:6px;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea, #printArea *{visibility:visible;}
+  #printArea{position:absolute;top:0;left:0;width:100%;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Threading the Needle: Essay Engine</h1>
+  <p>Reverse engineer the model, then build your own</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-mode="reverse">Lesson 1: Break Down the Essay</button>
+  <button class="tab-btn" data-mode="build">Lesson 2: Build Your Own Essay</button>
+</nav>
+
+<main>
+
+<section class="mode active" id="reverse">
+
+  <details class="essaybox" open>
+    <summary></summary>
+    <div class="essay-body" id="essayText"></div>
+  </details>
+
+  <div class="stage unlocked" id="stage1">
+    <h2>Activity 1: Read and Discuss</h2>
+    <div class="sub">What is the writer arguing? Does she prove her point? Why?</div>
+    <div class="timerwrap">
+      <div class="timer" id="timerDisplay">6:00</div>
+      <button class="big" id="timerBtn" onclick="startTimer()">Start 6 minute timer</button>
+      <p style="margin-top:1rem;">
+        <button class="ghost" onclick="unlock('stage2')">We have discussed it, continue</button>
+      </p>
+    </div>
+  </div>
+
+  <div class="stage" id="stage2">
+    <h2>Activity 2: What Is Each Paragraph's Job?</h2>
+    <div class="sub">Choose the correct purpose for each paragraph, then check.</div>
+    <div id="paraChoices"></div>
+    <button class="big" onclick="checkStage2()">Check answers</button>
+    <p id="stage2msg" style="font-family:Arial,sans-serif;font-weight:700;"></p>
+  </div>
+
+  <div class="stage" id="stage3">
+    <h2>Activity 3: Scan for Facts</h2>
+    <div class="sub">Name, date, and which part of the psyche each artwork mostly examines.</div>
+    <table class="scan" id="scanTable"></table>
+    <br><button class="big" onclick="checkStage3()">Check answers</button>
+    <p id="stage3msg" style="font-family:Arial,sans-serif;font-weight:700;"></p>
+  </div>
+
+  <div class="stage" id="stage4">
+    <h2>Activity 4: True, False, or Multiple Choice</h2>
+    <div class="sub">Some questions test structure, some test whether you understood what she actually said.</div>
+    <div id="tfmcq"></div>
+    <button class="big" onclick="checkStage4()">Check answers</button>
+    <p id="stage4msg" style="font-family:Arial,sans-serif;font-weight:700;"></p>
+  </div>
+
+  <div class="stage" id="stage5">
+    <h2>Activity 5: Tag Every Sentence</h2>
+    <div class="sub">Class discussion first, five minutes: what do you notice about where things sit? Then tag each sentence below. All tags must be correct to continue.</div>
+    <div class="taglegend" id="tagLegend"></div>
+    <div id="taggableEssay"></div>
+    <button class="big" onclick="checkStage5()">Check my answers</button>
+    <button class="ghost" onclick="revealStructure()">Reveal essay structure</button>
+    <p id="stage5msg" style="font-family:Arial,sans-serif;font-weight:700;"></p>
+    <div id="structureReveal" style="display:none;margin-top:1rem;padding:1rem;background:#F0EAD6;border-radius:8px;font-family:Arial,sans-serif;font-size:.9rem;">
+      <b>Intro:</b> Theory, theme, background, thesis statement.<br>
+      <b>Body paragraphs:</b> Point, Explain, Example, then connect and conclude.<br>
+      <b>Conclusion:</b> Restate the thesis, summarise, call to action.
+    </div>
+  </div>
+
+  <div class="stage" id="stage6">
+    <h2>Activity 6: Find the Devices</h2>
+    <div class="sub">Click any word inside a highlighted phrase to reveal it. Reveal every phrase in a paragraph to lock it. Then drag each revealed phrase into the column that names its job.</div>
+    <div class="essay-body" id="clickEssay"></div>
+    <div class="revealbank" id="revealBank">Nothing revealed yet.</div>
+    <div class="chartgrid" id="chartGrid"></div>
+    <button class="big" onclick="checkStage6()" style="margin-top:1rem;">Check answers</button>
+    <p id="stage6msg" style="font-family:Arial,sans-serif;font-weight:700;"></p>
+  </div>
+
+  <div class="stage" id="stage6b">
+    <h2>Activity 6b: Sprinkle the Linking Words</h2>
+    <div class="sub">Drag each phrase into the part of the essay where it belongs.</div>
+    <div class="chipbank" id="reverseSprinkleBank"></div>
+    <div class="zonewrap" id="reverseZoneWrap"></div>
+    <p style="margin-top:.8rem;"><button class="ghost" onclick="unlock('stage7')">Done, continue</button></p>
+  </div>
+
+  <div class="stage" id="stage7">
+    <h2>Activity 7: Reveal the Plan</h2>
+    <div class="sub">Every box below needs an answer. Write in your own words first, compare with a partner, then reveal the correct answer and grade yourself.</div>
+    <div class="scaleguide">
+      <b>Self grading scale</b>
+      100% = same idea, right words &nbsp; | &nbsp; 75% = right idea, missing a detail &nbsp; | &nbsp; 50% = partly right &nbsp; | &nbsp; 25% = barely connected &nbsp; | &nbsp; 0% = not this, or blank
+    </div>
+    <div id="gradeboxes"></div>
+    <div class="toolbar">
+      <button class="btn-load" onclick="revealGradeboxes()">Reveal correct answers</button>
+      <button class="btn-clear" onclick="clearGradeboxes()">Clear and retry</button>
+    </div>
+  </div>
+
+</section>
+
+<section class="mode" id="build">
+
+  <div class="stage unlocked">
+    <h2>Step 1: Theory and Ten Artworks</h2>
+    <select id="theoryPick" style="max-width:100%;margin-bottom:1rem;">
+      <option>Cultural Identity Formation</option>
+      <option>Artifacts and Protest Art</option>
+      <option>Wallas's Creative Process</option>
+      <option>Perry's Scheme of Development</option>
+      <option>Colour Theory</option>
+      <option>Poetic Devices</option>
+      <option>Sapir-Whorf Hypothesis</option>
+      <option>Mulvey's Male Gaze</option>
+      <option>Foucault, Madness and the Panopticon</option>
+      <option selected>Freud, ID Ego Superego</option>
+      <option>Fashion as Cultural Artifact</option>
+      <option>Light as Tool versus Subject</option>
+    </select>
+    <div class="sub" style="margin-top:0;">List at least ten artworks that could apply to this theory, and jot why.</div>
+    <div id="artRows"></div>
+    <div class="artcounter" id="artCounter">0 of 10 artworks listed</div>
+  </div>
+
+  <div class="stage unlocked">
+    <h2>Step 2: Choose Your Organiser</h2>
+    <div class="sub">Hover each option to see which essay style it suits best.</div>
+    <div class="orgpicker" id="orgPicker">
+      <button class="sel" data-org="org-tree" data-hint="Best for three or more supporting concepts that don't conflict with each other.">Tree, several concepts</button>
+      <button data-org="org-court" data-hint="Best for one bold claim that needs strong, direct evidence to defend it.">Courtroom, one strong claim</button>
+      <button data-org="org-pyramid" data-hint="Best for a simple, linear essay moving from broad theory down to specific evidence.">Pyramid, simple hierarchy</button>
+      <button data-org="org-tchart" data-hint="Best for comparing two opposing ideas, a for or against argument.">T-Chart, two opposing ideas</button>
+      <button data-org="org-venn" data-hint="Best when some evidence supports two ideas at once, showing overlap.">Venn, ideas that overlap</button>
+    </div>
+    <div class="orghint" id="orgHint">Tree, several concepts: best for three or more supporting concepts that don't conflict with each other.</div>
+
+    <div class="toolbar">
+      <button class="btn-dl" onclick="openPlanModal()">Get my plan (print / save as PDF)</button>
+    </div>
+
+    <div class="org active" id="org-tree">
+      <div class="toolbar">
+        <button class="btn-clear" onclick="clearTree('build')">Clear all</button>
+      </div>
+      <div class="tree" id="buildTree"></div>
+    </div>
+
+    <div class="org" id="org-court">
+      <div class="node node-thesis" contenteditable="true" data-ph="Thesis: I claim that..." style="margin:0 auto 1rem;"></div>
+      <div class="witness">
+        <div class="witnessbox"><b>Witness 1</b><div contenteditable="true" data-ph="Artwork" style="margin:.4rem 0;font-style:italic;"></div><div contenteditable="true" data-ph="What does this prove?"></div></div>
+        <div class="witnessbox"><b>Witness 2</b><div contenteditable="true" data-ph="Artwork" style="margin:.4rem 0;font-style:italic;"></div><div contenteditable="true" data-ph="What does this prove?"></div></div>
+        <div class="witnessbox"><b>Witness 3</b><div contenteditable="true" data-ph="Artwork" style="margin:.4rem 0;font-style:italic;"></div><div contenteditable="true" data-ph="What does this prove?"></div></div>
+      </div>
+      <p style="text-align:center;font-family:Arial,sans-serif;font-weight:700;margin-top:1rem;">Have I proved my case?</p>
+    </div>
+
+    <div class="org" id="org-pyramid" style="font-family:Arial,sans-serif;">
+      <div class="pyramidrow" contenteditable="true" data-ph="Theory"></div>
+      <div class="pyramidrow" contenteditable="true" data-ph="Theme"></div>
+      <div class="pyramidrow" contenteditable="true" data-ph="Thesis" style="border-color:var(--thesis);"></div>
+      <div class="pyramidrow" contenteditable="true" data-ph="Concept 1, Concept 2, Concept 3"></div>
+      <div class="pyramidrow" contenteditable="true" data-ph="Artwork, artwork, artwork, artwork, artwork" style="border-color:var(--artwork);"></div>
+      <div class="pyramidrow" contenteditable="true" data-ph="Evidence, quotes, examples"></div>
+    </div>
+
+    <div class="org" id="org-tchart" style="font-family:Arial,sans-serif;">
+      <div class="node node-thesis" contenteditable="true" data-ph="Thesis: which side does the essay argue, and why?" style="margin:0 auto 1rem;"></div>
+      <div style="display:flex;gap:1rem;">
+        <div style="flex:1;border:2px solid var(--theory);border-radius:8px;padding:.7rem;">
+          <b>Idea A</b>
+          <div contenteditable="true" data-ph="What supports this side?" style="min-height:70px;margin-top:.4rem;"></div>
+          <div contenteditable="true" data-ph="Artwork(s)" style="min-height:40px;margin-top:.4rem;font-style:italic;color:var(--artwork);"></div>
+        </div>
+        <div style="flex:1;border:2px solid var(--counter);border-radius:8px;padding:.7rem;">
+          <b>Idea B</b>
+          <div contenteditable="true" data-ph="What supports this side?" style="min-height:70px;margin-top:.4rem;"></div>
+          <div contenteditable="true" data-ph="Artwork(s)" style="min-height:40px;margin-top:.4rem;font-style:italic;color:var(--artwork);"></div>
+        </div>
+      </div>
+      <div class="node node-proof" contenteditable="true" data-ph="Which side does your thesis land on, and why?" style="margin:1rem auto 0;max-width:600px;"></div>
+    </div>
+
+    <div class="org" id="org-venn" style="font-family:Arial,sans-serif;">
+      <div class="node node-thesis" contenteditable="true" data-ph="Thesis: how do these two ideas relate?" style="margin:0 auto 1rem;"></div>
+      <div style="display:flex;gap:.6rem;">
+        <div style="flex:1;border:2px solid var(--theory);border-radius:50px 8px 8px 50px;padding:.8rem;">
+          <b>Only Idea A</b>
+          <div contenteditable="true" data-ph="Artwork(s) and notes" style="min-height:80px;margin-top:.4rem;"></div>
+        </div>
+        <div style="flex:1;border:2px dashed var(--transition);border-radius:8px;padding:.8rem;background:#EEF7F8;">
+          <b>Both A and B</b>
+          <div contenteditable="true" data-ph="Artwork(s) that fit both" style="min-height:80px;margin-top:.4rem;"></div>
+        </div>
+        <div style="flex:1;border:2px solid var(--counter);border-radius:8px 50px 50px 8px;padding:.8rem;">
+          <b>Only Idea B</b>
+          <div contenteditable="true" data-ph="Artwork(s) and notes" style="min-height:80px;margin-top:.4rem;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage unlocked">
+    <h2>Step 3: The Full Structure, In Order</h2>
+    <div class="sub">Use your organiser above to fill in notes for every line below.</div>
+    <div id="outlineRows"></div>
+  </div>
+
+  <div class="stage unlocked">
+    <h2>Step 4: Sprinkle the Linking Words</h2>
+    <div class="sub">Drag each phrase onto the paragraph it belongs to. Add your own in the blank chips if you want.</div>
+    <div class="chipbank" id="sprinkleBank"></div>
+    <div class="chipbank" id="customChipRow"></div>
+    <div class="zonewrap" id="zoneWrap"></div>
+  </div>
+
+  <div class="stage unlocked">
+    <h2>Step 5: Timed Writing</h2>
+    <div class="sub">Writing is on paper. Press start once you have paper and a pen ready.</div>
+    <div class="timerwrap">
+      <div class="timer" id="timer2Display">20:00</div>
+      <button class="big" onclick="startTimer2()">Start 20 minute timer</button>
+    </div>
+  </div>
+
+  <div class="stage unlocked">
+    <h2>Step 6: Peer Review</h2>
+    <div class="sub">Read your partner's handwritten essay. Tick each box as you confirm it, section by section.</div>
+    <div style="font-family:Arial,sans-serif;font-size:.9rem;">
+
+      <div style="background:#F0EAD6;border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;">
+        <b style="color:#1E2761;">Introduction</b><br>
+        <label><input type="checkbox"> Paragraph is indented</label><br>
+        <label><input type="checkbox"> Theory is named clearly</label><br>
+        <label><input type="checkbox"> Background is given</label><br>
+        <label><input type="checkbox"> Thesis statement is one clear sentence</label><br>
+        <label><input type="checkbox"> Subthesis or counterargument is addressed</label>
+      </div>
+
+      <div style="background:#F0EAD6;border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;">
+        <b style="color:#1E2761;">Body Paragraph 1</b><br>
+        <label><input type="checkbox"> Paragraph is indented</label><br>
+        <label><input type="checkbox"> Topic sentence states the point</label><br>
+        <label><input type="checkbox"> Explanation unpacks the idea</label><br>
+        <label><input type="checkbox"> Example names and dates the artwork</label><br>
+        <label><input type="checkbox"> Sentence connects back to the thesis</label>
+      </div>
+
+      <div style="background:#F0EAD6;border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;">
+        <b style="color:#1E2761;">Body Paragraph 2</b><br>
+        <label><input type="checkbox"> Paragraph is indented</label><br>
+        <label><input type="checkbox"> Topic sentence states the point</label><br>
+        <label><input type="checkbox"> Explanation unpacks the idea</label><br>
+        <label><input type="checkbox"> Example names and dates the artwork</label><br>
+        <label><input type="checkbox"> Sentence connects back to the thesis</label>
+      </div>
+
+      <div style="background:#F0EAD6;border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;">
+        <b style="color:#1E2761;">Body Paragraph 3</b><br>
+        <label><input type="checkbox"> Paragraph is indented</label><br>
+        <label><input type="checkbox"> Topic sentence states the point</label><br>
+        <label><input type="checkbox"> Explanation unpacks the idea</label><br>
+        <label><input type="checkbox"> Example names and dates the artwork</label><br>
+        <label><input type="checkbox"> Sentence connects back to the thesis</label>
+      </div>
+
+      <div style="background:#F0EAD6;border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;">
+        <b style="color:#1E2761;">Conclusion</b><br>
+        <label><input type="checkbox"> Paragraph is indented</label><br>
+        <label><input type="checkbox"> Thesis is restated</label><br>
+        <label><input type="checkbox"> Ideas are summarised</label><br>
+        <label><input type="checkbox"> Ends with a call to action</label>
+      </div>
+
+      <div style="background:#F0EAD6;border-radius:8px;padding:.7rem 1rem;">
+        <b style="color:#1E2761;">Style, Across the Whole Essay</b><br>
+        <label><input type="checkbox"> At least one thread linking phrase per paragraph</label><br>
+        <label><input type="checkbox"> No em dashes</label>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<div class="modal-overlay" id="planModal">
+  <div class="modal-box">
+    <h3 style="margin-top:0;color:#1E2761;">My Essay Plan</h3>
+    <div id="printArea"></div>
+    <textarea id="planText" readonly onclick="this.select()"></textarea>
+    <p style="font-size:.8rem;color:#666;">Press Ctrl+P or Cmd+P to print or save as PDF. Or select all the text above and copy it.</p>
+    <button class="big" onclick="window.print()">Print / Save as PDF</button>
+    <button class="ghost" onclick="document.getElementById('planModal').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<script>
+var paragraphsRaw = [
+"Sigmund Freud's model of the psyche divides the self into three competing forces: the ID, driven by instinct and desire without regard for consequence; the superego, the internalised voice of parents, religion and society; and the ego, which negotiates a livable compromise between the two. Most days, that negotiation is invisible. We do not notice the ego at work because it succeeds, quietly editing what we are willing to say, wear, want and do. Art breaks this pattern. It is one of the only spaces where the negotiation becomes visible, where an audience can feel the pull of instinct and the weight of judgement in the same instant, without stepping outside acceptable behaviour. Because the ID, ego and superego are structures of the human mind rather than products of any single culture, they offer a lens capable of explaining art's emotional pull across the most unrelated of contexts: a South African rap video, a Japanese survival film, an American gallery piece, a German metal concert and a spoken word poem born of a distinctly Western feminism. Tracing this shared negotiation across the works of Die Antwoord, Kinji Fukasaku's 2000 film Battle Royale, Andres Serrano's Piss Christ, Rammstein and Cynthia Nixon's spoken word piece \u201cBe a Lady\u201d reveals that Freud's model of the psyche is key to understanding how audiences engage with art emotionally on a global scale, a mechanism that operates beneath, and often overrides, the specific culture producing or receiving the work, even where that culture still determines the particular form the transgression is permitted to take.",
+"Some art exists simply to let the ID feel pleasure without apology, and Die Antwoord's Cookie Thumper, released in 2012, is one of the purest examples of this. The song and its accompanying visuals commit fully to excess: exaggerated sexuality, deliberately grotesque imagery, and a sound so abrasive it refuses to be background music. There is no attempt at redemption or moral framing here, only appetite. A person who behaved this way in a classroom, a workplace or a family gathering would face immediate correction from every layer of the superego, yet inside a music video the same behaviour becomes spectacle rather than scandal. Rammstein's live performances, staged continuously since the band's formation in 1994, work through a related, if louder, register of pleasure. Pyrotechnics, volume and choreographed aggression overwhelm the senses before any single lyric or image can be judged individually. In both cases, art gives the ID a stage large enough to perform on and asks the audience simply to feel, not to approve. Neither work stays this simple for long, however: the same excess that reads as pleasure here is precisely what begins to strain against the superego's tolerance once the audience is asked to keep watching.",
+"That strain is where the second function of art begins, testing exactly where the ID's freedom ends rather than simply indulging it. Andres Serrano's Piss Christ, first exhibited in 1987, submerges a crucifix in the artist's own urine, an act that, stripped of its gallery context, would read as a direct assault on organised religion, one of the superego's oldest strongholds. Inside a frame labelled art, the same object becomes an uncomfortable question about faith, the body and suffering rather than simple sacrilege. Serrano does not remove the taboo, he relocates it just far enough that it can be examined instead of only condemned. Kinji Fukasaku's Battle Royale, released in 2000, tests a different limit: not blasphemy but violence, and specifically what remains of a person once every rule restraining the ID is deliberately stripped away. Forty-two students, still dressed in the uniforms that once marked them as compliant and protected, are given collars and told to kill one another. The uniform is the detail that keeps this from becoming pure carnage; it is a constant visual reminder of the very system that failed them, so that even as the ID takes over on screen, the audience is never allowed to forget that the superego's absence is the actual cause of the horror. The excess praised as pure pleasure in Cookie Thumper (2012) resurfaces here too, since its deliberate ugliness, the zef aesthetic Die Antwoord has built a career on since the early 2010s, is less an accident than a calculated insult to bourgeois taste, testing how far an audience's tolerance will stretch before disgust replaces enjoyment. That same question, how far tolerance stretches, is what finally forces the superego to answer for itself.",
+"The superego does not merely tolerate art, at its most demanding moments art makes the superego's own requirements visible enough to be questioned. Cynthia Nixon's spoken word performance of Be a Lady They Said, released in 2017, achieves this directly, listing decades of contradictory instructions given to women about their bodies, their ambition and their worth. The poem's force comes less from anger than from exhaustion; underneath every rule it recites is an ID that simply wants to stop performing, and naming that exhaustion aloud, in the protected space of performance, allows an audience to feel permitted to agree. Rammstein returns here in a different register from the sensory overload discussed earlier. Beneath the same fire and volume, songs such as Deutschland, released in 2019, stage German national identity itself as a site of unresolved guilt and pride, forcing a superego built from twentieth century history to sit uncomfortably beside a nation's ordinary desire to feel proud of itself. Even Battle Royale (2000) reappears with new meaning in this light: the film's closing insistence on friendship and grief, after so much submission to instinct, is the ego's attempt to reassert a superego that violence had temporarily erased. What began, in the first paragraph, as pleasure taken without apology has, by the last, become a negotiation the psyche cannot walk away from.",
+"None of these five works, Cookie Thumper (2012), Piss Christ (1987), Battle Royale (2000), Be a Lady They Said (2017) or Rammstein's Deutschland (2019), needed to resolve the tension between instinct and rule in order to succeed as art. Their power lies instead in how each one moves between functions rather than sitting still inside a single one: pleasure curdles into provocation, provocation forces a reckoning with the superego, and the ID never entirely wins or loses. That is the real answer to why a South African rap video, a Japanese survival film, a New York gallery piece, a German metal concert and an American spoken word poem can each produce an instant emotional reaction in audiences who share no common culture: the argument being staged is not cultural at all, it is the mind's own, and art briefly excuses that mind from picking a side."
+];
+var paraLabels = ["Paragraph 1, Introduction","Paragraph 2","Paragraph 3","Paragraph 4","Paragraph 5, Conclusion"];
+var paraAnswers = ["Introduce theory, theme and thesis","Pleasure the ID","Test the ID's limits","Negotiate the superego","Conclude and restate the thesis"];
+var paragraphs = paragraphsRaw.map(function(html,i){ return {label:paraLabels[i], html:html, answer:paraAnswers[i]}; });
+
+var sentenceKey = [
+  ["theory","theory","theory","background","background","theme","thesis"],
+  ["topic","example","explain","explain","example","explain","concl","concl"],
+  ["topic","example","explain","explain","example","example","explain","explain","concl"],
+  ["topic","example","explain","example","explain","example","concl"],
+  ["thesis2","concl","action"]
+];
+
+var artworks = [
+  { name: "Cookie Thumper", date: "2012", psyche: "ID" },
+  { name: "Piss Christ", date: "1987", psyche: "Superego" },
+  { name: "Battle Royale", date: "2000", psyche: "ID" },
+  { name: "Be a Lady They Said", date: "2017", psyche: "Superego" },
+  { name: "Deutschland", date: "2019", psyche: "Superego" },
+];
+
+document.getElementById('essayText').innerHTML = paragraphs.map(function(p){
+  return '<div class="para-label">'+p.label+'</div><p>'+p.html+'</p>';
+}).join('');
+
+var t1 = 360, t1id;
+function startTimer(){
+  document.getElementById('timerBtn').disabled = true;
+  t1id = setInterval(function(){
+    t1--;
+    var m = Math.floor(t1/60), s = t1%60;
+    document.getElementById('timerDisplay').textContent = m+":"+(s<10?"0":"")+s;
+    if(t1<=0){ clearInterval(t1id); document.getElementById('timerDisplay').textContent="Time!"; }
+  },1000);
+}
+function unlock(id){
+  document.getElementById(id).classList.add('unlocked');
+  document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+var paraOptions = ["Introduce theory, theme and thesis","Pleasure the ID","Test the ID's limits","Negotiate the superego","Conclude and restate the thesis"];
+document.getElementById('paraChoices').innerHTML = paragraphs.map(function(p,i){
+  var opts = paraOptions.map(function(o){ return '<option>'+o+'</option>'; }).join('');
+  return '<div class="parachoice"><label>'+p.label+'</label><select id="pc'+i+'"><option value="">choose...</option>'+opts+'</select></div>';
+}).join('');
+function checkStage2(){
+  var allOk = true;
+  paragraphs.forEach(function(p,i){
+    var sel = document.getElementById('pc'+i);
+    if(sel.value === p.answer){ sel.className='correct'; } else { sel.className='wrong'; allOk=false; }
+  });
+  document.getElementById('stage2msg').textContent = allOk ? "All correct. Next activity unlocked." : "Not quite, adjust the red ones and check again.";
+  document.getElementById('stage2msg').style.color = allOk ? "#2F8F5B" : "#C0392B";
+  if(allOk) unlock('stage3');
+}
+
+document.getElementById('scanTable').innerHTML = '<tr><th>Artwork</th><th>Date</th><th>Which part of the psyche?</th></tr>' +
+  artworks.map(function(a,i){
+    return '<tr><td>'+a.name+'</td><td><input id="date'+i+'" placeholder="year"></td><td><select id="psy'+i+'"><option value="">choose</option><option>ID</option><option>Ego</option><option>Superego</option></select></td></tr>';
+  }).join('');
+function checkStage3(){
+  var allOk = true;
+  artworks.forEach(function(a,i){
+    var d = document.getElementById('date'+i), p = document.getElementById('psy'+i);
+    var dOk = d.value.trim() === a.date, pOk = p.value === a.psyche;
+    d.style.borderColor = dOk ? '#2F8F5B' : '#C0392B';
+    p.style.borderColor = pOk ? '#2F8F5B' : '#C0392B';
+    if(!dOk || !pOk) allOk = false;
+  });
+  document.getElementById('stage3msg').textContent = allOk ? "All correct. Next activity unlocked." : "Check the red boxes and try again.";
+  document.getElementById('stage3msg').style.color = allOk ? "#2F8F5B" : "#C0392B";
+  if(allOk) unlock('stage4');
+}
+
+var tfmcq = [
+  { q: "True or false: each paragraph is dedicated to one artwork only.", opts:["True","False"], a:"False", cat:"structure" },
+  { q: "True or false: the thesis argues culture matters more than psychology.", opts:["True","False"], a:"False", cat:"content" },
+  { q: "Which artwork appears in more than one paragraph?", opts:["Piss Christ","Be a Lady They Said","Battle Royale","Deutschland"], a:"Battle Royale", cat:"structure" },
+  { q: "Why does Cookie Thumper count as pleasuring the ID, not testing it?", opts:["It has no attempt at moral framing or redemption","It was banned in several countries","It uses religious imagery","It was released before Piss Christ"], a:"It has no attempt at moral framing or redemption", cat:"content" },
+  { q: "What does the essay say Serrano does to the taboo in Piss Christ?", opts:["He removes it entirely","He relocates it so it can be examined","He ignores it","He apologises for it"], a:"He relocates it so it can be examined", cat:"content" },
+  { q: "Why does the uniform detail matter in Battle Royale, per the essay?", opts:["It shows fashion trends of 2000","It reminds us the failed system caused the horror","It proves the students are children","It has no real function"], a:"It reminds us the failed system caused the horror", cat:"content" },
+  { q: "What is the emotional source of power in Be a Lady They Said, per the essay?", opts:["Anger","Exhaustion","Fear","Joy"], a:"Exhaustion", cat:"content" },
+  { q: "True or false: the essay claims Deutschland deals with national guilt and pride.", opts:["True","False"], a:"True", cat:"content" },
+];
+document.getElementById('tfmcq').innerHTML = tfmcq.map(function(item,i){
+  var opts = item.opts.map(function(o){ return '<span class="opt" data-v="'+o+'">'+o+'</span>'; }).join('');
+  var badge = '<span class="qcat'+(item.cat==='content'?' content':'')+'">'+item.cat+'</span>';
+  return '<div class="qitem" data-answer="'+item.a+'" id="tf'+i+'">'+badge+'<p style="font-family:Arial,sans-serif;font-weight:700;margin-top:.2rem;">'+item.q+'</p>'+opts+'</div>';
+}).join('');
+document.getElementById('tfmcq').querySelectorAll('.opt').forEach(function(opt){
+  opt.onclick = function(){
+    var item = opt.closest('.qitem');
+    item.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct','wrong'); });
+    if(opt.dataset.v === item.dataset.answer){ opt.classList.add('correct'); item.dataset.done="1"; }
+    else { opt.classList.add('wrong'); item.dataset.done=""; item.querySelectorAll('.opt').forEach(function(o){ if(o.dataset.v===item.dataset.answer) o.classList.add('correct'); }); }
+  };
+});
+function checkStage4(){
+  var items = document.querySelectorAll('#tfmcq .qitem');
+  var allOk = Array.prototype.every.call(items, function(it){ return it.dataset.done==="1"; });
+  document.getElementById('stage4msg').textContent = allOk ? "All correct. Sentence tagging unlocked." : "Click the correct option for every question.";
+  document.getElementById('stage4msg').style.color = allOk ? "#2F8F5B" : "#C0392B";
+  if(allOk) unlock('stage5');
+}
+
+var tagTypes = [
+  {k:"theory", label:"Theory", color:"#2B5FAD"},
+  {k:"theme", label:"Theme", color:"#2F8F5B"},
+  {k:"thesis", label:"Thesis statement", color:"#C0392B"},
+  {k:"thesis2", label:"Thesis, reworded", color:"#E07A5F"},
+  {k:"topic", label:"Topic sentence", color:"#B8860B"},
+  {k:"concl", label:"Concluding sentence", color:"#1C8C8C"},
+  {k:"example", label:"Example", color:"#7B4FA0"},
+  {k:"explain", label:"Explanation", color:"#2F8F5B"},
+  {k:"background", label:"Background info", color:"#2B5FAD"},
+  {k:"action", label:"Call to action", color:"#B5541E"},
+];
+document.getElementById('tagLegend').innerHTML = tagTypes.map(function(t){ return '<span style="background:'+t.color+'">'+t.label+'</span>'; }).join('');
+
+function splitSentences(html){
+  return html.match(/[^.!?]+[.!?]+(\s|$)/g) || [html];
+}
+var sentIdCounter = 0;
+document.getElementById('taggableEssay').innerHTML = paragraphs.map(function(p,pi){
+  var sents = splitSentences(p.html);
+  var spans = sents.map(function(s,si){
+    sentIdCounter++;
+    return '<span class="sent" id="sent'+sentIdCounter+'" data-p="'+pi+'" data-s="'+si+'" onclick="tagSentence('+sentIdCounter+')">'+s+'</span>';
+  }).join('');
+  return '<div class="para-label">'+p.label+'</div><p>'+spans+'</p>';
+}).join('');
+
+function tagSentence(id){
+  var el = document.getElementById('sent'+id);
+  if(el.querySelector('select')) return;
+  var sel = document.createElement('select');
+  sel.className = 'tagpop';
+  var opts = tagTypes.map(function(t){ return '<option value="'+t.k+'">'+t.label+'</option>'; }).join('');
+  sel.innerHTML = '<option value="">tag as...</option>' + opts;
+  if(el.dataset.tag) sel.value = el.dataset.tag;
+  sel.onchange = function(){
+    var t = tagTypes.filter(function(x){ return x.k===sel.value; })[0];
+    if(t){ el.style.borderBottom = '3px solid '+t.color; el.classList.add('tagged'); el.classList.remove('correct','wrong'); el.dataset.tag = t.k; }
+    sel.remove();
+  };
+  el.appendChild(sel);
+}
+function checkStage5(){
+  var allOk = true, total = 0;
+  document.querySelectorAll('#taggableEssay .sent').forEach(function(el){
+    total++;
+    var pi = parseInt(el.dataset.p), si = parseInt(el.dataset.s);
+    var correctTag = sentenceKey[pi][si];
+    el.classList.remove('correct','wrong');
+    if(el.dataset.tag === correctTag){ el.classList.add('correct'); }
+    else { el.classList.add('wrong'); allOk = false; }
+  });
+  document.getElementById('stage5msg').textContent = allOk ? "All correct. Word level activity unlocked." : "Some sentences are tagged wrong (in red). Fix and check again.";
+  document.getElementById('stage5msg').style.color = allOk ? "#2F8F5B" : "#C0392B";
+  if(allOk) unlock('stage6');
+}
+function revealStructure(){ document.getElementById('structureReveal').style.display='block'; }
+
+var clickPara0 = "Sigmund Freud's model of the psyche divides the self into three competing forces: the ID, driven by instinct and desire without regard for consequence; the superego, the internalised voice of parents, religion and society; and the ego, which negotiates a livable compromise between the two. <span class=\"clickable-word\" data-id=\"d1\" onclick=\"revealWord(this)\">Most days</span>, that negotiation is invisible. We do not notice the ego at work <span class=\"clickable-word\" data-id=\"d2\" onclick=\"revealWord(this)\">because</span> it succeeds, quietly editing what we are willing to say, wear, want and do. Art breaks this pattern. It is one of the only spaces where the negotiation becomes visible, where an audience can feel the pull of instinct and the weight of judgement in the same instant, without stepping outside acceptable behaviour. <span class=\"clickable-word\" data-id=\"d3\" onclick=\"revealWord(this)\">Because</span> the ID, ego and superego are structures of the human mind <span class=\"clickable-word\" data-id=\"d4\" onclick=\"revealWord(this)\">rather than</span> products of any single culture, they offer a lens capable of explaining art's emotional pull across the most unrelated of contexts: a South African rap video, a Japanese survival film, an American gallery piece, a German metal concert <span class=\"clickable-word\" data-id=\"d8\" onclick=\"revealWord(this)\">and</span> a spoken word poem born of a distinctly Western feminism. <span class=\"clickable-word\" data-id=\"d6\" onclick=\"revealWord(this)\">Tracing this shared negotiation across</span> the works of Die Antwoord, Kinji Fukasaku's 2000 film Battle Royale, Andres Serrano's Piss Christ, Rammstein and Cynthia Nixon's spoken word piece &quot;Be a Lady&quot; <span class=\"clickable-word\" data-id=\"d7\" onclick=\"revealWord(this)\">reveals that</span> Freud's model of the psyche is key to understanding how audiences engage with art emotionally on a global scale, a mechanism that operates beneath, and often overrides, the specific culture producing or receiving the work, <span class=\"clickable-word\" data-id=\"d5\" onclick=\"revealWord(this)\">even where</span> that culture still determines the particular form the transgression is permitted to take.";
+
+var clickPara1 = "Some art exists simply to let the ID feel pleasure without apology, <span class=\"clickable-word\" data-id=\"d9\" onclick=\"revealWord(this)\">and</span> Die Antwoord's Cookie Thumper, released in 2012, is one of the purest examples of this. The song and its accompanying visuals commit fully to excess: exaggerated sexuality, deliberately grotesque imagery, and a sound so abrasive it refuses to be background music. There is no attempt at redemption or moral framing here, only appetite. A person who behaved this way in a classroom, a workplace or a family gathering would face immediate correction from every layer of the superego, <span class=\"clickable-word\" data-id=\"d10\" onclick=\"revealWord(this)\">yet</span> inside a music video the same behaviour becomes spectacle rather than scandal. Rammstein's live performances, staged continuously since the band's formation in 1994, work through a related, <span class=\"clickable-word\" data-id=\"d13\" onclick=\"revealWord(this)\">if louder</span>, register of pleasure. Pyrotechnics, volume and choreographed aggression overwhelm the senses <span class=\"clickable-word\" data-id=\"d14\" onclick=\"revealWord(this)\">before</span> any single lyric or image can be judged individually. <span class=\"clickable-word\" data-id=\"d12\" onclick=\"revealWord(this)\">In both cases</span>, art gives the ID a stage large enough to perform on and asks the audience simply to feel, not to approve. Neither work stays this simple for long, <span class=\"clickable-word\" data-id=\"d11\" onclick=\"revealWord(this)\">however</span>: the same excess that reads as pleasure here is precisely what begins to strain against the superego's tolerance once the audience is asked to keep watching.";
+
+document.getElementById('clickEssay').innerHTML =
+  '<div class="para-label">Paragraph 1</div><p id="clickp0">'+clickPara0+'</p>'+
+  '<div class="para-label">Paragraph 2</div><p id="clickp1">'+clickPara1+'</p>';
+
+var devices = [
+ {id:'d1', text:'Most days', cat:'time', para:0},
+ {id:'d2', text:'because', cat:'cause', para:0},
+ {id:'d3', text:'Because', cat:'cause', para:0},
+ {id:'d4', text:'rather than', cat:'contrast', para:0},
+ {id:'d5', text:'even where', cat:'concession', para:0},
+ {id:'d6', text:'Tracing this shared negotiation across', cat:'linking', para:0},
+ {id:'d7', text:'reveals that', cat:'linking', para:0},
+ {id:'d8', text:'and', cat:'addition', para:0},
+ {id:'d9', text:'and', cat:'addition', para:1},
+ {id:'d10', text:'yet', cat:'contrast', para:1},
+ {id:'d11', text:'however', cat:'contrast', para:1},
+ {id:'d12', text:'In both cases', cat:'addition', para:1},
+ {id:'d13', text:'if louder', cat:'concession', para:1},
+ {id:'d14', text:'before', cat:'time', para:1},
+];
+var chartCats6 = [
+  {k:'addition',label:'Addition'},{k:'contrast',label:'Contrast'},{k:'cause',label:'Cause and effect'},
+  {k:'concession',label:'Concession'},{k:'linking',label:'Linking to evidence'},{k:'time',label:'Time / sequence'}
+];
+document.getElementById('chartGrid').innerHTML = chartCats6.map(function(c){
+  return '<div class="chartcol" id="col6-'+c.k+'" ondragover="event.preventDefault();this.classList.add(\'over\')" ondragleave="this.classList.remove(\'over\')" ondrop="dropChip6(event,\''+c.k+'\')"><h4>'+c.label+'</h4></div>';
+}).join('');
+
+var revealedCount = {0:0, 1:0};
+var revealedIds = {};
+function revealWord(span){
+  if(span.classList.contains('revealed')) return;
+  span.classList.add('revealed');
+  var id = span.dataset.id;
+  var d = devices.filter(function(x){ return x.id===id; })[0];
+  revealedIds[id] = d;
+  var para = d.para;
+  revealedCount[para]++;
+  var totalForPara = devices.filter(function(x){ return x.para===para; }).length;
+  if(revealedCount[para] >= totalForPara){
+    document.getElementById('clickp'+para).classList.add('para-locked');
+  }
+  renderRevealBank();
+}
+function renderRevealBank(){
+  var ids = Object.keys(revealedIds);
+  if(ids.length === 0){ document.getElementById('revealBank').textContent = 'Nothing revealed yet.'; return; }
+  var existingBank = document.getElementById('bank6');
+  var bank = existingBank || document.createElement('div');
+  if(!existingBank){ bank.className = 'chipbank'; bank.id = 'bank6'; document.getElementById('revealBank').innerHTML=''; document.getElementById('revealBank').appendChild(bank); }
+  ids.forEach(function(id){
+    var d = revealedIds[id];
+    if(document.getElementById('chip6-'+id)) return;
+    var chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.id = 'chip6-'+id;
+    chip.draggable = true;
+    chip.dataset.id = id;
+    chip.textContent = d.text;
+    chip.ondragstart = function(e){ e.dataTransfer.setData('text', id); };
+    bank.appendChild(chip);
+  });
+}
+function dropChip6(e, cat){
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  var id = e.dataTransfer.getData('text');
+  var d = revealedIds[id];
+  if(!d) return;
+  var chip = document.getElementById('chip6-'+id);
+  if(!chip) return;
+  chip.dataset.cat = cat;
+  chip.style.background = '';
+  chip.style.color = '';
+  chip.classList.add('placed');
+  chip.style.cursor = 'grab';
+  e.currentTarget.appendChild(chip);
+}
+function checkStage6(){
+  var allRevealed = devices.every(function(d){ return revealedIds[d.id]; });
+  if(!allRevealed){
+    document.getElementById('stage6msg').textContent = "Reveal every phrase in both paragraphs first.";
+    document.getElementById('stage6msg').style.color = "#C0392B";
+    return;
+  }
+  var allPlaced = true, allCorrect = true;
+  devices.forEach(function(d){
+    var chip = document.getElementById('chip6-'+d.id);
+    if(!chip || !chip.classList.contains('placed')){ allPlaced = false; return; }
+    var ok = chip.dataset.cat === d.cat;
+    chip.style.background = ok ? '#DCEEDC' : '#F6DADA';
+    chip.style.borderColor = ok ? '#2F8F5B' : '#C0392B';
+    if(!ok) allCorrect = false;
+  });
+  if(!allPlaced){
+    document.getElementById('stage6msg').textContent = "Drag every revealed phrase into a column first.";
+    document.getElementById('stage6msg').style.color = "#C0392B";
+    return;
+  }
+  document.getElementById('stage6msg').textContent = allCorrect ? "All correct. Next activity unlocked." : "Some are in the wrong column (shown in red). Drag them to a new column and check again.";
+  document.getElementById('stage6msg').style.color = allCorrect ? "#2F8F5B" : "#C0392B";
+  if(allCorrect) unlock('stage6b');
+}
+
+var zones = [{k:"intro",label:"Introduction"},{k:"body",label:"Body paragraphs"},{k:"conclusion",label:"Conclusion"}];
+var reverseSprinkle = [
+  {w:"Because", zone:"intro"}, {w:"Tracing this shared negotiation across", zone:"intro"},
+  {w:"Neither work stays this simple, however", zone:"body"}, {w:"That strain is where", zone:"body"},
+  {w:"resurfaces here too", zone:"body"}, {w:"returns here in a different register", zone:"body"},
+  {w:"Even Battle Royale reappears", zone:"body"}, {w:"What began, in the first paragraph", zone:"conclusion"},
+  {w:"None of these five works", zone:"conclusion"},
+];
+document.getElementById('reverseSprinkleBank').innerHTML = reverseSprinkle.map(function(s,i){
+  return '<div class="chip" draggable="true" id="rspr'+i+'" ondragstart="event.dataTransfer.setData(\'text\','+i+')">'+s.w+'</div>';
+}).join('');
+document.getElementById('reverseZoneWrap').innerHTML = zones.map(function(z){
+  return '<div class="zone" id="rzone-'+z.k+'" ondragover="event.preventDefault();this.classList.add(\'over\')" ondragleave="this.classList.remove(\'over\')" ondrop="dropReverseSprinkle(event,\''+z.k+'\')"><h4>'+z.label+'</h4></div>';
+}).join('');
+function dropReverseSprinkle(e,zone){
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+
+  var i = e.dataTransfer.getData('text');
+  var s = reverseSprinkle[i];
+  var chip = document.getElementById('rspr'+i);
+  if(!chip) return;
+
+  var correct = s.zone === zone;
+  chip.textContent = s.w + (correct ? ' \u2713' : ' ?');
+  chip.style.background = correct ? '#2F8F5B' : '#B8860B';
+  chip.style.color = '#fff';
+
+  e.currentTarget.appendChild(chip);
+}
+
+/* Activity 7: gradeboxes */
+var gradeConfig = [
+  {key:"theory", label:"Theory", answer:"Freud, the ID, Ego and Superego"},
+  {key:"theme", label:"Theme", answer:"Psychology of art, and why it works the same way across different cultures"},
+  {key:"thesis", label:"Thesis Statement", answer:"Freud's model of the psyche is key to understanding how audiences engage with art emotionally on a global scale, a mechanism that operates beneath, and often overrides, culture."},
+  {key:"counter", label:"Subthesis / Counterargument", answer:"Culture still shapes the particular form the transgression is allowed to take, it just doesn't create the underlying pull."},
+  {key:"c1", label:"Topic of Paragraph 1 (Body 1)", answer:"Pleasuring the ID"},
+  {key:"a1", label:"Artwork(s) in Paragraph 1", answer:"Cookie Thumper (2012), Rammstein live shows (since 1994)"},
+  {key:"p1", label:"How Paragraph 1 Proves the Thesis", answer:"Gives the ID a stage to feel pleasure without real consequence, no culture-specific moral needed."},
+  {key:"c2", label:"Topic of Paragraph 2 (Body 2)", answer:"Testing the ID's limits"},
+  {key:"a2", label:"Artwork(s) in Paragraph 2", answer:"Piss Christ (1987), Battle Royale (2000)"},
+  {key:"p2", label:"How Paragraph 2 Proves the Thesis", answer:"Shows exactly where each culture's superego draws its line, proving the mechanism is universal."},
+  {key:"c3", label:"Topic of Paragraph 3 (Body 3)", answer:"Negotiating the superego"},
+  {key:"a3", label:"Artwork(s) in Paragraph 3", answer:"Be a Lady They Said (2017), Deutschland (2019), Battle Royale (2000)"},
+  {key:"p3", label:"How Paragraph 3 Proves the Thesis", answer:"Makes the superego's demands visible across totally different contexts, gender norms, national guilt."},
+];
+document.getElementById('gradeboxes').innerHTML = gradeConfig.map(function(g){
+  return '<div class="gradebox" id="gb-'+g.key+'">'+
+    '<span class="cap">'+g.label+'</span>'+
+    '<textarea id="ans-'+g.key+'" placeholder="Write your answer here..."></textarea>'+
+    '<div id="pair-'+g.key+'"></div>'+
+    '</div>';
+}).join('');
+function revealGradeboxes(){
+  gradeConfig.forEach(function(g){
+    var yourText = document.getElementById('ans-'+g.key).value || '(left blank)';
+    document.getElementById('pair-'+g.key).innerHTML =
+      '<div class="answerpair">'+
+        '<div class="yourbox"><b>Your answer</b><br>'+yourText+'</div>'+
+        '<div class="keybox"><b>Correct answer</b><br>'+g.answer+'</div>'+
+      '</div>'+
+      '<div class="selfgrade">How close were you? '+
+        '<select id="grade-'+g.key+'"><option value="">choose...</option><option>100%</option><option>75%</option><option>50%</option><option>25%</option><option>0%</option></select>'+
+      '</div>';
+  });
+}
+function clearGradeboxes(){
+  gradeConfig.forEach(function(g){
+    document.getElementById('ans-'+g.key).value = '';
+    document.getElementById('pair-'+g.key).innerHTML = '';
+  });
+}
+
+/* Part 2, Step 1: ten artworks */
+document.getElementById('artRows').innerHTML = Array.from({length:10}, function(_,i){
+  return '<div class="artrow"><span class="num">'+(i+1)+'.</span><input id="art'+i+'" placeholder="Artwork name" oninput="updateArtCounter()"><input id="artwhy'+i+'" placeholder="Why it fits" oninput="updateArtCounter()"></div>';
+}).join('');
+function updateArtCounter(){
+  var count = 0;
+  for(var i=0;i<10;i++){ if(document.getElementById('art'+i).value.trim()) count++; }
+  var el = document.getElementById('artCounter');
+  el.textContent = count+' of 10 artworks listed';
+  el.classList.toggle('done', count>=10);
+}
+updateArtCounter();
+
+/* Part 2, Step 2: organiser tree + picker hints */
+var treeKeysBuild = ['theory','theme','thesis','counter','c1','a1','p1','c2','a2','p2','c3','a3','p3'];
+var treeHTML =
+  '<div class="node-cap">Theory</div><div class="node node-theory" data-key="theory" contenteditable="true" data-ph="Theory"></div>'+
+  '<div class="connector"></div>'+
+  '<div class="node-cap">Theme</div><div class="node node-theme" data-key="theme" contenteditable="true" data-ph="Theme"></div>'+
+  '<div class="connector"></div>'+
+  '<div class="node-cap">Thesis statement</div><div class="node node-thesis" data-key="thesis" contenteditable="true" data-ph="Thesis statement"></div>'+
+  '<div class="node-cap">Subthesis / counterargument</div><div class="node node-counter" data-key="counter" contenteditable="true" data-ph="Counterargument"></div>'+
+  '<div class="connector"></div>'+
+  '<div class="branches">'+
+    '<div class="branch"><div class="node-cap">Topic, paragraph 1</div><div class="node node-concept" data-key="c1" contenteditable="true" data-ph="Concept 1"></div>'+
+      '<div class="node-cap">Artwork(s)</div><div class="node node-artwork" data-key="a1" contenteditable="true" data-ph="Artwork(s)"></div>'+
+      '<div class="node-cap">Proves the thesis how?</div><div class="node node-proof" data-key="p1" contenteditable="true" data-ph="How does this prove the thesis?"></div></div>'+
+    '<div class="branch"><div class="node-cap">Topic, paragraph 2</div><div class="node node-concept" data-key="c2" contenteditable="true" data-ph="Concept 2"></div>'+
+      '<div class="node-cap">Artwork(s)</div><div class="node node-artwork" data-key="a2" contenteditable="true" data-ph="Artwork(s)"></div>'+
+      '<div class="node-cap">Proves the thesis how?</div><div class="node node-proof" data-key="p2" contenteditable="true" data-ph="How does this prove the thesis?"></div></div>'+
+    '<div class="branch"><div class="node-cap">Topic, paragraph 3</div><div class="node node-concept" data-key="c3" contenteditable="true" data-ph="Concept 3"></div>'+
+      '<div class="node-cap">Artwork(s)</div><div class="node node-artwork" data-key="a3" contenteditable="true" data-ph="Artwork(s)"></div>'+
+      '<div class="node-cap">Proves the thesis how?</div><div class="node node-proof" data-key="p3" contenteditable="true" data-ph="How does this prove the thesis?"></div></div>'+
+  '</div>';
+document.getElementById('buildTree').innerHTML = treeHTML;
+function clearTree(which){
+  document.querySelectorAll('#buildTree .node[contenteditable]').forEach(function(n){ n.textContent=''; });
+}
+
+document.querySelectorAll('#orgPicker button').forEach(function(btn){
+  btn.addEventListener('mouseenter', function(){ document.getElementById('orgHint').textContent = btn.textContent+': '+btn.dataset.hint; });
+  btn.addEventListener('mouseleave', function(){ var sel = document.querySelector('#orgPicker button.sel'); document.getElementById('orgHint').textContent = sel.textContent+': '+sel.dataset.hint; });
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#orgPicker button').forEach(function(b){ b.classList.remove('sel'); });
+    btn.classList.add('sel');
+    document.querySelectorAll('.org').forEach(function(o){ o.classList.remove('active'); });
+    document.getElementById(btn.dataset.org).classList.add('active');
+    document.getElementById('orgHint').textContent = btn.textContent+': '+btn.dataset.hint;
+  });
+});
+
+/* Get my plan: modal with print + selectable text, since raw file download is blocked in some sandboxed viewers */
+function openPlanModal(){
+  var activeOrg = document.querySelector('.org.active');
+  var lines = [];
+  lines.push('MY ESSAY PLAN');
+  lines.push('Theory: ' + (document.getElementById('theoryPick').value||''));
+  lines.push('');
+
+  lines.push('--- ARTWORK BANK ---');
+  for(var i=0;i<10;i++){
+    var name = document.getElementById('art'+i).value.trim();
+    var why = document.getElementById('artwhy'+i).value.trim();
+    if(name || why){
+      lines.push((i+1)+'. '+(name||'(untitled)')+(why ? ' \u2014 '+why : ''));
+    }
+  }
+  lines.push('');
+
+  lines.push('--- ORGANISER ---');
+  activeOrg.querySelectorAll('[contenteditable]').forEach(function(n){
+    lines.push((n.textContent || '(empty)'));
+  });
+  lines.push('');
+
+  lines.push('--- FULL STRUCTURE OUTLINE ---');
+  outlineItems.forEach(function(o){
+    var val = document.getElementById('out'+o.n).value.trim();
+    lines.push(o.n+'. '+o.label+': '+(val || '(not yet filled in)'));
+  });
+
+  var text = lines.join('\n');
+  document.getElementById('planText').value = text;
+  document.getElementById('printArea').innerHTML = '<h2>My Essay Plan</h2><pre style="white-space:pre-wrap;font-family:Georgia,serif;">'+text.replace(/</g,'&lt;')+'</pre>';
+  document.getElementById('planModal').classList.add('show');
+}
+
+/* Part 2, Step 3: full structure outline */
+var outlineItems = [
+  {n:1, label:"Theory"}, {n:2, label:"Theme"}, {n:3, label:"Background"}, {n:4, label:"Thesis statement"}, {n:5, label:"Substatement / counter"},
+  {n:6, label:"Paragraph 1: Topic sentence"}, {n:7, label:"Explain"}, {n:8, label:"Example (artwork)"}, {n:9, label:"Connect / conclude"},
+  {n:10, label:"Paragraph 2: Topic sentence"}, {n:11, label:"Explain"}, {n:12, label:"Example (artwork)"}, {n:13, label:"Connect / conclude"},
+  {n:14, label:"Paragraph 3: Topic sentence"}, {n:15, label:"Explain"}, {n:16, label:"Example (artwork)"}, {n:17, label:"Connect / conclude"},
+  {n:18, label:"Conclusion: Restate thesis"}, {n:19, label:"Summarise"}, {n:20, label:"Call to action"},
+];
+document.getElementById('outlineRows').innerHTML = outlineItems.map(function(o){
+  return '<div class="outlinerow"><span class="onum">'+o.n+'.</span><span class="olabel">'+o.label+' -</span><input id="out'+o.n+'" placeholder="notes..."></div>';
+}).join('');
+
+/* Part 2, Step 4: sprinkle words onto 5 structural zones + custom chips */
+var sprinkle = [
+  {w:"For example", zone:"body1"}, {w:"However", zone:"body2"}, {w:"In contrast", zone:"body2"},
+  {w:"As a result", zone:"body3"}, {w:"This essay argues", zone:"intro"}, {w:"Firstly", zone:"body1"},
+  {w:"In summary", zone:"conclusion"}, {w:"This suggests that", zone:"conclusion"}, {w:"Building on this", zone:"body3"},
+];
+document.getElementById('sprinkleBank').innerHTML = sprinkle.map(function(s,i){
+  return '<div class="chip" draggable="true" id="spr'+i+'" ondragstart="event.dataTransfer.setData(\'text\',\'p\'+'+i+')">'+s.w+'</div>';
+}).join('');
+document.getElementById('customChipRow').innerHTML =
+  '<input id="customWordInput" placeholder="Type your own linking word or phrase" style="padding:.4rem;border:1px solid var(--line);border-radius:6px;font-family:Arial,sans-serif;font-size:.85rem;">'+
+  '<button class="ghost" style="padding:.4rem .8rem;" onclick="addCustomChip()">Add</button>';
+var customChips = [];
+function addCustomChip(){
+  var input = document.getElementById('customWordInput');
+  var val = input.value.trim();
+  if(!val) return;
+  var idx = customChips.length;
+  customChips.push(val);
+  var chip = document.createElement('div');
+  chip.className = 'chip';
+  chip.draggable = true;
+  chip.id = 'cspr'+idx;
+  chip.textContent = val;
+  chip.ondragstart = function(e){ e.dataTransfer.setData('text','c'+idx); };
+  document.getElementById('customChipRow').appendChild(chip);
+  input.value = '';
+}
+var zoneDefs = [{k:"intro",label:"Introduction"},{k:"body1",label:"Body Paragraph 1"},{k:"body2",label:"Body Paragraph 2"},{k:"body3",label:"Body Paragraph 3"},{k:"conclusion",label:"Conclusion"}];
+document.getElementById('zoneWrap').innerHTML = zoneDefs.map(function(z){
+  return '<div class="zone" id="zone-'+z.k+'" ondragover="event.preventDefault();this.classList.add(\'over\')" ondragleave="this.classList.remove(\'over\')" ondrop="dropSprinkle(event,\''+z.k+'\')"><h4>'+z.label+'</h4></div>';
+}).join('');
+function dropSprinkle(e,zone){
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+
+  var token = e.dataTransfer.getData('text');
+  var isCustom = token.charAt(0)==='c';
+  var idx = parseInt(token.slice(1));
+  var chip = document.getElementById((isCustom?'cspr':'spr')+idx);
+  if(!chip) return;
+
+  var label = isCustom ? customChips[idx] : sprinkle[idx].w;
+
+  if(!isCustom){
+    var correct = sprinkle[idx].zone === zone;
+    chip.textContent = label + (correct ? ' \u2713' : ' ?');
+    chip.style.background = correct ? '#2F8F5B' : '#B8860B';
+  } else {
+    chip.textContent = label;
+    chip.style.background = '#1C7293';
+  }
+
+  chip.style.color = '#fff';
+  e.currentTarget.appendChild(chip);
+}
+
+/* Part 2, Step 5: timer only, writing on paper */
+var t2 = 1200, t2id;
+function startTimer2(){
+  if(t2id) return;
+
+  document.querySelector('button[onclick="startTimer2()"]').disabled = true;
+
+  t2id = setInterval(function(){
+    t2--;
+    var m = Math.floor(t2/60), s = t2%60;
+    document.getElementById('timer2Display').textContent = m+":"+(s<10?"0":"")+s;
+
+    if(t2<=0){
+      clearInterval(t2id);
+      document.getElementById('timer2Display').textContent="Time!";
+    }
+  },1000);
+}
+
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.onclick = function(){
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.mode').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.mode).classList.add('active');
+  };
+});
+</script>
+</body>
+</html>
