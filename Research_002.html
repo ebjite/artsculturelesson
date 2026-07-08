@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gallery Research: Class 002</title>
+<style>
+:root{ --navy:#1E2761; --navy2:#141B47; --teal:#1C7293; --gold:#F0B429; --cream:#FBF8F2; --ink:#22283B; --line:#DAD3C3; }
+*{box-sizing:border-box;}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Georgia,serif;line-height:1.6;}
+header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:1.6rem 1.5rem 1.2rem;}
+header h1{margin:0 0 .15rem;font-size:1.4rem;}
+header p{margin:0;color:#C9D4EA;font-family:Arial,sans-serif;font-size:.85rem;}
+main{max-width:800px;margin:0 auto;padding:1.5rem 1.5rem 5rem;}
+.timerbar{position:sticky;top:0;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:1rem;text-align:center;font-family:Arial,sans-serif;margin-bottom:1.4rem;z-index:20;}
+.timer{font-size:2.2rem;font-weight:900;color:var(--navy);margin:.3rem 0;}
+button.big{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:.7rem 1.3rem;font-weight:700;font-size:.9rem;cursor:pointer;font-family:Arial,sans-serif;margin-top:1rem;}
+button.big:disabled{background:#ccc;}
+.grouppicker{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.6rem;}
+.grouppicker button{border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:8px;padding:.6rem 1rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
+.grouppicker button.sel{background:var(--navy);color:#fff;}
+.extralabel{font-family:Arial,sans-serif;font-size:.78rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin:1rem 0 .4rem;}
+.extrapicker{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.4rem;}
+.extrapicker button{border:2px dashed var(--gold);background:#fff;color:#8a6d00;border-radius:8px;padding:.6rem 1rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
+.extrapicker button.sel{background:var(--gold);color:#3a2f00;}
+.panel{display:none;background:#fff;border-radius:10px;padding:1.4rem 1.6rem;box-shadow:0 2px 10px rgba(0,0,0,.08);}
+.panel.active{display:block;}
+.panel h2{margin-top:0;color:var(--navy);}
+.sub{font-family:Arial,sans-serif;font-size:.85rem;color:#888;margin-bottom:1rem;}
+.piece{border-top:2px solid var(--line);padding-top:1rem;margin-top:1rem;}
+.piece:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+.piece h3{color:var(--navy);margin-bottom:.2rem;}
+.meta a{color:var(--teal);font-family:Arial,sans-serif;font-size:.85rem;text-decoration:none;font-weight:700;}
+.qitem{margin-bottom:.8rem;font-family:Arial,sans-serif;}
+.qitem label{display:block;font-size:.85rem;font-weight:700;color:var(--navy);margin-bottom:.3rem;}
+.qitem textarea{width:100%;min-height:55px;padding:.5rem;border:1px solid var(--line);border-radius:6px;font-family:Arial,sans-serif;font-size:.87rem;}
+.copiedmsg{font-family:Arial,sans-serif;font-size:.8rem;color:#2F8F5B;font-weight:700;margin-top:.5rem;}
+.reminder{font-family:Arial,sans-serif;font-size:.85rem;font-weight:700;color:#B5541E;background:#FBEFDD;border-radius:8px;padding:.7rem 1rem;margin-bottom:1.2rem;}
+.pdfbtn{background:var(--navy);margin-left:.5rem;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:10px;padding:1.5rem;max-width:650px;width:90%;max-height:85vh;overflow:auto;font-family:Arial,sans-serif;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea, #printArea *{visibility:visible;}
+  #printArea{position:absolute;top:0;left:0;width:100%;}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Gallery Research: Class 002</h1>
+  <p>Pick your group, research your piece, post to the discussion board</p>
+</header>
+<main>
+  <div class="timerbar">
+    <div style="font-family:Arial,sans-serif;font-weight:700;color:#666;">Working timer</div>
+    <div class="timer" id="timerDisplay">25:00</div>
+    <button class="big" id="timerBtn" onclick="startTimer()">Start 25 minute timer</button>
+  </div>
+
+  <div class="grouppicker" id="groupPicker"></div>
+  <div class="extralabel">Finished early? Extra pieces, open to any group</div><div class="extrapicker" id="extraPicker"></div>
+  <div class="reminder">Finish a piece? Save it as a PDF, then post it to the discussion board called "Art Research".</div>
+
+  <div class="panel" id="panel-g1">
+      <h2>Group 1</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>60" Rectified Truncated Cuboctahedron (Bronze)</h3>
+        <p class="meta"><a href="https://www.instagram.com/reel/DZ2ihpShUGs/" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g1" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g1" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g1" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g1" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g1" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g1')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g1', "60\" Rectified Truncated Cuboctahedron (Bronze)")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g1"></div>
+    </div><div class="panel" id="panel-g2">
+      <h2>Group 2</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>Reversible Rotation: Dark Existence</h3>
+        <p class="meta"><a href="https://www.teamlab.art/ew/reversiblerotation-darkexistence-azabudai/tokyo/" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g2" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g2" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g2" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g2" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g2" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g2')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g2', "Reversible Rotation: Dark Existence")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g2"></div>
+    </div><div class="panel" id="panel-g3">
+      <h2>Group 3</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>On the Asymmetry of the Universe</h3>
+        <p class="meta"><a href="https://www.teamlab.art/ew/fixedstar-asymmetriccosmos-azabudai/tokyo/" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g3" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g3" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g3" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g3" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g3" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g3')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g3', "On the Asymmetry of the Universe")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g3"></div>
+    </div><div class="panel" id="panel-g4">
+      <h2>Group 4</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>Infinite Awakening</h3>
+        <p class="meta"><a href="https://shop.mikael-b.com/product/limited-edition-infinite-awakening/" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g4" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g4" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g4" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g4" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g4" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g4')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g4', "Infinite Awakening")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g4"></div>
+    </div><div class="panel" id="panel-g5">
+      <h2>Group 5</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>Insult to Injury</h3>
+        <p class="meta"><a href="https://www.tate.org.uk/whats-on/tate-britain/turner-prize-2003/turner-prize-2003-artists-jake-and-dinos-chapman" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g5" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g5" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g5" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g5" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g5" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g5')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g5', "Insult to Injury")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g5"></div>
+    </div><div class="panel" id="panel-g6">
+      <h2>Group 6</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>Mona Lisa</h3>
+        <p class="meta"><a href="https://en.wikipedia.org/wiki/Mona_Lisa" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g6" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g6" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g6" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g6" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g6" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g6')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g6', "Mona Lisa")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g6"></div>
+    </div><div class="panel" id="panel-g7">
+      <h2>Group 7</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>Living Architecture: Casa Batllo</h3>
+        <p class="meta"><a href="https://refikanadolstudio.com/projects/living-architecture-casa-batllo/" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g7" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g7" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g7" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g7" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g7" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g7')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g7', "Living Architecture: Casa Batllo")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g7"></div>
+    </div><div class="panel" id="panel-g8">
+      <h2>Group 8</h2>
+      <div class="sub">Your piece to research</div>
+      
+      <div class="piece">
+        <h3>Power Rangers</h3>
+        <p class="meta"><a href="https://en.wikipedia.org/wiki/Power_Rangers" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="g8" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="g8" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="g8" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="g8" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="g8" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('g8')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('g8', "Power Rangers")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-g8"></div>
+    </div>
+  <div class="panel" id="panel-eA">
+      <h2>Extra Piece A</h2>
+      <div class="sub">Finished early? Any group can pick this one up.</div>
+      
+      <div class="piece">
+        <h3>The Scream</h3>
+        <p class="meta"><a href="https://en.wikipedia.org/wiki/The_Scream" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="eA" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="eA" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="eA" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="eA" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="eA" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('eA')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('eA', "The Scream")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-eA"></div>
+    </div><div class="panel" id="panel-eB">
+      <h2>Extra Piece B</h2>
+      <div class="sub">Finished early? Any group can pick this one up.</div>
+      
+      <div class="piece">
+        <h3>Ballroom Culture</h3>
+        <p class="meta"><a href="https://uk.pinterest.com/estelio/ballroom-the-extravagant-underground-art/" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="eB" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="eB" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="eB" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="eB" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="eB" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('eB')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('eB', "Ballroom Culture")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-eB"></div>
+    </div><div class="panel" id="panel-eC">
+      <h2>Extra Piece C</h2>
+      <div class="sub">Finished early? Any group can pick this one up.</div>
+      
+      <div class="piece">
+        <h3>Combat Sports as High Art</h3>
+        <p class="meta"><a href="https://www.opennotegrappling.com/p/combat-sports-high-art" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="eC" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="eC" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="eC" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="eC" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="eC" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('eC')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('eC', "Combat Sports as High Art")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-eC"></div>
+    </div><div class="panel" id="panel-eD">
+      <h2>Extra Piece D</h2>
+      <div class="sub">Finished early? Any group can pick this one up.</div>
+      
+      <div class="piece">
+        <h3>Crime and Punishment</h3>
+        <p class="meta"><a href="https://en.wikipedia.org/wiki/Crime_and_Punishment" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="eD" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="eD" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="eD" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="eD" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="eD" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('eD')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('eD', "Crime and Punishment")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-eD"></div>
+    </div><div class="panel" id="panel-eE">
+      <h2>Extra Piece E</h2>
+      <div class="sub">Finished early? Any group can pick this one up.</div>
+      
+      <div class="piece">
+        <h3>Identification</h3>
+        <p class="meta"><a href="https://vocaloidlyrics.miraheze.org/wiki/Category:Abu-Se-Ken_songs_list" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="eE" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="eE" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="eE" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="eE" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="eE" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('eE')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('eE', "Identification")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-eE"></div>
+    </div><div class="panel" id="panel-eF">
+      <h2>Extra Piece F</h2>
+      <div class="sub">Finished early? Any group can pick this one up.</div>
+      
+      <div class="piece">
+        <h3>Into the Wild (Warriors, Book 1)</h3>
+        <p class="meta"><a href="https://en.wikipedia.org/wiki/Into_the_Wild_(novel)" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="eF" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="eF" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="eF" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="eF" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="eF" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('eF')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('eF', "Into the Wild (Warriors, Book 1)")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-eF"></div>
+    </div><div class="panel" id="panel-eG">
+      <h2>Extra Piece G</h2>
+      <div class="sub">Finished early? Any group can pick this one up.</div>
+      
+      <div class="piece">
+        <h3>Hi Ren</h3>
+        <p class="meta"><a href="https://en.wikipedia.org/wiki/Ren_Gill" target="_blank" rel="noopener">View the piece &rarr;</a></p>
+        <div class="qitem"><label>1. Who made this, and when?</label><textarea data-k="eG" data-q="1"></textarea></div>
+        <div class="qitem"><label>2. What is happening in or with this piece? Describe it in your own words.</label><textarea data-k="eG" data-q="2"></textarea></div>
+        <div class="qitem"><label>3. What message or meaning does it seem to carry?</label><textarea data-k="eG" data-q="3"></textarea></div>
+        <div class="qitem"><label>4. Is that message something everyone would agree on, or could it be debated? Why?</label><textarea data-k="eG" data-q="4"></textarea></div>
+        <div class="qitem"><label>5. Stretch: which theory from this semester could this piece connect to, and how?</label><textarea data-k="eG" data-q="5"></textarea></div>
+      </div>
+      <button class="big" onclick="copyAnswers('eG')">Copy my answers to paste on the discussion board</button>
+      <button class="big pdfbtn" onclick="savePDF('eG', "Hi Ren")">Save as PDF</button>
+      <div class="copiedmsg" id="copiedmsg-eG"></div>
+    </div>
+</main>
+
+<div class="modal-overlay" id="pdfModal">
+  <div class="modal-box">
+    <h3 id="pdfModalTitle" style="margin-top:0;color:#1E2761;"></h3>
+    <div id="printArea"></div>
+    <p style="font-size:.8rem;color:#666;">Press Ctrl+P or Cmd+P, or click below, to print or save as PDF.</p>
+    <button class="big" onclick="window.print()">Print / Save as PDF</button>
+    <button class="big" style="background:#888;" onclick="document.getElementById('pdfModal').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<script>
+var groupIds = ["g1","g2","g3","g4","g5","g6","g7","g8"];
+var extraIds = ["eA","eB","eC","eD","eE","eF","eG"];
+var picker = document.getElementById('groupPicker');
+groupIds.forEach(function(id){
+  var label = 'Group ' + id.slice(1);
+  var btn = document.createElement('button');
+  btn.textContent = label;
+  btn.onclick = function(){ selectPanel(id, btn); };
+  picker.appendChild(btn);
+});
+var extraPicker = document.getElementById('extraPicker');
+if (extraPicker) {
+  extraIds.forEach(function(id){
+    var label = 'Extra ' + id.slice(1);
+    var btn = document.createElement('button');
+    btn.textContent = label;
+    btn.onclick = function(){ selectPanel(id, btn); };
+    extraPicker.appendChild(btn);
+  });
+}
+function selectPanel(id, btn){
+  document.querySelectorAll('.grouppicker button, .extrapicker button').forEach(function(b){ b.classList.remove('sel'); });
+  btn.classList.add('sel');
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+var t = 1500, tid;
+function startTimer(){
+  document.getElementById('timerBtn').disabled = true;
+  tid = setInterval(function(){
+    t--;
+    var m = Math.floor(t/60), s = t%60;
+    document.getElementById('timerDisplay').textContent = m+":"+(s<10?"0":"")+s;
+    if(t<=0){ clearInterval(tid); document.getElementById('timerDisplay').textContent="Time! Post to the discussion board."; }
+  },1000);
+}
+
+function savePDF(key, pieceTitle){
+  var areas = document.querySelectorAll('textarea[data-k="'+key+'"]');
+  var html = "<h2>" + pieceTitle + "</h2>";
+  areas.forEach(function(a){
+    html += "<p><b>" + a.previousElementSibling.textContent + "</b><br>" + (a.value ? a.value.replace(/</g,'&lt;') : "(not answered)") + "</p>";
+  });
+  document.getElementById('pdfModalTitle').textContent = pieceTitle;
+  document.getElementById('printArea').innerHTML = html;
+  document.getElementById('pdfModal').classList.add('show');
+}
+
+function copyAnswers(key){
+  var areas = document.querySelectorAll('textarea[data-k="'+key+'"]');
+  var lines = [];
+  areas.forEach(function(a){
+    lines.push(a.previousElementSibling.textContent);
+    lines.push(a.value || "(not answered)");
+  });
+  var text = lines.join("\n");
+  navigator.clipboard.writeText(text).then(function(){
+    document.getElementById('copiedmsg-'+key).textContent = "Copied. Paste it into the discussion board now.";
+  }).catch(function(){
+    document.getElementById('copiedmsg-'+key).textContent = "Could not auto-copy, select the text manually from your answers.";
+  });
+}
+</script>
+</body>
+</html>
